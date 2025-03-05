@@ -1,3 +1,3 @@
-import Viewer from "./components/viewer/Viewer.jsx"
+import Viewer from "./components/viewer/Viewer";
 
-export default Viewer
+export default Viewer;
