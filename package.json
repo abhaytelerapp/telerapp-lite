@@ -1,10 +1,10 @@
 {
   "name": "@abhaytelerapp/telerapp-lite",
-  "version": "0.2.0",
-  "main": "src/index.js",
-  "module": "src/index.js",
+  "version": "0.2.1",
+  "main": "dist/index.js",
+  "module": "disk/index.js",
   "files": [
-    "src"
+    "disk"
   ],
   "private": false,
   "dependencies": {
