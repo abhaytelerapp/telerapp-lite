@@ -1,3 +1,2 @@
-import Viewer from "./components/viewer/Viewer";
+export { default as Viewer } from "./components/viewer/Viewer";
 
-export default Viewer;
