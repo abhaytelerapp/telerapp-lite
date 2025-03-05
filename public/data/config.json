@@ -1,0 +1,34 @@
+{
+    "DICOMWebServersConfig": [
+        {
+            "AETitle": "ldcmPACS",
+            "QIDO-enableHTTPS": true,
+            "WADO-enableHTTPS": true,
+            "QIDO-hostname": "orthang.telerapp.net",
+            "WADO-hostname": "orthang.telerapp.net",
+            "QIDO-PORT": 443,
+            "WADO-PORT": 443,
+            "contentType": "application/json",
+            "timeout": 80000,
+            "charset": "UTF=8",
+            "QIDO": "dicom-web",
+            "WADO-URI": "api/dicom/wado",
+            "WADO-RS": "dicom-web",
+            "WADO-RS/URI":"RS",
+            "STOW": "stow",
+            "enableRetrieveURI": false,
+            "includefield": false,
+            "enableXml2Dcm":false,
+            "Xml2DcmUrl":"/upload",
+            "target": "https://cylab-tw.github.io/bluelight/bluelight/html/start.html",
+            "token": {
+                "apikey":"",
+                "Authorization":"Basic YWRtaW46YWRtaW4="
+            }
+        }
+    ],
+    "//_thumnail_witdth": "縮圖寬度",
+    "thumnail_witdth": 70,
+    "//_study_comparison": "進片模式",
+    "study_comparison": false
+}
