@@ -354,12 +354,25 @@ function html_onload() {
 
   getByid("WindowRevisionOption").onclick = function () {
     if (this.enable == false) return;
+    const openWindowDiv = getByid("openWindowRevisionDiv");
+    if (!openWindowDiv) {
+        console.error("Element with ID 'openWindowRevisionDiv' not found.");
+        return; // Exit function if element is missing
+    }
+
     hideAllDrawer("openWindowRevisionDiv");
     invertDisplayById('openWindowRevisionDiv');
-    if (getByid("openWindowRevisionDiv").style.display == "none") getByid("WindowRevisionParent").style.position = "";
-    else {
-      getByid("WindowRevisionParent").style.position = "relative";
-      onElementLeave();
+    // if (getByid("openWindowRevisionDiv").style.display == "none") getByid("WindowRevisionParent").style.position = "";
+    // else {
+    //   getByid("WindowRevisionParent").style.position = "relative";
+    //   onElementLeave();
+    // }
+    const parentElement = getByid("WindowRevisionParent");
+    if (openWindowDiv.style.display == "none") {
+        if (parentElement) parentElement.style.position = "";
+    } else {
+        if (parentElement) parentElement.style.position = "relative";
+        onElementLeave();
     }
 
     function setWindowSelectStyle() {

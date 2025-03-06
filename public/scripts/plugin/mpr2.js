@@ -294,8 +294,18 @@ function initMPR2() {
         var addition = (- low + intercept) / (high - low) * 255;
         var j = 0;
         for (var h = 0; h < pixelData2.length; h++) {
+            if (!Array.isArray(pixelData2[h])) {
+                continue;
+            }
+    
             for (var w = 0, w4 = 0; w < pixelData2[h].length / 4; w++, w4 += 4, j++) {
-                pixelData2[h][w4 + 0] = pixelData2[h][w4 + 1] = pixelData2[h][w4 + 2] = pixelData[j] * multiplication + addition;
+                if (j >= pixelData.length) {
+                    console.warn("Warning: pixelData index out of bounds.");
+                    break;
+                }
+    
+                pixelData2[h][w4 + 0] = pixelData2[h][w4 + 1] = pixelData2[h][w4 + 2] =
+                    pixelData[j] * multiplication + addition;
                 pixelData2[h][w4 + 3] = 255;
             }
         }

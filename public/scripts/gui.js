@@ -27,16 +27,22 @@ onloadFunction.push2Last(
 
 function HideElemByID(Elem) {
     console.log(Elem, 'Elem');
+    // if (Elem.constructor.name == "Array") {
+    //     for (let elem of Elem) {
+    //         let el = getByid(elem);
+    //         if (el) el.style.display = "";
+    //     }
+    // }
+    // else if (Elem.constructor.name == "String") {
+    //     // getByid(Elem).style.display = "none";
+    //     let el = getByid(Elem);
+    //     if (el) el.style.display = "none";
+    // }
     if (Elem.constructor.name == "Array") {
-        for (let elem of Elem) {
-            let el = getByid(elem);
-            if (el) el.style.display = "";
-        }
+        for (elem of Elem) getByid(elem).style.display = "none";
     }
     else if (Elem.constructor.name == "String") {
-        // getByid(Elem).style.display = "none";
-        let el = getByid(Elem);
-        if (el) el.style.display = "none";
+        getByid(Elem).style.display = "none";
     }
 }
 
