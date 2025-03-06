@@ -46,16 +46,6 @@ function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 const Viewer = () => {
-  const [isAttachmentModalOpen, setAttachmentModalOpen] = (0, _react.useState)(false);
-  const [isClinicalModalOpen, setClinicalModalOpen] = (0, _react.useState)(false);
-  const [clinicalHistory, setClinicalHistory] = (0, _react.useState)("");
-  const openModal = () => setAttachmentModalOpen(true);
-  const closeModal = () => setAttachmentModalOpen(false);
-  const openClinicalModal = () => setClinicalModalOpen(true);
-  const closeClinicalModal = () => setClinicalModalOpen(false);
-  const handleClinicalHistoryChange = () => {
-    closeClinicalModal();
-  };
   return /*#__PURE__*/_react.default.createElement("div", {
     style: {
       backgroundColor: "#000000"
@@ -767,19 +757,26 @@ const Viewer = () => {
   }, /*#__PURE__*/_react.default.createElement("select", {
     id: "templateSelect"
   }), /*#__PURE__*/_react.default.createElement("button", {
-    onClick: openModal,
+    id: "openModal",
     className: "btn"
   }, "Attachment"), /*#__PURE__*/_react.default.createElement("button", {
-    onClick: openClinicalModal,
+    id: "openClinicalModel",
     className: "button"
   }, "Clinical History")), /*#__PURE__*/_react.default.createElement("div", {
-    className: "editor_table"
+    className: "editor_table",
+    style: {
+      height: "92%"
+    }
   }, /*#__PURE__*/_react.default.createElement("div", {
     id: "toolbar-container"
   }), /*#__PURE__*/_react.default.createElement("div", {
     id: "editor"
   })), /*#__PURE__*/_react.default.createElement("div", {
-    className: "controls"
+    className: "controls",
+    style: {
+      display: "flex",
+      gap: "12px"
+    }
   }, /*#__PURE__*/_react.default.createElement("button", {
     id: "submitBtn"
   }, "Submit"), /*#__PURE__*/_react.default.createElement("button", {
@@ -796,7 +793,7 @@ const Viewer = () => {
       fontSize: 15
     }
   })), /*#__PURE__*/_react.default.createElement("button", {
-    onClick: () => console.log("Download PDF")
+    id: "downloadPDF"
   }, " ", /*#__PURE__*/_react.default.createElement("i", {
     className: "fa-solid fa-file-arrow-down",
     style: {
@@ -810,7 +807,7 @@ const Viewer = () => {
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "modal-header"
   }, /*#__PURE__*/_react.default.createElement("span", null, "Attachment"), /*#__PURE__*/_react.default.createElement("button", {
-    onClick: closeModal
+    id: "closeModal"
   }, "X")), /*#__PURE__*/_react.default.createElement("div", {
     className: "modal-body"
   }, /*#__PURE__*/_react.default.createElement("p", {
@@ -824,9 +821,12 @@ const Viewer = () => {
   }, /*#__PURE__*/_react.default.createElement("input", {
     type: "file",
     id: "fileInput",
-    accept: ".pdf, .png, .jpg, .doc, .docx, .mp4"
+    accept: ".pdf, .png, .jpg, .doc, .docx, .mp4",
+    style: {
+      width: "100%"
+    }
   }), /*#__PURE__*/_react.default.createElement("button", {
-    onClick: () => console.log("Upload Document")
+    id: "uploadDocument"
   }, "Upload")), /*#__PURE__*/_react.default.createElement("table", {
     id: "documentTable"
   }, /*#__PURE__*/_react.default.createElement("thead", null, /*#__PURE__*/_react.default.createElement("tr", null, /*#__PURE__*/_react.default.createElement("th", null, "Document Name"), /*#__PURE__*/_react.default.createElement("th", null, "Preview"), /*#__PURE__*/_react.default.createElement("th", null, "Remove"))), /*#__PURE__*/_react.default.createElement("tbody", {
@@ -846,25 +846,23 @@ const Viewer = () => {
     id: "clinicalHistory",
     className: "textarea",
     rows: "4",
-    placeholder: "Enter Clinical History",
-    value: clinicalHistory,
-    onChange: e => setClinicalHistory(e.target.value)
+    placeholder: "Enter Clinical History"
   }), /*#__PURE__*/_react.default.createElement("div", {
     className: "modal-buttons"
   }, /*#__PURE__*/_react.default.createElement("button", {
-    id: "saveButton",
+    id: "handleClinicalHistoryChange",
     style: {
       fontSize: "0.75rem",
       paddingTop: "0.5rem",
       paddingBottom: "0.5rem",
       paddingRight: "0.75rem",
       paddingLeft: "0.75rem"
-    },
-    onClick: handleClinicalHistoryChange
+    }
   }, "Save"), /*#__PURE__*/_react.default.createElement("button", {
-    id: "closeModalBtn",
-    onClick: closeClinicalModal
+    id: "closeClinicalModal"
   }, "Cancel")))))), /*#__PURE__*/_react.default.createElement("div", {
+    id: "popupOverlay"
+  }), /*#__PURE__*/_react.default.createElement("div", {
     id: "previewPopup"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "modal-content",
@@ -874,7 +872,7 @@ const Viewer = () => {
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "modal-header"
   }, /*#__PURE__*/_react.default.createElement("span", null, "Attachment Preview"), /*#__PURE__*/_react.default.createElement("button", {
-    onClick: () => console.log("Close Preview")
+    id: "closePreview"
   }, "X")), /*#__PURE__*/_react.default.createElement("div", {
     className: "modal-body"
   }, /*#__PURE__*/_react.default.createElement("div", {
