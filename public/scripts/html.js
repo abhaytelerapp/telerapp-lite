@@ -692,6 +692,38 @@ function html_onload() {
         : "none";
   };
 
+  getByid("openModal").onclick = function () {
+    openModal();
+  };
+
+  getByid("closeModal").onclick = function () {
+    closeModal();
+  };
+ 
+  getByid("closePreview").onclick = function () {
+    closePreview();
+  };
+
+  getByid("openClinicalModel").onclick = function () {
+    openClinicalModel();
+  };
+
+  getByid("closeClinicalModal").onclick = function () {
+    closeClinicalModal();
+  };
+  
+  getByid("uploadDocument").onclick = function () {
+    uploadDocument();
+  };
+
+  getByid("handleClinicalHistoryChange").onclick = function () {
+    handleClinicalHistoryChange();
+  };
+
+  getByid("downloadPDF").onclick = function () {
+    downloadPDF();
+  };
+
   getByid("discardBtn").onclick = function () {
     toggleDisplayReportEditorView()
 
@@ -739,15 +771,16 @@ function html_onload() {
       if (recognition) recognition.stop();
   }
 
-  function downloadPDF() {
-    html2canvas(document.querySelector(".cke_wysiwyg_frame")).then(canvas => {
-        const imgData = canvas.toDataURL("image/png");
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF();
-        pdf.addImage(imgData, "PNG", 10, 10, 180, 160);
-        pdf.save("report.pdf");
-    });
-}
+//   function downloadPDF() {
+//     console.log
+//     html2canvas(document.querySelector(".cke_wysiwyg_frame")).then(canvas => {
+//         const imgData = canvas.toDataURL("image/png");
+//         const { jsPDF } = window.jspdf;
+//         const pdf = new jsPDF();
+//         pdf.addImage(imgData, "PNG", 10, 10, 180, 160);
+//         pdf.save("report.pdf");
+//     });
+// }
 
   getByid("MarkcolorSelect").onchange = function () {
     displayAllMark()

@@ -24,6 +24,7 @@ loadMPR();
 
 function loadMPR_UI() {
     if (!getByid("MouseOperation_MPR")) {
+        console.log('hello')
         var img = document.createElement("IMG");
         img.src = getByid("MouseOperation").src;
         img.id = "MouseOperation_MPR";

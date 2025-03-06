@@ -38,20 +38,6 @@ import download_dcm from "../image/icon/lite/download_dcm.png";
 import edit_patient from "../image/icon/lite/edit_patient.png";
 
 const Viewer = () => {
-  const [isAttachmentModalOpen, setAttachmentModalOpen] = useState(false);
-  const [isClinicalModalOpen, setClinicalModalOpen] = useState(false);
-  const [clinicalHistory, setClinicalHistory] = useState("");
-
-  const openModal = () => setAttachmentModalOpen(true);
-  const closeModal = () => setAttachmentModalOpen(false);
-
-  const openClinicalModal = () => setClinicalModalOpen(true);
-  const closeClinicalModal = () => setClinicalModalOpen(false);
-
-  const handleClinicalHistoryChange = () => {
-    closeClinicalModal();
-  };
-
   return (
     <div style={{ backgroundColor: "#000000" }} onWheel={() => {}}>
       <header className="page-header" id="page-header">
@@ -778,18 +764,18 @@ const Viewer = () => {
               }}
             >
               <select id="templateSelect"></select>
-              <button onClick={openModal} className="btn">
+              <button id="openModal" className="btn">
                 Attachment
               </button>
-              <button onClick={openClinicalModal} className="button">
+              <button id="openClinicalModel" className="button">
                 Clinical History
               </button>
             </div>
-            <div className="editor_table">
+            <div className="editor_table" style={{height: "92%"}}>
               <div id="toolbar-container"></div>
               <div id="editor"></div>
             </div>
-            <div className="controls">
+            <div className="controls" style={{display: "flex", gap: "12px"}}>
               <button id="submitBtn">Submit</button>
               <button id="draftBtn">Draft</button>
               <button id="criticalBtn">Critical</button>
@@ -797,7 +783,7 @@ const Viewer = () => {
               <button id="captureBtn">
                 <i className="fa-solid fa-camera" style={{ fontSize: 15 }}></i>
               </button>
-              <button onClick={() => console.log("Download PDF")}>
+              <button id="downloadPDF">
                 {" "}
                 <i
                   className="fa-solid fa-file-arrow-down"
@@ -812,7 +798,7 @@ const Viewer = () => {
           <div className="modal-content">
             <div className="modal-header">
               <span>Attachment</span>
-              <button onClick={closeModal}>X</button>
+              <button id="closeModal">X</button>
             </div>
             <div className="modal-body">
               <p id="patientName">Patient: </p>
@@ -821,8 +807,9 @@ const Viewer = () => {
                   type="file"
                   id="fileInput"
                   accept=".pdf, .png, .jpg, .doc, .docx, .mp4"
+                  style={{width: "100%"}}
                 />
-                <button onClick={() => console.log("Upload Document")}>
+                <button id="uploadDocument">
                   Upload
                 </button>
               </div>
@@ -852,12 +839,10 @@ const Viewer = () => {
                 className="textarea"
                 rows="4"
                 placeholder="Enter Clinical History"
-                value={clinicalHistory}
-                onChange={(e) => setClinicalHistory(e.target.value)}
               ></textarea>
               <div className="modal-buttons">
                 <button
-                  id="saveButton"
+                  id="handleClinicalHistoryChange"
                   style={{
                     fontSize: "0.75rem",
                     paddingTop: "0.5rem",
@@ -865,11 +850,10 @@ const Viewer = () => {
                     paddingRight: "0.75rem",
                     paddingLeft: "0.75rem",
                   }}
-                  onClick={handleClinicalHistoryChange}
                 >
                   Save
                 </button>
-                <button id="closeModalBtn" onClick={closeClinicalModal}>
+                <button id="closeClinicalModal">
                   Cancel
                 </button>
               </div>
@@ -878,11 +862,13 @@ const Viewer = () => {
         </div>
       </div>
 
+      <div id="popupOverlay"></div>
+
       <div id="previewPopup">
         <div className="modal-content" style={{ width: "100%" }}>
           <div className="modal-header">
             <span>Attachment Preview</span>
-            <button onClick={() => console.log("Close Preview")}>X</button>
+            <button id="closePreview">X</button>
           </div>
           <div className="modal-body">
             <div style={{ width: "100%", height: "72vh" }}>

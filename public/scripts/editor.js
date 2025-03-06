@@ -733,6 +733,7 @@ async function editor() {
           editor.setData(template);
         }
 
+        const editorTable = document?.querySelector('.editor_table');
         // Set editor as read-only if approved
         if (patientReportDetail?.document_status === "Approved") {
           editor.editing.view.document.isReadOnly =
@@ -925,7 +926,7 @@ function openClinicalModel() {
 
   const patientNameDisplay = document.getElementById("patientNameDisplay");
   const clinicalHistoryField = document.getElementById("clinicalHistory");
-  const saveButton = document.querySelector("#saveButton");
+  const saveButton = document.querySelector("#handleClinicalHistoryChange");
 
   clinicalHistoryField.value = clinicalHistory;
   saveButton.innerText = clinicalHistory ? "Update" : "Save";
