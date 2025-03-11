@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import b_Annotation from "../image/icon/lite/b_Annotation.png";
 import openfile from "../image/icon/lite/openfile.png";
+import left from "../image/icon/lite/left.png";
 import b_Pan from "../image/icon/lite/b_Pan.png";
 import b_Scroll from "../image/icon/lite/b_Scroll.png";
 import b_LayoutWithinViewport from "../image/icon/lite/b_LayoutWithinViewport.png";
@@ -49,6 +50,14 @@ const Viewer = () => {
           }}
         >
           <span id="icon-list">
+            <span id="left_span">
+              <img
+                className="img pdf ecg"
+                id="returnHomePage"
+                src={left}
+                style={{ filter: "invert(80%)", position: 'relative', top: '-14px', width: '10px', height: '20px', cursor: 'pointer' }}
+              />
+            </span>
             <span id="openFile_span">
               <img
                 className="img pdf ecg"

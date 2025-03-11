@@ -7,6 +7,7 @@ exports.default = void 0;
 var _react = _interopRequireWildcard(require("react"));
 var _b_Annotation = _interopRequireDefault(require("../image/icon/lite/b_Annotation.png"));
 var _openfile = _interopRequireDefault(require("../image/icon/lite/openfile.png"));
+var _left = _interopRequireDefault(require("../image/icon/lite/left.png"));
 var _b_Pan = _interopRequireDefault(require("../image/icon/lite/b_Pan.png"));
 var _b_Scroll = _interopRequireDefault(require("../image/icon/lite/b_Scroll.png"));
 var _b_LayoutWithinViewport = _interopRequireDefault(require("../image/icon/lite/b_LayoutWithinViewport.png"));
@@ -63,6 +64,20 @@ const Viewer = () => {
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "icon-list"
   }, /*#__PURE__*/_react.default.createElement("span", {
+    id: "left_span"
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    className: "img pdf ecg",
+    id: "returnHomePage",
+    src: _left.default,
+    style: {
+      filter: "invert(80%)",
+      position: 'relative',
+      top: '-14px',
+      width: '10px',
+      height: '20px',
+      cursor: 'pointer'
+    }
+  })), /*#__PURE__*/_react.default.createElement("span", {
     id: "openFile_span"
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img pdf ecg",

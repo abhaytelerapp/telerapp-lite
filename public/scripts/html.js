@@ -767,6 +767,27 @@ function html_onload() {
     handleCaptureImage();
   };
 
+  getByid("returnHomePage").onclick = function () {
+    const { pathname, search } = window.location;
+    const dataSourceIdx = pathname.indexOf('/', 1);
+    const query = new URLSearchParams(search);
+    const configUrl = query.get('configUrl');
+
+    const dataSourceName = pathname.substring(dataSourceIdx + 1);
+    const existingDataSource = dataSourceName ? true : false; // Simulating data source check
+
+    const searchQuery = new URLSearchParams();
+    if (dataSourceIdx !== -1 && existingDataSource) {
+        searchQuery.append('datasources', dataSourceName);
+    }
+
+    if (configUrl) {
+        searchQuery.append('configUrl', configUrl);
+    }
+
+    window.location.href = '/' + (searchQuery.toString() ? '?' + decodeURIComponent(searchQuery.toString()) : '');
+  };
+
   
   let recognition;
   function startListening() {
