@@ -55,7 +55,7 @@ const Viewer = () => {
                 className="img pdf ecg"
                 id="returnHomePage"
                 src={left}
-                style={{ filter: "invert(80%)", position: 'relative', top: '-14px', width: '10px', height: '20px', cursor: 'pointer' }}
+                style={{ filter: "invert(80%)", width: '10px', height: '20px', cursor: 'pointer' }}
               />
             </span>
             <span id="openFile_span">

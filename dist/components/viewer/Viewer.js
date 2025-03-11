@@ -71,8 +71,6 @@ const Viewer = () => {
     src: _left.default,
     style: {
       filter: "invert(80%)",
-      position: 'relative',
-      top: '-14px',
       width: '10px',
       height: '20px',
       cursor: 'pointer'
