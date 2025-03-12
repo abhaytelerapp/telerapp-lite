@@ -780,7 +780,7 @@ const Viewer = () => {
                 Clinical History
               </button>
             </div>
-            <div className="editor_table" style={{height: "92%"}}>
+            <div className="editor_table" style={{height: "90%"}}>
               <div id="toolbar-container"></div>
               <div id="editor"></div>
             </div>

@@ -778,7 +778,7 @@ const Viewer = () => {
   }, "Clinical History")), /*#__PURE__*/_react.default.createElement("div", {
     className: "editor_table",
     style: {
-      height: "92%"
+      height: "90%"
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
     id: "toolbar-container"
