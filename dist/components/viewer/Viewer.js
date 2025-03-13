@@ -43,6 +43,7 @@ var _b_CineTools = _interopRequireDefault(require("../image/icon/lite/b_CineTool
 var _download_img = _interopRequireDefault(require("../image/icon/lite/download_img.png"));
 var _download_dcm = _interopRequireDefault(require("../image/icon/lite/download_dcm.png"));
 var _edit_patient = _interopRequireDefault(require("../image/icon/lite/edit_patient.png"));
+var _telerapp_logo = _interopRequireDefault(require("../image/icon/lite/telerapp_logo.png"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -71,9 +72,9 @@ const Viewer = () => {
     src: _left.default,
     style: {
       filter: "invert(80%)",
-      width: '10px',
-      height: '20px',
-      cursor: 'pointer'
+      width: "10px",
+      height: "20px",
+      cursor: "pointer"
     }
   })), /*#__PURE__*/_react.default.createElement("span", {
     id: "openFile_span"
@@ -723,6 +724,28 @@ const Viewer = () => {
       display: "none"
     }
   })), /*#__PURE__*/_react.default.createElement("div", {
+    id: "loader",
+    style: {
+      zIndex: "999999999",
+      width: "100%",
+      height: "100vh",
+      backgroundColor: "#000"
+    }
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    className: "custom-size",
+    src: _telerapp_logo.default,
+    style: {
+      width: "300px"
+    }
+  }), /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      width: "12rem"
+    }
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    id: "loading"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "infinite-loading-bar-quantum-lite"
+  })))), /*#__PURE__*/_react.default.createElement("div", {
     className: "form-group",
     id: "form-group"
   }, /*#__PURE__*/_react.default.createElement("label", {

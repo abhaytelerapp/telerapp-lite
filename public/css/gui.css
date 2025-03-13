@@ -72,6 +72,59 @@ html {
   overflow: hidden;
 }
 
+#loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem; /* Equivalent to space-y-5 */
+}
+
+#loading {
+  background-color: #091731;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.infinite-loading-bar-quantum-lite {
+  animation: side2side 2s ease-in-out infinite;
+  height: 100%;
+  position: absolute;
+  border-radius: 4px;
+  width: 50%;
+  background-color: #d4d4d4; 
+}
+body.dark .infinite-loading-bar-quantum-lite {
+  background-color: #333333; 
+}
+
+@keyframes side2side {
+  0%,
+  100% {
+    transform: translateX(-50%);
+  }
+  50% {
+    transform: translateX(150%);
+  }
+}
+
+.custom-size {
+  height: 3rem;  /* h-12 (12 * 0.25rem) */
+  width: 3rem;   /* w-12 (12 * 0.25rem) */
+  color: black;  /* text-black */
+}
+
+body.dark .custom-size {
+  color: white;  /* dark:text-white */
+}
+
 #form-group {
   flex-grow: 1;
 }

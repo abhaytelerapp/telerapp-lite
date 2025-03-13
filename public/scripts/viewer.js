@@ -361,7 +361,12 @@ function loadDicomDataSet(fileData, loadimage = true, url, fromLocal = false) {
     //else if (image.data.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.EncapsulatedPDFStorage) parseDicomWithoutImage(image.data, DICOM_obj.imageId); 
 }
 
+function showLoader(show) {
+    document.getElementById("loader").style.display = show ? "inline-flex" : "none";
+}
+
 function loadDICOMFromUrl(url, loadimage = true) {
+    showLoader(false)
     var oReq = new XMLHttpRequest();
     try { oReq.open("get", url, true); }
     catch (e) { console.log(e); }

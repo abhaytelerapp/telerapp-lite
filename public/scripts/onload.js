@@ -425,6 +425,7 @@ function readJson(url) {
   //發送以Series為單位的請求
   SeriesRequest.send();
   SeriesRequest.onload = function () {
+    showLoader(true)
     getJsonBySeriesRequest(SeriesRequest);
   }
 }

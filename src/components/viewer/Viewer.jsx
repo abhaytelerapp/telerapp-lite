@@ -37,6 +37,7 @@ import b_CineTools from "../image/icon/lite/b_CineTools.png";
 import download_img from "../image/icon/lite/download_img.png";
 import download_dcm from "../image/icon/lite/download_dcm.png";
 import edit_patient from "../image/icon/lite/edit_patient.png";
+import loaderLogo from "../image/icon/lite/telerapp_logo.png";
 
 const Viewer = () => {
   return (
@@ -55,7 +56,12 @@ const Viewer = () => {
                 className="img pdf ecg"
                 id="returnHomePage"
                 src={left}
-                style={{ filter: "invert(80%)", width: '10px', height: '20px', cursor: 'pointer' }}
+                style={{
+                  filter: "invert(80%)",
+                  width: "10px",
+                  height: "20px",
+                  cursor: "pointer",
+                }}
               />
             </span>
             <span id="openFile_span">
@@ -734,6 +740,27 @@ const Viewer = () => {
         ></input>
       </header>
 
+      <div
+        id="loader"
+        style={{
+          zIndex: "999999999",
+          width: "100%",
+          height: "100vh",
+          backgroundColor: "#000",
+        }}
+      >
+        <img
+          className="custom-size"
+          src={loaderLogo}
+          style={{ width: "300px" }}
+        />
+        <div style={{ width: "12rem" }}>
+          <div id="loading">
+            <div className="infinite-loading-bar-quantum-lite"></div>
+          </div>
+        </div>
+      </div>
+      {/* <div id="loader">Loading DICOM...</div> */}
       <div className="form-group" id="form-group">
         <label className="control-label col-sm-1" htmlFor="wadoURL">
           &nbsp;
@@ -780,11 +807,11 @@ const Viewer = () => {
                 Clinical History
               </button>
             </div>
-            <div className="editor_table" style={{height: "90%"}}>
+            <div className="editor_table" style={{ height: "90%" }}>
               <div id="toolbar-container"></div>
               <div id="editor"></div>
             </div>
-            <div className="controls" style={{display: "flex", gap: "12px"}}>
+            <div className="controls" style={{ display: "flex", gap: "12px" }}>
               <button id="submitBtn">Submit</button>
               <button id="draftBtn">Draft</button>
               <button id="criticalBtn">Critical</button>
@@ -816,11 +843,9 @@ const Viewer = () => {
                   type="file"
                   id="fileInput"
                   accept=".pdf, .png, .jpg, .doc, .docx, .mp4"
-                  style={{width: "100%"}}
+                  style={{ width: "100%" }}
                 />
-                <button id="uploadDocument">
-                  Upload
-                </button>
+                <button id="uploadDocument">Upload</button>
               </div>
               <table id="documentTable">
                 <thead>
@@ -862,9 +887,7 @@ const Viewer = () => {
                 >
                   Save
                 </button>
-                <button id="closeClinicalModal">
-                  Cancel
-                </button>
+                <button id="closeClinicalModal">Cancel</button>
               </div>
             </div>
           </div>
