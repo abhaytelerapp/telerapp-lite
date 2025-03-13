@@ -735,7 +735,7 @@ const Viewer = () => {
     className: "custom-size",
     src: _telerapp_logo.default,
     style: {
-      width: "300px"
+      width: "192px"
     }
   }), /*#__PURE__*/_react.default.createElement("div", {
     style: {

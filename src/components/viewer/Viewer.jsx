@@ -752,7 +752,7 @@ const Viewer = () => {
         <img
           className="custom-size"
           src={loaderLogo}
-          style={{ width: "300px" }}
+          style={{ width: "192px" }}
         />
         <div style={{ width: "12rem" }}>
           <div id="loading">
