@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _react = _interopRequireWildcard(require("react"));
+var _react = _interopRequireDefault(require("react"));
 var _b_Annotation = _interopRequireDefault(require("../image/icon/lite/b_Annotation.png"));
 var _openfile = _interopRequireDefault(require("../image/icon/lite/openfile.png"));
 var _left = _interopRequireDefault(require("../image/icon/lite/left.png"));
@@ -45,8 +45,6 @@ var _download_dcm = _interopRequireDefault(require("../image/icon/lite/download_
 var _edit_patient = _interopRequireDefault(require("../image/icon/lite/edit_patient.png"));
 var _telerapp_logo = _interopRequireDefault(require("../image/icon/lite/telerapp_logo.png"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 const Viewer = () => {
   return /*#__PURE__*/_react.default.createElement("div", {
     style: {
@@ -94,7 +92,11 @@ const Viewer = () => {
     id: "MouseOperation",
     src: _b_Pan.default,
     width: "50",
-    height: "50"
+    height: "50",
+    style: {
+      filter: 'invert(80%)',
+      border: 'none'
+    }
   })), /*#__PURE__*/_react.default.createElement("span", {
     id: "b_Scroll_span"
   }, /*#__PURE__*/_react.default.createElement("img", {
@@ -103,7 +105,10 @@ const Viewer = () => {
     id: "b_Scroll",
     src: _b_Scroll.default,
     width: "50",
-    height: "50"
+    height: "50",
+    style: {
+      filter: 'invert(80%)'
+    }
   })), /*#__PURE__*/_react.default.createElement("span", {
     id: "SplitParent"
   }, /*#__PURE__*/_react.default.createElement("img", {
@@ -112,7 +117,10 @@ const Viewer = () => {
     id: "SplitWindow",
     src: _b_LayoutWithinViewport.default,
     width: "50",
-    height: "50"
+    height: "50",
+    style: {
+      filter: 'invert(80%)'
+    }
   }), /*#__PURE__*/_react.default.createElement("div", {
     id: "openSplitWindowDiv",
     className: "drawer",
@@ -215,7 +223,10 @@ const Viewer = () => {
     id: "WindowRevision",
     src: _b_Window_Presets_left.default,
     width: "38",
-    height: "50"
+    height: "50",
+    style: {
+      filter: 'invert(80%)'
+    }
   })), /*#__PURE__*/_react.default.createElement("span", {
     id: "WindowRevisionOption_span"
   }, /*#__PURE__*/_react.default.createElement("img", {
@@ -280,7 +291,10 @@ const Viewer = () => {
     id: "zoom",
     src: _b_Zoom.default,
     width: "50",
-    height: "50"
+    height: "50",
+    style: {
+      filter: 'invert(80%)'
+    }
   })), /*#__PURE__*/_react.default.createElement("span", {
     id: "color_invert_span"
   }, /*#__PURE__*/_react.default.createElement("img", {
@@ -308,7 +322,10 @@ const Viewer = () => {
     id: "resetImg",
     src: _b_DisplayReset.default,
     width: "50",
-    height: "50"
+    height: "50",
+    style: {
+      filter: 'invert(80%)'
+    }
   })), /*#__PURE__*/_react.default.createElement("span", {
     id: "MeasureImgParent"
   }, /*#__PURE__*/_react.default.createElement("img", {
@@ -341,7 +358,10 @@ const Viewer = () => {
     id: "removeAllRuler",
     src: _b_trashcan.default,
     width: "50",
-    height: "50"
+    height: "50",
+    style: {
+      filter: 'invert(80%)'
+    }
   })), /*#__PURE__*/_react.default.createElement("span", {
     id: "removeRuler_span"
   }, /*#__PURE__*/_react.default.createElement("img", {
@@ -461,7 +481,10 @@ const Viewer = () => {
     id: "playvideo",
     src: _b_CinePlay.default,
     width: "50",
-    height: "50"
+    height: "50",
+    style: {
+      filter: 'invert(80%)'
+    }
   })), /*#__PURE__*/_react.default.createElement("span", {
     id: "MarkButton_span"
   }, /*#__PURE__*/_react.default.createElement("img", {
@@ -525,7 +548,10 @@ const Viewer = () => {
     id: "clearviewportImg",
     src: _b_trashcan.default,
     width: "50",
-    height: "50"
+    height: "50",
+    style: {
+      filter: 'invert(80%)'
+    }
   })), " ", /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("span", {
     id: "downloadImg_span"
   }, /*#__PURE__*/_react.default.createElement("img", {

@@ -30,7 +30,7 @@ function loadMPR_UI() {
         img.id = "MouseOperation_MPR";
         img.className = "MPR_icon";
         img.width = img.height = "50";
-        img.style.filter = "sepia(100%)"
+        img.style.filter = "invert(80%)"
         getByid("MouseOperation_span").appendChild(img);
     }
     if (!getByid("WindowRevision_MPR")) {
@@ -39,7 +39,7 @@ function loadMPR_UI() {
         img.id = "WindowRevision_MPR";
         img.className = "MPR_icon";
         img.width = img.height = "50";
-        img.style.filter = "sepia(100%)"
+        img.style.filter = "invert(80%)"
         getByid("WindowRevision_span").appendChild(img);
     }
     if (!getByid("b_Scroll_MPR")) {
@@ -48,7 +48,7 @@ function loadMPR_UI() {
         img.id = "b_Scroll_MPR";
         img.className = "MPR_icon";
         img.width = img.height = "50";
-        img.style.filter = "sepia(100%)"
+        img.style.filter = "invert(80%)"
         getByid("b_Scroll_span").appendChild(img);
     }
     if (!getByid("MouseRotate_MPR")) {

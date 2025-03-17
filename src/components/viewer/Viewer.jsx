@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import b_Annotation from "../image/icon/lite/b_Annotation.png";
 import openfile from "../image/icon/lite/openfile.png";
 import left from "../image/icon/lite/left.png";
@@ -83,6 +83,10 @@ const Viewer = () => {
                 src={b_Pan}
                 width="50"
                 height="50"
+                style={{
+                  filter: 'invert(80%)',
+                  border: 'none'
+                }}
               />
             </span>
             <span id="b_Scroll_span">
@@ -93,6 +97,9 @@ const Viewer = () => {
                 src={b_Scroll}
                 width="50"
                 height="50"
+                style={{
+                  filter: 'invert(80%)'
+                }}
               />
             </span>
 
@@ -104,6 +111,9 @@ const Viewer = () => {
                 src={b_LayoutWithinViewport}
                 width="50"
                 height="50"
+                style={{
+                  filter: 'invert(80%)'
+                }}
               />
               <div
                 id="openSplitWindowDiv"
@@ -219,6 +229,9 @@ const Viewer = () => {
                   src={b_Window_Presets_left}
                   width="38"
                   height="50"
+                  style={{
+                    filter: 'invert(80%)'
+                  }}
                 />
               </span>
               <span id="WindowRevisionOption_span">
@@ -298,6 +311,9 @@ const Viewer = () => {
                 src={b_Zoom}
                 width="50"
                 height="50"
+                style={{
+                  filter: 'invert(80%)'
+                }}
               />
             </span>
             <span id="color_invert_span">
@@ -329,6 +345,9 @@ const Viewer = () => {
                 src={b_DisplayReset}
                 width="50"
                 height="50"
+                style={{
+                  filter: 'invert(80%)'
+                }}
               />
             </span>
             <span id="MeasureImgParent">
@@ -364,6 +383,9 @@ const Viewer = () => {
                     src={b_trashcan}
                     width="50"
                     height="50"
+                    style={{
+                      filter: 'invert(80%)'
+                    }}
                   />
                 </span>
                 <span id="removeRuler_span">
@@ -500,6 +522,9 @@ const Viewer = () => {
                 src={b_CinePlay}
                 width="50"
                 height="50"
+                style={{
+                  filter: 'invert(80%)'
+                }}
               />
             </span>
             <span id="MarkButton_span">
@@ -568,7 +593,9 @@ const Viewer = () => {
                     id="clearviewportImg"
                     src={b_trashcan}
                     width="50"
-                    height="50"
+                    height="50"style={{
+                      filter: 'invert(80%)'
+                    }}
                   />
                 </span>{" "}
                 <br />
