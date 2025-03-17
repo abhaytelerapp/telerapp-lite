@@ -90,7 +90,7 @@ const Viewer = () => {
               id="icon-list"
               style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}
             >
-              {/* <span id="openFile_span" style={{ verticalAlign: "super" }}>
+              <span id="openFile_span" style={{ verticalAlign: "super" }}>
                 <img
                   className="img pdf ecg"
                   type="file"
@@ -100,7 +100,7 @@ const Viewer = () => {
                   width="30"
                   height="30"
                 />
-              </span> */}
+              </span>
               <span id="MouseOperation_span" style={{ verticalAlign: "super" }}>
                 <img
                   className="img VR MPR SEG"

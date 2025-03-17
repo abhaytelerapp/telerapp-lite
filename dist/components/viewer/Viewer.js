@@ -110,6 +110,19 @@ const Viewer = () => {
       gap: "8px"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
+    id: "openFile_span",
+    style: {
+      verticalAlign: "super"
+    }
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    className: "img pdf ecg",
+    type: "file",
+    alt: "Open File",
+    id: "openFile",
+    src: _openfile.default,
+    width: "30",
+    height: "30"
+  })), /*#__PURE__*/_react.default.createElement("span", {
     id: "MouseOperation_span",
     style: {
       verticalAlign: "super"
