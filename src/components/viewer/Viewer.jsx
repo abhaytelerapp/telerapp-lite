@@ -61,13 +61,17 @@ const Viewer = () => {
 
   return (
     <div style={{ backgroundColor: "#000000" }} onWheel={() => {}}>
-      <header className="page-header" id="page-header" style={{height: "52px", padding: "5px"}}>
+      <header
+        className="page-header"
+        id="page-header"
+        style={{ height: "52px", padding: "5px" }}
+      >
         <div
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "5px"
+            padding: "5px",
           }}
         >
           <div>
@@ -88,7 +92,12 @@ const Viewer = () => {
           <div style={{ textAlign: "center", width: "100%" }}>
             <span
               id="icon-list"
-              style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "8px",
+              }}
             >
               <span id="openFile_span" style={{ verticalAlign: "super" }}>
                 <img
@@ -258,7 +267,10 @@ const Viewer = () => {
                   </span>
                 </div>
               </span>
-              <span className="WindowRevisionParent" style={{width: '2%', display:"flex"}}>
+              <span
+                className="WindowRevisionParent"
+                style={{ width: "2%", display: "flex" }}
+              >
                 <span
                   id="WindowRevision_span"
                   style={{ verticalAlign: "super" }}
@@ -734,6 +746,7 @@ const Viewer = () => {
                 alignItems: "center",
                 marginRight: "10px",
                 fontSize: "22px",
+                cursor: "pointer",
               }}
               id="fullScreen"
               onClick={toggleFullscreen}
@@ -744,7 +757,24 @@ const Viewer = () => {
                 <i className="fa-solid fa-expand"></i>
               )}
             </div>
-            <div style={{ display: "flex", alignItems: "center", width: "40px" }}>
+            <div
+              style={{
+                filter: "invert(80%)",
+                display: "flex",
+                alignItems: "center",
+                marginRight: "10px",
+                fontSize: "22px",
+                cursor: "pointer",
+              }}
+              id="darkLightMode"
+              // onClick={toggleFullscreen}
+            >
+              <i class="fa-solid fa-moon"></i>
+            </div>
+
+            <div
+              style={{ display: "flex", alignItems: "center", width: "40px" }}
+            >
               <img
                 className=""
                 alt="Report Editor"
@@ -762,7 +792,7 @@ const Viewer = () => {
               loading="lazy"
               id="quantume"
               src={quantum_logo}
-              style={{ width: "112px"}}
+              style={{ width: "112px" }}
             />
           </div>
         </div>

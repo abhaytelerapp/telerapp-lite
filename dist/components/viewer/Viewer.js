@@ -284,7 +284,7 @@ const Viewer = () => {
   })))), /*#__PURE__*/_react.default.createElement("span", {
     className: "WindowRevisionParent",
     style: {
-      width: '2%',
+      width: "2%",
       display: "flex"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
@@ -750,7 +750,8 @@ const Viewer = () => {
       display: "flex",
       alignItems: "center",
       marginRight: "10px",
-      fontSize: "22px"
+      fontSize: "22px",
+      cursor: "pointer"
     },
     id: "fullScreen",
     onClick: toggleFullscreen
@@ -758,6 +759,19 @@ const Viewer = () => {
     className: "fa-solid fa-compress"
   }) : /*#__PURE__*/_react.default.createElement("i", {
     className: "fa-solid fa-expand"
+  })), /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      filter: "invert(80%)",
+      display: "flex",
+      alignItems: "center",
+      marginRight: "10px",
+      fontSize: "22px",
+      cursor: "pointer"
+    },
+    id: "darkLightMode"
+    // onClick={toggleFullscreen}
+  }, /*#__PURE__*/_react.default.createElement("i", {
+    class: "fa-solid fa-moon"
   })), /*#__PURE__*/_react.default.createElement("div", {
     style: {
       display: "flex",
