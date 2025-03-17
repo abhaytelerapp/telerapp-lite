@@ -761,7 +761,8 @@ const Viewer = () => {
   })), /*#__PURE__*/_react.default.createElement("div", {
     style: {
       display: "flex",
-      alignItems: "center"
+      alignItems: "center",
+      width: "40px"
     }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "",

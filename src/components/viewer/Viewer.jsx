@@ -744,7 +744,7 @@ const Viewer = () => {
                 <i className="fa-solid fa-expand"></i>
               )}
             </div>
-            <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", width: "40px" }}>
               <img
                 className=""
                 alt="Report Editor"
