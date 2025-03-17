@@ -3,12 +3,13 @@ var openWriteRTSS = false;
 
 function loadWriteRTSS() {
     var span = document.createElement("SPAN")
+    span.style.verticalAlign = "super";
     span.innerHTML =
-        ` <img class="img RTSS" alt="writeRTSS" id="writeRTSS" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/rtssdraw_OFF.png" width="50" height="50">  
-          <img class="img RTSS" alt="drawRTSS" id="drawRTSS" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/GraphicDraw.png" width="50" height="50" style="display:none;" >  
-          <img class="img RTSS" alt="eraseRTSS" id="eraseRTSS" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/b_Eraser.png" width="50" height="50" style="display:none;" >
-          <img class="img RTSS" alt="exitRTSS" id="exitRTSS" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/exit.png" width="50" height="50" style="display:none;" >
-          <img class="img RTSS" alt="saveRTSS" id="saveRTSS" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/download.png" width="50" height="50" style="display:none;" >`;
+        ` <img class="img RTSS" alt="writeRTSS" id="writeRTSS" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/rtssdraw_OFF.png" width="30" height="30">  
+          <img class="img RTSS" alt="drawRTSS" id="drawRTSS" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/GraphicDraw.png" width="30" height="30" style="display:none;" >  
+          <img class="img RTSS" alt="eraseRTSS" id="eraseRTSS" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/b_Eraser.png" width="30" height="30" style="display:none;" >
+          <img class="img RTSS" alt="exitRTSS" id="exitRTSS" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/exit.png" width="30" height="30" style="display:none;" >
+          <img class="img RTSS" alt="saveRTSS" id="saveRTSS" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/download.png" width="30" height="30" style="display:none;" >`;
     addIconSpan(span); 
 
     var span = document.createElement("SPAN")

@@ -11,7 +11,8 @@ var origin_openAnnotation;
 
 function loadMPR() {
     var span = document.createElement("SPAN");
-    span.innerHTML = `<img class="img MPR" alt="Old MPR" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" id="ImgMPR" src="../image/icon/lite/b_AdvancedMode_off.png" width="50" height="50">`;
+    span.style.verticalAlign = "super";
+    span.innerHTML = `<img class="img MPR" alt="Old MPR" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" id="ImgMPR" src="../image/icon/lite/b_AdvancedMode_off.png" width="30" height="30">`;
     addIconSpan(span); 
 
     var span = document.createElement("SPAN");
@@ -38,7 +39,7 @@ function loadMPR_UI() {
         img.src = getByid("WindowRevision").src;
         img.id = "WindowRevision_MPR";
         img.className = "MPR_icon";
-        img.width = img.height = "50";
+        img.width = img.height = "30";
         img.style.filter = "invert(80%)"
         getByid("WindowRevision_span").appendChild(img);
     }

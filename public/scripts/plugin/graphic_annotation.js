@@ -5,12 +5,13 @@ var openWriteGraphic = false;
 
 function loadWriteGraphic() {
     var span = document.createElement("SPAN")
+    span.style.verticalAlign = "super";
     span.innerHTML =
-        `<img class="img GSPS" alt="writeGSPS" id="writeGSPS" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/gsps_off.png" width="50" height="50">
-        <img class="img GSPS" alt="drawGSPS" id="drawGSPS" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/GraphicDraw.png" width="50" height="50" style="display:none;" >
-        <img class="img GSPS" alt="eraseGSPS" id="eraseGSPS" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/b_Eraser.png" width="50" height="50" style="display:none;" >
-        <img class="img GSPS" alt="exitGSPS" id="exitGSPS" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/exit.png" width="50" height="50" style="display:none;" >
-        <img class="img GSPS" alt="saveGSPS" id="saveGSPS" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/download.png" width="50" height="50" style="display:none;" >`;
+        `<img class="img GSPS" alt="writeGSPS" id="writeGSPS" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/gsps_off.png" width="30" height="30">
+        <img class="img GSPS" alt="drawGSPS" id="drawGSPS" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/GraphicDraw.png" width="30" height="30" style="display:none;" >
+        <img class="img GSPS" alt="eraseGSPS" id="eraseGSPS" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/b_Eraser.png" width="30" height="30" style="display:none;" >
+        <img class="img GSPS" alt="exitGSPS" id="exitGSPS" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/exit.png" width="30" height="30" style="display:none;" >
+        <img class="img GSPS" alt="saveGSPS" id="saveGSPS" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/download.png" width="30" height="30" style="display:none;" >`;
 
     addIconSpan(span); 
 

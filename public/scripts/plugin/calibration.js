@@ -7,8 +7,9 @@ var Calibration_Point2 = [0, 0];
 
 function loadCalibration() {
     var span = document.createElement("SPAN")
+    span.style.verticalAlign = "super";
     span.innerHTML =
-        ` <img class="img Calibration" alt="Calibration" id="Calibration" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/b_DistanceMeasurement.png" width="50" height="50" style="filter: invert(80%);">`;
+        ` <img class="img Calibration" alt="Calibration" id="Calibration" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/b_DistanceMeasurement.png" width="30" height="30" style="filter: invert(80%);">`;
     addIconSpan(span); 
 
     var span = document.createElement("SPAN")

@@ -31,12 +31,13 @@ var origin_openAnnotation;
 
 function loadVR() {
     var span = document.createElement("SPAN");
+    span.style.verticalAlign = "super";
     span.innerHTML =
-        `<img class="img VR" alt="VR" id="ImgVR" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/b_3D_off.png" width="50" height="50">
+        `<img class="img VR" alt="VR" id="ImgVR" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/b_3D_off.png" width="30" height="30">
     <img class="img VR MPR" alt="Render" id="3dDisplay" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/b_DisplayReset.png"
-    style="display:none;" width="50" height="50">
+    style="display:none;" width="30" height="30">
     <img class="img VR" alt="Scalpel" id="3dCave" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/b_Cross-hair_OFF.png" style="display:none;"
-    width="50" height="50">`;
+    width="30" height="30">`;
     addIconSpan(span);
 
     var span = document.createElement("SPAN");
@@ -132,8 +133,8 @@ function loadVR_UI() {
         img.src = getByid("WindowRevision").src;
         img.id = "WindowRevision_VR";
         img.className = "VR_icon";
-        img.width = "38";
-        img.height = "50";
+        img.width = "30";
+        img.height = "30";
         img.style.filter = "sepia(100%)"
         getByid("WindowRevision_span").appendChild(img);
     }

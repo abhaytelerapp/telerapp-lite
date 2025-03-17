@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import b_Annotation from "../image/icon/lite/b_Annotation.png";
 import openfile from "../image/icon/lite/openfile.png";
 import left from "../image/icon/lite/left.png";
@@ -37,20 +37,40 @@ import b_CineTools from "../image/icon/lite/b_CineTools.png";
 import download_img from "../image/icon/lite/download_img.png";
 import download_dcm from "../image/icon/lite/download_dcm.png";
 import edit_patient from "../image/icon/lite/edit_patient.png";
+import quantum_logo from "../image/icon/lite/quantum-logo.png";
 import loaderLogo from "../image/icon/lite/telerapp_logo.png";
 
 const Viewer = () => {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      // Request fullscreen on the document (or any element)
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.error("Error attempting to enable fullscreen mode:", err);
+      });
+      setIsFullscreen(true);
+    } else {
+      // Exit fullscreen
+      document.exitFullscreen().catch((err) => {
+        console.error("Error attempting to exit fullscreen mode:", err);
+      });
+      setIsFullscreen(false);
+    }
+  };
+
   return (
     <div style={{ backgroundColor: "#000000" }} onWheel={() => {}}>
-      <header className="page-header" id="page-header">
+      <header className="page-header" id="page-header" style={{height: "52px", padding: "5px"}}>
         <div
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            padding: "5px"
           }}
         >
-          <span id="icon-list">
+          <div>
             <span id="left_span">
               <img
                 className="img pdf ecg"
@@ -58,576 +78,642 @@ const Viewer = () => {
                 src={left}
                 style={{
                   filter: "invert(80%)",
-                  width: "10px",
+                  width: "20px",
                   height: "20px",
                   cursor: "pointer",
                 }}
               />
             </span>
-            <span id="openFile_span">
-              <img
-                className="img pdf ecg"
-                type="file"
-                alt="Open File"
-                id="openFile"
-                src={openfile}
-                width="50"
-                height="50"
-              />
-            </span>
-            <span id="MouseOperation_span">
-              <img
-                className="img VR MPR SEG"
-                alt="Move & Zoom"
-                id="MouseOperation"
-                src={b_Pan}
-                width="50"
-                height="50"
-                style={{
-                  filter: 'invert(80%)',
-                  border: 'none'
-                }}
-              />
-            </span>
-            <span id="b_Scroll_span">
-              <img
-                className="img MPR"
-                alt="Scroll"
-                id="b_Scroll"
-                src={b_Scroll}
-                width="50"
-                height="50"
-                style={{
-                  filter: 'invert(80%)'
-                }}
-              />
-            </span>
-
-            <span id="SplitParent">
-              <img
-                className="img"
-                alt="Split Screen"
-                id="SplitWindow"
-                src={b_LayoutWithinViewport}
-                width="50"
-                height="50"
-                style={{
-                  filter: 'invert(80%)'
-                }}
-              />
-              <div
-                id="openSplitWindowDiv"
-                className="drawer"
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  whiteSpace: "nowrap",
-                  zIndex: 100,
-                  width: 500,
-                  display: "none",
-                }}
-              ></div>
-            </span>
-
-            <span id="TransformationsImgParent">
-              <img
-                className="img"
-                id="openTransformationsImg"
-                alt="Transformations"
-                src={b_Transformations}
-                width="50"
-                height="50"
-              />
-              <div
-                id="openTransformationsDiv"
-                className="drawer"
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  whiteSpace: "nowrap",
-                  zIndex: 100,
-                  width: 500,
-                  display: "none",
-                  backgroundColor: "black",
-                }}
-              >
-                <span id="horizontal_flip_span">
-                  <img
-                    alt="Horizontal Flip"
-                    className="innerimg"
-                    loading="lazy"
-                    id="horizontal_flip"
-                    src={b_FlipHorizontally}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-                <span id="vertical_flip_span">
-                  <img
-                    alt="Vertical Flip"
-                    className="innerimg"
-                    loading="lazy"
-                    id="vertical_flip"
-                    src={b_FlipVertically}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-                <span id="MouseRotate_span">
-                  <img
-                    className="innerimg"
-                    loading="lazy"
-                    alt="rotate"
-                    id="MouseRotate"
-                    src={b_Rotate}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-                <br />
-                <span id="rotate0_span">
-                  <img
-                    className="innerimg"
-                    loading="lazy"
-                    alt="rotate 0"
-                    id="Rotate_0"
-                    src={b_Rotate_0}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-                <span id="rotatei90_span">
-                  <img
-                    className="innerimg"
-                    loading="lazy"
-                    alt="rotate 90"
-                    id="Rotate_i90"
-                    src={b_Rotate_90}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-                <span id="rotate90_span">
-                  <img
-                    className="innerimg filpx"
-                    loading="lazy"
-                    alt="rotate 90"
-                    id="Rotate_90"
-                    src={b_Rotate_i90}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-              </div>
-            </span>
-            <span className="WindowRevisionParent">
-              <span id="WindowRevision_span">
+          </div>
+          <div style={{ textAlign: "center", width: "100%" }}>
+            <span
+              id="icon-list"
+              style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}
+            >
+              <span id="openFile_span" style={{ verticalAlign: "super" }}>
                 <img
-                  className="cropimg VR MPR SEG"
-                  alt="Window Level"
-                  id="WindowRevision"
-                  src={b_Window_Presets_left}
-                  width="38"
-                  height="50"
+                  className="img pdf ecg"
+                  type="file"
+                  alt="Open File"
+                  id="openFile"
+                  src={openfile}
+                  width="30"
+                  height="30"
+                />
+              </span>
+              <span id="MouseOperation_span" style={{ verticalAlign: "super" }}>
+                <img
+                  className="img VR MPR SEG"
+                  alt="Move & Zoom"
+                  id="MouseOperation"
+                  src={b_Pan}
+                  width="30"
+                  height="30"
                   style={{
-                    filter: 'invert(80%)'
+                    filter: "invert(80%)",
+                    border: "none",
                   }}
                 />
               </span>
-              <span id="WindowRevisionOption_span">
+              <span id="b_Scroll_span" style={{ verticalAlign: "super" }}>
                 <img
-                  className="cropimg VR MPR SEG"
-                  alt="Window Level"
-                  id="WindowRevisionOption"
-                  src={b_Window_Presets_right}
-                  width="12"
-                  height="50"
+                  className="img MPR"
+                  alt="Scroll"
+                  id="b_Scroll"
+                  src={b_Scroll}
+                  width="30"
+                  height="30"
+                  style={{
+                    filter: "invert(80%)",
+                  }}
                 />
               </span>
-              <div
-                id="openWindowRevisionDiv"
-                className="drawer"
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  whiteSpace: "nowrap",
-                  zIndex: 100,
-                  width: 500,
-                  display: "none",
-                }}
-              >
-                <div className="WindowSelect" id="WindowDefault">
-                  Default
-                </div>
-                <div className="WindowSelect" id="WindowCustom">
-                  Custom
-                </div>
-                <div
-                  className="WindowSelect"
-                  id="WindowAbdomen"
-                  wc="60"
-                  ww="400"
-                >
-                  Abdomen(60,400)
-                </div>
-                <div
-                  className="WindowSelect"
-                  id="WindowAngio"
-                  wc="300"
-                  ww="600"
-                >
-                  Angio(300,600)
-                </div>
-                <div
-                  className="WindowSelect"
-                  id="WindowBone"
-                  wc="300"
-                  ww="1500"
-                >
-                  Bone(300,1500)
-                </div>
-                <div className="WindowSelect" id="WindowBrain" wc="40" ww="80">
-                  Brain(40,80)
-                </div>
-                <div className="WindowSelect" id="WindowChest" wc="40" ww="400">
-                  Chest(40,400)
-                </div>
-                <div
-                  className="WindowSelect"
-                  id="WindowLungs"
-                  wc="-400"
-                  ww="1500"
-                >
-                  Lungs(-400,1500)
-                </div>
-              </div>
-            </span>
 
-            <span id="zoom_span">
-              <img
-                className="img"
-                alt="Zoom"
-                id="zoom"
-                src={b_Zoom}
-                width="50"
-                height="50"
-                style={{
-                  filter: 'invert(80%)'
-                }}
-              />
-            </span>
-            <span id="color_invert_span">
-              <img
-                className="img"
-                alt="Color Invert"
-                id="color_invert"
-                src={b_InvertGrayscale}
-                width="50"
-                height="50"
-              />
-            </span>
-            <span id="unlink_span">
-              <img
-                className="img"
-                altzhtw="同步操作"
-                alt="Synchronous Operation"
-                id="unlink"
-                src={b_unlink_translation_synchronization}
-                width="50"
-                height="50"
-              />
-            </span>
-            <span id="reset_span">
-              <img
-                className="img"
-                alt="Restore Img"
-                id="resetImg"
-                src={b_DisplayReset}
-                width="50"
-                height="50"
-                style={{
-                  filter: 'invert(80%)'
-                }}
-              />
-            </span>
-            <span id="MeasureImgParent">
-              <img
-                className="img"
-                id="openMeasureImg"
-                altzhtw="測量"
-                alt="Measure"
-                src={MPng}
-                width="50"
-                height="50"
-              />
-              <div
-                id="openMeasureDIv"
-                className="drawer"
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  whiteSpace: "nowrap",
-                  zIndex: 100,
-                  width: 500,
-                  display: "none",
-                  backgroundColor: "black",
-                }}
+              <span id="SplitParent" style={{ verticalAlign: "super" }}>
+                <img
+                  className="img"
+                  alt="Split Screen"
+                  id="SplitWindow"
+                  src={b_LayoutWithinViewport}
+                  width="30"
+                  height="30"
+                  style={{
+                    filter: "invert(80%)",
+                  }}
+                />
+                <div
+                  id="openSplitWindowDiv"
+                  className="drawer"
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    whiteSpace: "nowrap",
+                    zIndex: 100,
+                    width: 500,
+                    display: "none",
+                  }}
+                ></div>
+              </span>
+
+              <span
+                id="TransformationsImgParent"
+                style={{ verticalAlign: "super" }}
               >
-                <span id="removeAllRuler_span">
+                <img
+                  className="img"
+                  id="openTransformationsImg"
+                  alt="Transformations"
+                  src={b_Transformations}
+                  width="30"
+                  height="30"
+                />
+                <div
+                  id="openTransformationsDiv"
+                  className="drawer"
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    whiteSpace: "nowrap",
+                    zIndex: 100,
+                    width: 500,
+                    display: "none",
+                    backgroundColor: "black",
+                  }}
+                >
+                  <span
+                    id="horizontal_flip_span"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      alt="Horizontal Flip"
+                      className="innerimg"
+                      loading="lazy"
+                      id="horizontal_flip"
+                      src={b_FlipHorizontally}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <span
+                    id="vertical_flip_span"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      alt="Vertical Flip"
+                      className="innerimg"
+                      loading="lazy"
+                      id="vertical_flip"
+                      src={b_FlipVertically}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <span
+                    id="MouseRotate_span"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      className="innerimg"
+                      loading="lazy"
+                      alt="rotate"
+                      id="MouseRotate"
+                      src={b_Rotate}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <br />
+                  <span id="rotate0_span" style={{ verticalAlign: "super" }}>
+                    <img
+                      className="innerimg"
+                      loading="lazy"
+                      alt="rotate 0"
+                      id="Rotate_0"
+                      src={b_Rotate_0}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <span id="rotatei90_span" style={{ verticalAlign: "super" }}>
+                    <img
+                      className="innerimg"
+                      loading="lazy"
+                      alt="rotate 90"
+                      id="Rotate_i90"
+                      src={b_Rotate_90}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <span id="rotate90_span" style={{ verticalAlign: "super" }}>
+                    <img
+                      className="innerimg filpx"
+                      loading="lazy"
+                      alt="rotate 90"
+                      id="Rotate_90"
+                      src={b_Rotate_i90}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                </div>
+              </span>
+              <span className="WindowRevisionParent">
+                <span
+                  id="WindowRevision_span"
+                  style={{ verticalAlign: "super" }}
+                >
                   <img
-                    alt="remove all"
-                    altzhtw="清除所有測量"
-                    className="innerimg"
-                    loading="lazy"
-                    id="removeAllRuler"
-                    src={b_trashcan}
-                    width="50"
-                    height="50"
+                    className="cropimg VR MPR SEG"
+                    alt="Window Level"
+                    id="WindowRevision"
+                    src={b_Window_Presets_left}
+                    width="30"
+                    height="30"
                     style={{
-                      filter: 'invert(80%)'
+                      filter: "invert(80%)",
                     }}
                   />
                 </span>
-                <span id="removeRuler_span">
+                <span
+                  id="WindowRevisionOption_span"
+                  style={{ verticalAlign: "super" }}
+                >
                   <img
-                    alt="remove"
-                    altzhtw="清除測量"
-                    className="innerimg"
-                    loading="lazy"
-                    id="removeRuler"
-                    src={XPng}
-                    width="50"
-                    height="50"
+                    className="cropimg VR MPR SEG"
+                    alt="Window Level"
+                    id="WindowRevisionOption"
+                    src={b_Window_Presets_right}
+                    width="12"
+                    height="30"
                   />
                 </span>
-                <span id="eraseRuler_span">
-                  <img
-                    alt="eraser"
-                    altzhtw="橡皮擦"
-                    className="innerimg"
-                    loading="lazy"
-                    id="eraseRuler"
-                    src={b_Eraser}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-                <span id="MeasureRuler_span">
-                  <img
-                    alt="measure"
-                    altzhtw="測量"
-                    className="innerimg"
-                    loading="lazy"
-                    id="MeasureRuler"
-                    src={b_DistanceMeasurement}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-                <span id="AngleRuler_span">
-                  <img
-                    alt="angle"
-                    altzhtw="角度"
-                    className="innerimg"
-                    loading="lazy"
-                    id="AngleRuler"
-                    src={b_AngleMeasurement}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-                <br />
-                <span id="AngleRuler_span2">
-                  <img
-                    alt="angle"
-                    altzhtw="角度"
-                    className="innerimg"
-                    loading="lazy"
-                    id="AngleRuler2"
-                    src={b_AngleMeasurement2}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-                <span id="RectRuler_span">
-                  <img
-                    alt="Rect shape"
-                    altzhtw="矩形"
-                    className="innerimg"
-                    loading="lazy"
-                    id="RectRuler"
-                    src={b_RectMeasurement}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-                <span id="CircleRuler_span">
-                  <img
-                    alt="Circle shape"
-                    altzhtw="圓形"
-                    className="innerimg"
-                    loading="lazy"
-                    id="CircleRuler"
-                    src={b_CircleMeasurement}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-                <span id="IrregularRuler_span">
-                  <img
-                    alt="irregular shape"
-                    altzhtw="不規則形狀"
-                    className="innerimg"
-                    loading="lazy"
-                    id="IrregularRuler"
-                    src={irregular}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-                <br />
-                <span id="arrowRuler_span">
-                  <img
-                    alt="arrow"
-                    altzhtw="箭頭"
-                    className="innerimg"
-                    loading="lazy"
-                    id="ArrowRuler"
-                    src={b_arrow}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-                <span id="TextAnnotation_span">
-                  <img
-                    alt="text annotation"
-                    altzhtw="文字註解"
-                    className="innerimg"
-                    loading="lazy"
-                    id="TextAnnotation"
-                    src={TPng}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-              </div>
-            </span>
+                <div
+                  id="openWindowRevisionDiv"
+                  className="drawer"
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    whiteSpace: "nowrap",
+                    zIndex: 100,
+                    width: 500,
+                    display: "none",
+                  }}
+                >
+                  <div className="WindowSelect" id="WindowDefault">
+                    Default
+                  </div>
+                  <div className="WindowSelect" id="WindowCustom">
+                    Custom
+                  </div>
+                  <div
+                    className="WindowSelect"
+                    id="WindowAbdomen"
+                    wc="60"
+                    ww="400"
+                  >
+                    Abdomen(60,400)
+                  </div>
+                  <div
+                    className="WindowSelect"
+                    id="WindowAngio"
+                    wc="300"
+                    ww="600"
+                  >
+                    Angio(300,600)
+                  </div>
+                  <div
+                    className="WindowSelect"
+                    id="WindowBone"
+                    wc="300"
+                    ww="1500"
+                  >
+                    Bone(300,1500)
+                  </div>
+                  <div
+                    className="WindowSelect"
+                    id="WindowBrain"
+                    wc="40"
+                    ww="80"
+                  >
+                    Brain(40,80)
+                  </div>
+                  <div
+                    className="WindowSelect"
+                    id="WindowChest"
+                    wc="40"
+                    ww="400"
+                  >
+                    Chest(40,400)
+                  </div>
+                  <div
+                    className="WindowSelect"
+                    id="WindowLungs"
+                    wc="-400"
+                    ww="1500"
+                  >
+                    Lungs(-400,1500)
+                  </div>
+                </div>
+              </span>
 
-            <span id="playvideo_span">
-              <img
-                className="img"
-                loading="lazy"
-                alt="Cine"
-                id="playvideo"
-                src={b_CinePlay}
-                width="50"
-                height="50"
-                style={{
-                  filter: 'invert(80%)'
-                }}
-              />
+              <span id="zoom_span" style={{ verticalAlign: "super" }}>
+                <img
+                  className="img"
+                  alt="Zoom"
+                  id="zoom"
+                  src={b_Zoom}
+                  width="30"
+                  height="30"
+                  style={{
+                    filter: "invert(80%)",
+                  }}
+                />
+              </span>
+              <span id="color_invert_span" style={{ verticalAlign: "super" }}>
+                <img
+                  className="img"
+                  alt="Color Invert"
+                  id="color_invert"
+                  src={b_InvertGrayscale}
+                  width="30"
+                  height="30"
+                />
+              </span>
+              <span id="unlink_span" style={{ verticalAlign: "super" }}>
+                <img
+                  className="img"
+                  altzhtw="同步操作"
+                  alt="Synchronous Operation"
+                  id="unlink"
+                  src={b_unlink_translation_synchronization}
+                  width="30"
+                  height="30"
+                />
+              </span>
+              <span id="reset_span" style={{ verticalAlign: "super" }}>
+                <img
+                  className="img"
+                  alt="Restore Img"
+                  id="resetImg"
+                  src={b_DisplayReset}
+                  width="30"
+                  height="30"
+                  style={{
+                    filter: "invert(80%)",
+                  }}
+                />
+              </span>
+              <span id="MeasureImgParent" style={{ verticalAlign: "super" }}>
+                <img
+                  className="img"
+                  id="openMeasureImg"
+                  altzhtw="測量"
+                  alt="Measure"
+                  src={MPng}
+                  width="30"
+                  height="30"
+                />
+                <div
+                  id="openMeasureDIv"
+                  className="drawer"
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    whiteSpace: "nowrap",
+                    zIndex: 100,
+                    width: 500,
+                    display: "none",
+                    backgroundColor: "black",
+                  }}
+                >
+                  <span
+                    id="removeAllRuler_span"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      alt="remove all"
+                      altzhtw="清除所有測量"
+                      className="innerimg"
+                      loading="lazy"
+                      id="removeAllRuler"
+                      src={b_trashcan}
+                      width="30"
+                      height="30"
+                      style={{
+                        filter: "invert(80%)",
+                      }}
+                    />
+                  </span>
+                  <span
+                    id="removeRuler_span"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      alt="remove"
+                      altzhtw="清除測量"
+                      className="innerimg"
+                      loading="lazy"
+                      id="removeRuler"
+                      src={XPng}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <span id="eraseRuler_span" style={{ verticalAlign: "super" }}>
+                    <img
+                      alt="eraser"
+                      altzhtw="橡皮擦"
+                      className="innerimg"
+                      loading="lazy"
+                      id="eraseRuler"
+                      src={b_Eraser}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <span
+                    id="MeasureRuler_span"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      alt="measure"
+                      altzhtw="測量"
+                      className="innerimg"
+                      loading="lazy"
+                      id="MeasureRuler"
+                      src={b_DistanceMeasurement}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <span id="AngleRuler_span" style={{ verticalAlign: "super" }}>
+                    <img
+                      alt="angle"
+                      altzhtw="角度"
+                      className="innerimg"
+                      loading="lazy"
+                      id="AngleRuler"
+                      src={b_AngleMeasurement}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <br />
+                  <span
+                    id="AngleRuler_span2"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      alt="angle"
+                      altzhtw="角度"
+                      className="innerimg"
+                      loading="lazy"
+                      id="AngleRuler2"
+                      src={b_AngleMeasurement2}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <span id="RectRuler_span" style={{ verticalAlign: "super" }}>
+                    <img
+                      alt="Rect shape"
+                      altzhtw="矩形"
+                      className="innerimg"
+                      loading="lazy"
+                      id="RectRuler"
+                      src={b_RectMeasurement}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <span
+                    id="CircleRuler_span"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      alt="Circle shape"
+                      altzhtw="圓形"
+                      className="innerimg"
+                      loading="lazy"
+                      id="CircleRuler"
+                      src={b_CircleMeasurement}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <span
+                    id="IrregularRuler_span"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      alt="irregular shape"
+                      altzhtw="不規則形狀"
+                      className="innerimg"
+                      loading="lazy"
+                      id="IrregularRuler"
+                      src={irregular}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <br />
+                  <span id="arrowRuler_span" style={{ verticalAlign: "super" }}>
+                    <img
+                      alt="arrow"
+                      altzhtw="箭頭"
+                      className="innerimg"
+                      loading="lazy"
+                      id="ArrowRuler"
+                      src={b_arrow}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <span
+                    id="TextAnnotation_span"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      alt="text annotation"
+                      altzhtw="文字註解"
+                      className="innerimg"
+                      loading="lazy"
+                      id="TextAnnotation"
+                      src={TPng}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                </div>
+              </span>
+
+              <span id="playvideo_span" style={{ verticalAlign: "super" }}>
+                <img
+                  className="img"
+                  loading="lazy"
+                  alt="Cine"
+                  id="playvideo"
+                  src={b_CinePlay}
+                  width="30"
+                  height="30"
+                  style={{
+                    filter: "invert(80%)",
+                  }}
+                />
+              </span>
+              <span id="MarkButton_span" style={{ verticalAlign: "super" }}>
+                <img
+                  className="img VR MPR"
+                  loading="lazy"
+                  alt="Display Mark"
+                  id="MarkButton"
+                  src={fist0}
+                  width="30"
+                  height="30"
+                />
+              </span>
+              <span id="annotation_span" style={{ verticalAlign: "super" }}>
+                <img
+                  className="img"
+                  loading="lazy"
+                  alt="Annotation"
+                  id="annotation"
+                  src={b_Annotation}
+                  width="30"
+                  height="30"
+                />
+              </span>
+              <span id="MarkupImg_span" style={{ verticalAlign: "super" }}>
+                <img
+                  className="img VR MPR RTSS"
+                  loading="lazy"
+                  alt="Markup & Annotation"
+                  id="MarkupImg"
+                  src={b_ShowReport}
+                  width="30"
+                  height="30"
+                />
+              </span>
+              <span id="OtherImgParent" style={{ verticalAlign: "super" }}>
+                <img
+                  className="img"
+                  loading="lazy"
+                  altzhtw="其他"
+                  alt="other"
+                  id="OtherImg"
+                  src={b_CineTools}
+                  width="30"
+                  height="30"
+                />
+                <div
+                  id="othereDIv"
+                  className="drawer"
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    whiteSpace: "nowrap",
+                    zIndex: 100,
+                    width: 500,
+                    display: "none",
+                    backgroundColor: "black",
+                  }}
+                >
+                  <span
+                    id="clearViewport_span"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      altzhtw="清除視窗"
+                      alt="clear viewport"
+                      className="innerimg"
+                      loading="lazy"
+                      id="clearviewportImg"
+                      src={b_trashcan}
+                      width="30"
+                      height="30"
+                      style={{
+                        filter: "invert(80%)",
+                      }}
+                    />
+                  </span>{" "}
+                  <br />
+                  <span
+                    id="downloadImg_span"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      altzhtw="下載圖片"
+                      alt="download image"
+                      className="innerimg"
+                      loading="lazy"
+                      id="downloadImg"
+                      src={download_img}
+                      width="30"
+                      height="30"
+                    />
+                  </span>{" "}
+                  <br />
+                  <span
+                    id="downloadDcm_span"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      altzhtw="下載DICOM"
+                      alt="download DICOM"
+                      className="innerimg"
+                      loading="lazy"
+                      id="downloadDcm"
+                      src={download_dcm}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                </div>
+              </span>
             </span>
-            <span id="MarkButton_span">
-              <img
-                className="img VR MPR"
-                loading="lazy"
-                alt="Display Mark"
-                id="MarkButton"
-                src={fist0}
-                width="50"
-                height="50"
-              />
-            </span>
-            <span id="annotation_span">
-              <img
-                className="img"
-                loading="lazy"
-                alt="Annotation"
-                id="annotation"
-                src={b_Annotation}
-                width="50"
-                height="50"
-              />
-            </span>
-            <span id="MarkupImg_span">
-              <img
-                className="img VR MPR RTSS"
-                loading="lazy"
-                alt="Markup & Annotation"
-                id="MarkupImg"
-                src={b_ShowReport}
-                width="50"
-                height="50"
-              />
-            </span>
-            <span id="OtherImgParent">
-              <img
-                className="img"
-                loading="lazy"
-                altzhtw="其他"
-                alt="other"
-                id="OtherImg"
-                src={b_CineTools}
-                width="50"
-                height="50"
-              />
-              <div
-                id="othereDIv"
-                className="drawer"
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  whiteSpace: "nowrap",
-                  zIndex: 100,
-                  width: 500,
-                  display: "none",
-                  backgroundColor: "black",
-                }}
-              >
-                <span id="clearViewport_span">
-                  <img
-                    altzhtw="清除視窗"
-                    alt="clear viewport"
-                    className="innerimg"
-                    loading="lazy"
-                    id="clearviewportImg"
-                    src={b_trashcan}
-                    width="50"
-                    height="50"style={{
-                      filter: 'invert(80%)'
-                    }}
-                  />
-                </span>{" "}
-                <br />
-                <span id="downloadImg_span">
-                  <img
-                    altzhtw="下載圖片"
-                    alt="download image"
-                    className="innerimg"
-                    loading="lazy"
-                    id="downloadImg"
-                    src={download_img}
-                    width="50"
-                    height="50"
-                  />
-                </span>{" "}
-                <br />
-                <span id="downloadDcm_span">
-                  <img
-                    altzhtw="下載DICOM"
-                    alt="download DICOM"
-                    className="innerimg"
-                    loading="lazy"
-                    id="downloadDcm"
-                    src={download_dcm}
-                    width="50"
-                    height="50"
-                  />
-                </span>
-              </div>
-            </span>
-          </span>
-          <span id="rwdImgTag_span">
+          </div>
+          <span id="rwdImgTag_span" style={{ verticalAlign: "super" }}>
             {" "}
             <img
               className="img VR MPR XML PEN"
@@ -636,20 +722,47 @@ const Viewer = () => {
               id="rwdImgTag"
               src={b_CineTools}
               style={{ display: "none" }}
-              width="50"
-              height="50"
+              width="30"
+              height="30"
             />
           </span>
-          <div style={{ marginTop: "13px" }}>
+          <div style={{ display: "flex" }}>
+            <div
+              style={{
+                filter: "invert(80%)",
+                display: "flex",
+                alignItems: "center",
+                marginRight: "10px",
+                fontSize: "22px",
+              }}
+              id="fullScreen"
+              onClick={toggleFullscreen}
+            >
+              {isFullscreen ? (
+                <i className="fa-solid fa-compress"></i>
+              ) : (
+                <i className="fa-solid fa-expand"></i>
+              )}
+            </div>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <img
+                className=""
+                alt="Report Editor"
+                loading="lazy"
+                id="reportEditor"
+                src={edit_patient}
+                style={{ filter: "invert(80%)" }}
+                width="30"
+                height="30"
+              />
+            </div>
             <img
               className=""
-              alt="Report Editor"
+              alt=""
               loading="lazy"
-              id="reportEditor"
-              src={edit_patient}
-              style={{ filter: "invert(80%)" }}
-              width="40"
-              height="40"
+              id="quantume"
+              src={quantum_logo}
+              style={{ width: "112px"}}
             />
           </div>
         </div>

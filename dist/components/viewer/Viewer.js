@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _react = _interopRequireDefault(require("react"));
+var _react = _interopRequireWildcard(require("react"));
 var _b_Annotation = _interopRequireDefault(require("../image/icon/lite/b_Annotation.png"));
 var _openfile = _interopRequireDefault(require("../image/icon/lite/openfile.png"));
 var _left = _interopRequireDefault(require("../image/icon/lite/left.png"));
@@ -43,9 +43,28 @@ var _b_CineTools = _interopRequireDefault(require("../image/icon/lite/b_CineTool
 var _download_img = _interopRequireDefault(require("../image/icon/lite/download_img.png"));
 var _download_dcm = _interopRequireDefault(require("../image/icon/lite/download_dcm.png"));
 var _edit_patient = _interopRequireDefault(require("../image/icon/lite/edit_patient.png"));
+var _quantumLogo = _interopRequireDefault(require("../image/icon/lite/quantum-logo.png"));
 var _telerapp_logo = _interopRequireDefault(require("../image/icon/lite/telerapp_logo.png"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 const Viewer = () => {
+  const [isFullscreen, setIsFullscreen] = (0, _react.useState)(false);
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      // Request fullscreen on the document (or any element)
+      document.documentElement.requestFullscreen().catch(err => {
+        console.error("Error attempting to enable fullscreen mode:", err);
+      });
+      setIsFullscreen(true);
+    } else {
+      // Exit fullscreen
+      document.exitFullscreen().catch(err => {
+        console.error("Error attempting to exit fullscreen mode:", err);
+      });
+      setIsFullscreen(false);
+    }
+  };
   return /*#__PURE__*/_react.default.createElement("div", {
     style: {
       backgroundColor: "#000000"
@@ -53,16 +72,19 @@ const Viewer = () => {
     onWheel: () => {}
   }, /*#__PURE__*/_react.default.createElement("header", {
     className: "page-header",
-    id: "page-header"
+    id: "page-header",
+    style: {
+      height: "52px",
+      padding: "5px"
+    }
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
       display: "flex",
       alignItems: "center",
-      justifyContent: "space-between"
+      justifyContent: "space-between",
+      padding: "5px"
     }
-  }, /*#__PURE__*/_react.default.createElement("span", {
-    id: "icon-list"
-  }, /*#__PURE__*/_react.default.createElement("span", {
+  }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("span", {
     id: "left_span"
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img pdf ecg",
@@ -70,56 +92,81 @@ const Viewer = () => {
     src: _left.default,
     style: {
       filter: "invert(80%)",
-      width: "10px",
+      width: "20px",
       height: "20px",
       cursor: "pointer"
     }
-  })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "openFile_span"
+  }))), /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      textAlign: "center",
+      width: "100%"
+    }
+  }, /*#__PURE__*/_react.default.createElement("span", {
+    id: "icon-list",
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      gap: "8px"
+    }
+  }, /*#__PURE__*/_react.default.createElement("span", {
+    id: "openFile_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img pdf ecg",
     type: "file",
     alt: "Open File",
     id: "openFile",
     src: _openfile.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "MouseOperation_span"
+    id: "MouseOperation_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img VR MPR SEG",
     alt: "Move & Zoom",
     id: "MouseOperation",
     src: _b_Pan.default,
-    width: "50",
-    height: "50",
+    width: "30",
+    height: "30",
     style: {
-      filter: 'invert(80%)',
-      border: 'none'
+      filter: "invert(80%)",
+      border: "none"
     }
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "b_Scroll_span"
+    id: "b_Scroll_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img MPR",
     alt: "Scroll",
     id: "b_Scroll",
     src: _b_Scroll.default,
-    width: "50",
-    height: "50",
+    width: "30",
+    height: "30",
     style: {
-      filter: 'invert(80%)'
+      filter: "invert(80%)"
     }
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "SplitParent"
+    id: "SplitParent",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img",
     alt: "Split Screen",
     id: "SplitWindow",
     src: _b_LayoutWithinViewport.default,
-    width: "50",
-    height: "50",
+    width: "30",
+    height: "30",
     style: {
-      filter: 'invert(80%)'
+      filter: "invert(80%)"
     }
   }), /*#__PURE__*/_react.default.createElement("div", {
     id: "openSplitWindowDiv",
@@ -133,14 +180,17 @@ const Viewer = () => {
       display: "none"
     }
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "TransformationsImgParent"
+    id: "TransformationsImgParent",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img",
     id: "openTransformationsImg",
     alt: "Transformations",
     src: _b_Transformations.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   }), /*#__PURE__*/_react.default.createElement("div", {
     id: "openTransformationsDiv",
     className: "drawer",
@@ -154,88 +204,112 @@ const Viewer = () => {
       backgroundColor: "black"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
-    id: "horizontal_flip_span"
+    id: "horizontal_flip_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     alt: "Horizontal Flip",
     className: "innerimg",
     loading: "lazy",
     id: "horizontal_flip",
     src: _b_FlipHorizontally.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "vertical_flip_span"
+    id: "vertical_flip_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     alt: "Vertical Flip",
     className: "innerimg",
     loading: "lazy",
     id: "vertical_flip",
     src: _b_FlipVertically.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "MouseRotate_span"
+    id: "MouseRotate_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "innerimg",
     loading: "lazy",
     alt: "rotate",
     id: "MouseRotate",
     src: _b_Rotate90DegreesClockwise.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("span", {
-    id: "rotate0_span"
+    id: "rotate0_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "innerimg",
     loading: "lazy",
     alt: "rotate 0",
     id: "Rotate_0",
     src: _b_Rotate_.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "rotatei90_span"
+    id: "rotatei90_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "innerimg",
     loading: "lazy",
     alt: "rotate 90",
     id: "Rotate_i90",
     src: _b_Rotate_2.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "rotate90_span"
+    id: "rotate90_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "innerimg filpx",
     loading: "lazy",
     alt: "rotate 90",
     id: "Rotate_90",
     src: _b_Rotate_i.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })))), /*#__PURE__*/_react.default.createElement("span", {
     className: "WindowRevisionParent"
   }, /*#__PURE__*/_react.default.createElement("span", {
-    id: "WindowRevision_span"
+    id: "WindowRevision_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "cropimg VR MPR SEG",
     alt: "Window Level",
     id: "WindowRevision",
     src: _b_Window_Presets_left.default,
-    width: "38",
-    height: "50",
+    width: "30",
+    height: "30",
     style: {
-      filter: 'invert(80%)'
+      filter: "invert(80%)"
     }
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "WindowRevisionOption_span"
+    id: "WindowRevisionOption_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "cropimg VR MPR SEG",
     alt: "Window Level",
     id: "WindowRevisionOption",
     src: _b_Window_Presets_right.default,
     width: "12",
-    height: "50"
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("div", {
     id: "openWindowRevisionDiv",
     className: "drawer",
@@ -284,58 +358,73 @@ const Viewer = () => {
     wc: "-400",
     ww: "1500"
   }, "Lungs(-400,1500)"))), /*#__PURE__*/_react.default.createElement("span", {
-    id: "zoom_span"
+    id: "zoom_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img",
     alt: "Zoom",
     id: "zoom",
     src: _b_Zoom.default,
-    width: "50",
-    height: "50",
+    width: "30",
+    height: "30",
     style: {
-      filter: 'invert(80%)'
+      filter: "invert(80%)"
     }
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "color_invert_span"
+    id: "color_invert_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img",
     alt: "Color Invert",
     id: "color_invert",
     src: _b_InvertGrayscale.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "unlink_span"
+    id: "unlink_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img",
     altzhtw: "\u540C\u6B65\u64CD\u4F5C",
     alt: "Synchronous Operation",
     id: "unlink",
     src: _b_unlinkTranslationSynchronization.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "reset_span"
+    id: "reset_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img",
     alt: "Restore Img",
     id: "resetImg",
     src: _b_DisplayReset.default,
-    width: "50",
-    height: "50",
+    width: "30",
+    height: "30",
     style: {
-      filter: 'invert(80%)'
+      filter: "invert(80%)"
     }
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "MeasureImgParent"
+    id: "MeasureImgParent",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img",
     id: "openMeasureImg",
     altzhtw: "\u6E2C\u91CF",
     alt: "Measure",
     src: _M.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   }), /*#__PURE__*/_react.default.createElement("div", {
     id: "openMeasureDIv",
     className: "drawer",
@@ -349,7 +438,10 @@ const Viewer = () => {
       backgroundColor: "black"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
-    id: "removeAllRuler_span"
+    id: "removeAllRuler_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     alt: "remove all",
     altzhtw: "\u6E05\u9664\u6240\u6709\u6E2C\u91CF",
@@ -357,13 +449,16 @@ const Viewer = () => {
     loading: "lazy",
     id: "removeAllRuler",
     src: _b_trashcan.default,
-    width: "50",
-    height: "50",
+    width: "30",
+    height: "30",
     style: {
-      filter: 'invert(80%)'
+      filter: "invert(80%)"
     }
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "removeRuler_span"
+    id: "removeRuler_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     alt: "remove",
     altzhtw: "\u6E05\u9664\u6E2C\u91CF",
@@ -371,10 +466,13 @@ const Viewer = () => {
     loading: "lazy",
     id: "removeRuler",
     src: _X.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "eraseRuler_span"
+    id: "eraseRuler_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     alt: "eraser",
     altzhtw: "\u6A61\u76AE\u64E6",
@@ -382,10 +480,13 @@ const Viewer = () => {
     loading: "lazy",
     id: "eraseRuler",
     src: _b_Eraser.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "MeasureRuler_span"
+    id: "MeasureRuler_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     alt: "measure",
     altzhtw: "\u6E2C\u91CF",
@@ -393,10 +494,13 @@ const Viewer = () => {
     loading: "lazy",
     id: "MeasureRuler",
     src: _b_DistanceMeasurement.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "AngleRuler_span"
+    id: "AngleRuler_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     alt: "angle",
     altzhtw: "\u89D2\u5EA6",
@@ -404,10 +508,13 @@ const Viewer = () => {
     loading: "lazy",
     id: "AngleRuler",
     src: _b_AngleMeasurement.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("span", {
-    id: "AngleRuler_span2"
+    id: "AngleRuler_span2",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     alt: "angle",
     altzhtw: "\u89D2\u5EA6",
@@ -415,10 +522,13 @@ const Viewer = () => {
     loading: "lazy",
     id: "AngleRuler2",
     src: _b_AngleMeasurement2.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "RectRuler_span"
+    id: "RectRuler_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     alt: "Rect shape",
     altzhtw: "\u77E9\u5F62",
@@ -426,10 +536,13 @@ const Viewer = () => {
     loading: "lazy",
     id: "RectRuler",
     src: _b_RectMeasurement.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "CircleRuler_span"
+    id: "CircleRuler_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     alt: "Circle shape",
     altzhtw: "\u5713\u5F62",
@@ -437,10 +550,13 @@ const Viewer = () => {
     loading: "lazy",
     id: "CircleRuler",
     src: _b_CircleMeasurement.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "IrregularRuler_span"
+    id: "IrregularRuler_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     alt: "irregular shape",
     altzhtw: "\u4E0D\u898F\u5247\u5F62\u72C0",
@@ -448,10 +564,13 @@ const Viewer = () => {
     loading: "lazy",
     id: "IrregularRuler",
     src: _irregular.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("span", {
-    id: "arrowRuler_span"
+    id: "arrowRuler_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     alt: "arrow",
     altzhtw: "\u7BAD\u982D",
@@ -459,10 +578,13 @@ const Viewer = () => {
     loading: "lazy",
     id: "ArrowRuler",
     src: _b_arrow.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "TextAnnotation_span"
+    id: "TextAnnotation_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     alt: "text annotation",
     altzhtw: "\u6587\u5B57\u8A3B\u89E3",
@@ -470,53 +592,68 @@ const Viewer = () => {
     loading: "lazy",
     id: "TextAnnotation",
     src: _T.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })))), /*#__PURE__*/_react.default.createElement("span", {
-    id: "playvideo_span"
+    id: "playvideo_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img",
     loading: "lazy",
     alt: "Cine",
     id: "playvideo",
     src: _b_CinePlay.default,
-    width: "50",
-    height: "50",
+    width: "30",
+    height: "30",
     style: {
-      filter: 'invert(80%)'
+      filter: "invert(80%)"
     }
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "MarkButton_span"
+    id: "MarkButton_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img VR MPR",
     loading: "lazy",
     alt: "Display Mark",
     id: "MarkButton",
     src: _fist.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "annotation_span"
+    id: "annotation_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img",
     loading: "lazy",
     alt: "Annotation",
     id: "annotation",
     src: _b_Annotation.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "MarkupImg_span"
+    id: "MarkupImg_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img VR MPR RTSS",
     loading: "lazy",
     alt: "Markup & Annotation",
     id: "MarkupImg",
     src: _b_ShowReport.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("span", {
-    id: "OtherImgParent"
+    id: "OtherImgParent",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img",
     loading: "lazy",
@@ -524,8 +661,8 @@ const Viewer = () => {
     alt: "other",
     id: "OtherImg",
     src: _b_CineTools.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   }), /*#__PURE__*/_react.default.createElement("div", {
     id: "othereDIv",
     className: "drawer",
@@ -539,7 +676,10 @@ const Viewer = () => {
       backgroundColor: "black"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
-    id: "clearViewport_span"
+    id: "clearViewport_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     altzhtw: "\u6E05\u9664\u8996\u7A97",
     alt: "clear viewport",
@@ -547,13 +687,16 @@ const Viewer = () => {
     loading: "lazy",
     id: "clearviewportImg",
     src: _b_trashcan.default,
-    width: "50",
-    height: "50",
+    width: "30",
+    height: "30",
     style: {
-      filter: 'invert(80%)'
+      filter: "invert(80%)"
     }
   })), " ", /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("span", {
-    id: "downloadImg_span"
+    id: "downloadImg_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     altzhtw: "\u4E0B\u8F09\u5716\u7247",
     alt: "download image",
@@ -561,10 +704,13 @@ const Viewer = () => {
     loading: "lazy",
     id: "downloadImg",
     src: _download_img.default,
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), " ", /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("span", {
-    id: "downloadDcm_span"
+    id: "downloadDcm_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, /*#__PURE__*/_react.default.createElement("img", {
     altzhtw: "\u4E0B\u8F09DICOM",
     alt: "download DICOM",
@@ -572,10 +718,13 @@ const Viewer = () => {
     loading: "lazy",
     id: "downloadDcm",
     src: _download_dcm.default,
-    width: "50",
-    height: "50"
-  }))))), /*#__PURE__*/_react.default.createElement("span", {
-    id: "rwdImgTag_span"
+    width: "30",
+    height: "30"
+  })))))), /*#__PURE__*/_react.default.createElement("span", {
+    id: "rwdImgTag_span",
+    style: {
+      verticalAlign: "super"
+    }
   }, " ", /*#__PURE__*/_react.default.createElement("img", {
     className: "img VR MPR XML PEN",
     alt: "RWD",
@@ -585,11 +734,30 @@ const Viewer = () => {
     style: {
       display: "none"
     },
-    width: "50",
-    height: "50"
+    width: "30",
+    height: "30"
   })), /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      marginTop: "13px"
+      display: "flex"
+    }
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      filter: "invert(80%)",
+      display: "flex",
+      alignItems: "center",
+      marginRight: "10px",
+      fontSize: "22px"
+    },
+    id: "fullScreen",
+    onClick: toggleFullscreen
+  }, isFullscreen ? /*#__PURE__*/_react.default.createElement("i", {
+    className: "fa-solid fa-compress"
+  }) : /*#__PURE__*/_react.default.createElement("i", {
+    className: "fa-solid fa-expand"
+  })), /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center"
     }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "",
@@ -600,8 +768,17 @@ const Viewer = () => {
     style: {
       filter: "invert(80%)"
     },
-    width: "40",
-    height: "40"
+    width: "30",
+    height: "30"
+  })), /*#__PURE__*/_react.default.createElement("img", {
+    className: "",
+    alt: "",
+    loading: "lazy",
+    id: "quantume",
+    src: _quantumLogo.default,
+    style: {
+      width: "112px"
+    }
   }))), /*#__PURE__*/_react.default.createElement("div", {
     id: "MarkStyleDiv",
     style: {

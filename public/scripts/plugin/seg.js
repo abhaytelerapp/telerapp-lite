@@ -3,13 +3,14 @@ var openWriteSEG = false;
 
 function loadWriteSEG() {
     var span = document.createElement("SPAN")
+    span.style.verticalAlign = "super";
     span.innerHTML =
-        `<img class="img SEG" alt="writeSEG" id="writeSEG" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/seg_off.png" width="50" height="50">
-        <img class="img SEG" alt="drawSEG" id="drawSEG" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/GraphicDraw.png" width="50" height="50" style="display:none;" >  
-        <img class="img SEGhide" alt="eraseSEG" id="eraseSEG" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/b_Eraser.png" width="50" height="50" style="display:none;" >
-        <img class="img SEG" alt="fillSEG" id="fillSEG" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/b_Oil.png" width="50" height="50" style="display:none;" >
-        <img class="img SEG" alt="exitSEG" id="exitSEG" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/exit.png" width="50" height="50" style="display:none;" >
-        <img class="img SEG" alt="saveSEG" id="saveSEG" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/download.png" width="50" height="50" style="display:none;" >`;
+        `<img class="img SEG" alt="writeSEG" id="writeSEG" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/seg_off.png" width="30" height="30">
+        <img class="img SEG" alt="drawSEG" id="drawSEG" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/GraphicDraw.png" width="30" height="30" style="display:none;" >  
+        <img class="img SEGhide" alt="eraseSEG" id="eraseSEG" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/b_Eraser.png" width="30" height="30" style="display:none;" >
+        <img class="img SEG" alt="fillSEG" id="fillSEG" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/b_Oil.png" width="30" height="30" style="display:none;" >
+        <img class="img SEG" alt="exitSEG" id="exitSEG" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/exit.png" width="30" height="30" style="display:none;" >
+        <img class="img SEG" alt="saveSEG" id="saveSEG" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/download.png" width="30" height="30" style="display:none;" >`;
 
     addIconSpan(span);
 
