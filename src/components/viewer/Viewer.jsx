@@ -258,7 +258,7 @@ const Viewer = () => {
                   </span>
                 </div>
               </span>
-              <span className="WindowRevisionParent">
+              <span className="WindowRevisionParent" style={{width: '2%', display:"flex"}}>
                 <span
                   id="WindowRevision_span"
                   style={{ verticalAlign: "super" }}

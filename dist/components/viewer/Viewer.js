@@ -282,7 +282,11 @@ const Viewer = () => {
     width: "30",
     height: "30"
   })))), /*#__PURE__*/_react.default.createElement("span", {
-    className: "WindowRevisionParent"
+    className: "WindowRevisionParent",
+    style: {
+      width: '2%',
+      display: "flex"
+    }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "WindowRevision_span",
     style: {
