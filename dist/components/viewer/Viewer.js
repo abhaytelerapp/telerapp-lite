@@ -106,7 +106,8 @@ const Viewer = () => {
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      gap: "8px"
+      gap: "8px",
+      flexWrap: "wrap"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "openFile_span",
@@ -771,13 +772,7 @@ const Viewer = () => {
     // onClick={toggleFullscreen}
   }, /*#__PURE__*/_react.default.createElement("i", {
     className: "fa-solid fa-moon"
-  })), /*#__PURE__*/_react.default.createElement("div", {
-    style: {
-      display: "flex",
-      alignItems: "center",
-      width: "40px"
-    }
-  }, /*#__PURE__*/_react.default.createElement("img", {
+  })), /*#__PURE__*/_react.default.createElement("img", {
     className: "",
     alt: "Report Editor",
     loading: "lazy",
@@ -788,7 +783,7 @@ const Viewer = () => {
     },
     width: "30",
     height: "30"
-  })), /*#__PURE__*/_react.default.createElement("img", {
+  }), /*#__PURE__*/_react.default.createElement("img", {
     className: "",
     alt: "",
     loading: "lazy",
@@ -1003,7 +998,10 @@ const Viewer = () => {
       display: "none"
     }
   })), /*#__PURE__*/_react.default.createElement("div", {
-    className: "report-editor-container"
+    className: "report-editor-container",
+    style: {
+      position: "relative"
+    }
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "toolbar",
     style: {
@@ -1032,7 +1030,10 @@ const Viewer = () => {
     className: "controls",
     style: {
       display: "flex",
-      gap: "12px"
+      gap: "12px",
+      position: "absolute",
+      left: "5px",
+      bottom: "5px"
     }
   }, /*#__PURE__*/_react.default.createElement("button", {
     id: "submitBtn"

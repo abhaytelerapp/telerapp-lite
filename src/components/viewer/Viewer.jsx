@@ -97,6 +97,7 @@ const Viewer = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 gap: "8px",
+                flexWrap: "wrap"
               }}
             >
               <span id="openFile_span" style={{ verticalAlign: "super" }}>
@@ -771,21 +772,16 @@ const Viewer = () => {
             >
               <i className="fa-solid fa-moon"></i>
             </div>
-
-            <div
-              style={{ display: "flex", alignItems: "center", width: "40px" }}
-            >
-              <img
-                className=""
-                alt="Report Editor"
-                loading="lazy"
-                id="reportEditor"
-                src={edit_patient}
-                style={{ filter: "invert(80%)" }}
-                width="30"
-                height="30"
-              />
-            </div>
+            <img
+              className=""
+              alt="Report Editor"
+              loading="lazy"
+              id="reportEditor"
+              src={edit_patient}
+              style={{ filter: "invert(80%)" }}
+              width="30"
+              height="30"
+            />
             <img
               className=""
               alt=""
@@ -960,7 +956,7 @@ const Viewer = () => {
               style={{ display: "none" }}
             ></div>
           </div>
-          <div className="report-editor-container">
+          <div className="report-editor-container" style={{position: "relative"}}>
             <div
               className="toolbar"
               style={{
@@ -981,7 +977,7 @@ const Viewer = () => {
               <div id="toolbar-container"></div>
               <div id="editor"></div>
             </div>
-            <div className="controls" style={{ display: "flex", gap: "12px" }}>
+            <div className="controls" style={{ display: "flex", gap: "12px", position: "absolute", left: "5px", bottom: "5px"}}>
               <button id="submitBtn">Submit</button>
               <button id="draftBtn">Draft</button>
               <button id="criticalBtn">Critical</button>

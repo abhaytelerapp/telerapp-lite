@@ -46,6 +46,10 @@
   .editor_table {
     height: 91% !important;
   }
+/* 
+  @media (min-width: ) {
+    
+  } */
   
   .ck-editor__main {
     height: 95% !important;
