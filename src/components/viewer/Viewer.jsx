@@ -64,7 +64,7 @@ const Viewer = () => {
       <header
         className="page-header"
         id="page-header"
-        style={{ height: "52px", padding: "5px" }}
+        style={{ padding: "5px" }}
       >
         <div
           style={{
@@ -769,7 +769,7 @@ const Viewer = () => {
               id="darkLightMode"
               // onClick={toggleFullscreen}
             >
-              <i class="fa-solid fa-moon"></i>
+              <i className="fa-solid fa-moon"></i>
             </div>
 
             <div

@@ -32,10 +32,12 @@ var origin_openAnnotation;
 function loadVR() {
     var span = document.createElement("SPAN");
     span.style.verticalAlign = "super";
+    span.style.display = "flex";
+    span.style.gap = "5px";
     span.innerHTML =
         `<img class="img VR" alt="VR" id="ImgVR" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/b_3D_off.png" width="30" height="30">
     <img class="img VR MPR" alt="Render" id="3dDisplay" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/b_DisplayReset.png"
-    style="display:none;" width="30" height="30">
+    style="display:none; filter: invert(80%)" width="30" height="30">
     <img class="img VR" alt="Scalpel" id="3dCave" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/b_Cross-hair_OFF.png" style="display:none;"
     width="30" height="30">`;
     addIconSpan(span);
@@ -125,7 +127,7 @@ function loadVR_UI() {
         img.id = "MouseOperation_VR";
         img.className = "VR_icon";
         img.width = img.height = "50";
-        img.style.filter = "sepia(100%)"
+        img.style.filter = "invert(80%)"
         getByid("MouseOperation_span").appendChild(img);
     }
     if (!getByid("WindowRevision_VR")) {
@@ -575,6 +577,7 @@ function initVR() {
         for (var l = 0; l < list.length; l++) {
             const l2 = l;
             const image = list[l2].Image;
+            if (image.imageDataLoaded == false && image.loadImageData)image.loadImageData();
             const pixelData = list[l2].Image.pixelData;
             try {
                 var NewDiv = document.createElement("DIV");

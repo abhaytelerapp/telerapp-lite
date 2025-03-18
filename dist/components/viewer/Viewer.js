@@ -74,7 +74,6 @@ const Viewer = () => {
     className: "page-header",
     id: "page-header",
     style: {
-      height: "52px",
       padding: "5px"
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
@@ -771,7 +770,7 @@ const Viewer = () => {
     id: "darkLightMode"
     // onClick={toggleFullscreen}
   }, /*#__PURE__*/_react.default.createElement("i", {
-    class: "fa-solid fa-moon"
+    className: "fa-solid fa-moon"
   })), /*#__PURE__*/_react.default.createElement("div", {
     style: {
       display: "flex",

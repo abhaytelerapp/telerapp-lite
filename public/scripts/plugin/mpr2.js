@@ -295,18 +295,8 @@ function initMPR2() {
         var addition = (- low + intercept) / (high - low) * 255;
         var j = 0;
         for (var h = 0; h < pixelData2.length; h++) {
-            if (!Array.isArray(pixelData2[h])) {
-                continue;
-            }
-    
             for (var w = 0, w4 = 0; w < pixelData2[h].length / 4; w++, w4 += 4, j++) {
-                if (j >= pixelData.length) {
-                    console.warn("Warning: pixelData index out of bounds.");
-                    break;
-                }
-    
-                pixelData2[h][w4 + 0] = pixelData2[h][w4 + 1] = pixelData2[h][w4 + 2] =
-                    pixelData[j] * multiplication + addition;
+                pixelData2[h][w4 + 0] = pixelData2[h][w4 + 1] = pixelData2[h][w4 + 2] = pixelData[j] * multiplication + addition;
                 pixelData2[h][w4 + 3] = 255;
             }
         }
@@ -319,6 +309,8 @@ function initMPR2() {
     for (var l = 0; l < list.length; l++) {
         const l2 = l;
         const image = list[l2].Image;
+        if (image.imageDataLoaded == false && image.loadImageData)image.loadImageData();
+
         const pixelData = list[l2].Image.pixelData;
         o3dPixelData.push(pixelData);
         o3dImage.push(image);
