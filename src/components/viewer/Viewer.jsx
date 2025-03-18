@@ -89,7 +89,7 @@ const Viewer = () => {
               />
             </span>
           </div>
-          <div style={{ textAlign: "center", width: "100%" }}>
+          <div style={{ textAlign: "center" }}>
             <span
               id="icon-list"
               style={{

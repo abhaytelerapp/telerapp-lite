@@ -97,8 +97,7 @@ const Viewer = () => {
     }
   }))), /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      textAlign: "center",
-      width: "100%"
+      textAlign: "center"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "icon-list",
