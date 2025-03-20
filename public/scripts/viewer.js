@@ -365,6 +365,11 @@ function showLoader(show) {
     document.getElementById("loader").style.display = show ? "inline-flex" : "none";
 }
 
+function showDicomLoader(show) {
+    console.log(show, 'showDicomLoaders')
+    document.getElementById("dicom-loader").style.display = show ? "block" : "none";
+}
+
 function loadDICOMFromUrl(url, loadimage = true) {
     showLoader(false)
     var oReq = new XMLHttpRequest();

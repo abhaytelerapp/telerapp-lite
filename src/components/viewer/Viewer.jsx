@@ -926,7 +926,7 @@ const Viewer = () => {
           </div>
         </div>
       </div>
-      {/* <div id="loader">Loading DICOM...</div> */}
+      <div id="dicom-loader">Loading DICOM...</div>
       <div className="form-group" id="form-group">
         <label className="control-label col-sm-1" htmlFor="wadoURL">
           &nbsp;
