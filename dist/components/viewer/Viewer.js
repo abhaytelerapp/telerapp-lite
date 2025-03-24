@@ -83,7 +83,11 @@ const Viewer = () => {
       justifyContent: "space-between",
       padding: "5px"
     }
-  }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("span", {
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      width: '5%'
+    }
+  }, /*#__PURE__*/_react.default.createElement("span", {
     id: "left_span"
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "img pdf ecg",
@@ -97,7 +101,8 @@ const Viewer = () => {
     }
   }))), /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      textAlign: "center"
+      textAlign: "center",
+      width: '100%'
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "icon-list",
@@ -743,7 +748,9 @@ const Viewer = () => {
     height: "30"
   })), /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      display: "flex"
+      display: "flex",
+      width: '40%',
+      justifyContent: 'end'
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {

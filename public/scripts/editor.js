@@ -394,12 +394,25 @@ async function editor() {
 
   // Populate the select dropdown
   const selectElement = document.getElementById("templateSelect");
+  
+  function truncateText(text, limit = 20) {
+    return text.length > limit ? text.substring(0, limit) + "..." : text;
+  }
 
   displayTemplateOptions.forEach((option) => {
     const opt = document.createElement("option");
     opt.value = option.value;
-    opt.textContent = option.label;
+    opt.textContent = truncateText(option.label, 20);
     selectElement.appendChild(opt);
+  });
+
+  // Initialize Tom Select for input-style search
+  new TomSelect(selectElement,{
+    create: true,
+    sortField: {
+      field: "text",
+      direction: "asc"
+    }
   });
 
   // Select the default template or first option
@@ -425,7 +438,10 @@ async function editor() {
 
   // Listen for changes
   selectElement.addEventListener("change", () => {
-    selectedTemplateOptions = getSelectedTemplate();
+    // selectedTemplateOptions = getSelectedTemplate();
+    selectedTemplateOptions = displayTemplateOptions.find(
+      (option) => option.value === selectElement.value
+    );
     renderReport();
   });
 

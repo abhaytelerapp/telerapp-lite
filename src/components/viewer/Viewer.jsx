@@ -74,7 +74,7 @@ const Viewer = () => {
             padding: "5px",
           }}
         >
-          <div>
+          <div style={{width: '5%'}}>
             <span id="left_span">
               <img
                 className="img pdf ecg"
@@ -89,7 +89,7 @@ const Viewer = () => {
               />
             </span>
           </div>
-          <div style={{ textAlign: "center" }}>
+          <div style={{ textAlign: "center", width: '100%' }}>
             <span
               id="icon-list"
               style={{
@@ -740,7 +740,7 @@ const Viewer = () => {
               height="30"
             />
           </span>
-          <div style={{ display: "flex" }}>
+          <div style={{ display: "flex", width: '40%', justifyContent: 'end' }}>
             <div
               style={{
                 filter: "invert(80%)",

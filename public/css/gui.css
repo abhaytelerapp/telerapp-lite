@@ -186,6 +186,9 @@ body.dark .custom-size {
 
 select,
 button,
+#overlay2seg,
+#seg2stl,
+#RemoveSEG,
 input {
   background-color: #404048;
   color: #fff;

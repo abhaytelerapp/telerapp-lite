@@ -120,6 +120,9 @@ html {
 
 select,
 button,
+#overlay2seg,
+#seg2stl,
+#RemoveSEG,
 input {
   background-color: #404048;
   color: #fff;
@@ -131,6 +134,46 @@ input {
 
 button:hover {
   filter: invert(80%);
+}
+
+.ts-dropdown .option, .ts-control .item {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ts-wrapper {
+  width: 40%;
+ }
+.ts-control, .ts-wrapper.single.input-active .ts-control, .ts-dropdown{
+  border-color: var(--secondary-dark);
+  color: black;
+  background-color: var(--secondary-light);
+}
+
+body.dark .ts-control, .ts-wrapper.single.input-active .ts-control, .ts-dropdown {
+  color: white;
+  background-color: var(--secondary-dark);
+  border-color: var(--primary-main);
+}
+
+.ts-dropdown .active {
+  background-color: #282828;
+  color: #000;
+}
+
+body.dark .ts-dropdown .active {
+  background-color: #6d6d6d;
+  color: #fff;
+}
+
+#templateSelect-ts-control{
+  color: #000;
+}
+
+body.dark #templateSelect-ts-control{
+  color: #fff;
 }
 
 /* .img {
@@ -360,6 +403,7 @@ button:hover {
 #tooltiptext_img {
   color: white;
   position: absolute;
+  z-index: 999;
 }
 
 .DicomTable {
