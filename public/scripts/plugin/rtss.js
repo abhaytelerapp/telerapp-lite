@@ -4,6 +4,7 @@ var openWriteRTSS = false;
 function loadWriteRTSS() {
     var span = document.createElement("SPAN")
     span.style.verticalAlign = "super";
+    span.style.display = "flex";
     span.innerHTML =
         ` <img class="img RTSS" alt="writeRTSS" id="writeRTSS" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/rtssdraw_OFF.png" width="30" height="30">  
           <img class="img RTSS" alt="drawRTSS" id="drawRTSS" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/GraphicDraw.png" width="30" height="30" style="display:none;" >  

@@ -426,6 +426,7 @@ button:hover {
 #tooltiptext_img {
   color: white;
   position: absolute;
+  z-index: 999;
 }
 
 .DicomTable {

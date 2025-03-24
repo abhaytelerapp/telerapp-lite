@@ -6,6 +6,7 @@ var openWriteGraphic = false;
 function loadWriteGraphic() {
     var span = document.createElement("SPAN")
     span.style.verticalAlign = "super";
+    span.style.display = "flex";
     span.innerHTML =
         `<img class="img GSPS" alt="writeGSPS" id="writeGSPS" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/gsps_off.png" width="30" height="30">
         <img class="img GSPS" alt="drawGSPS" id="drawGSPS" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/GraphicDraw.png" width="30" height="30" style="display:none;" >

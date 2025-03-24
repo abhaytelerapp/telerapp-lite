@@ -270,7 +270,7 @@ const Viewer = () => {
               </span>
               <span
                 className="WindowRevisionParent"
-                style={{ width: "2%", display: "flex" }}
+                style={{ width: "4%", display: "flex", position: "relative" }}
               >
                 <span
                   id="WindowRevision_span"
@@ -307,6 +307,7 @@ const Viewer = () => {
                   style={{
                     position: "absolute",
                     left: 0,
+                    top: '45px',
                     whiteSpace: "nowrap",
                     zIndex: 100,
                     width: 500,
@@ -928,9 +929,9 @@ const Viewer = () => {
       </div>
       <div id="dicom-loader">Loading DICOM...</div>
       <div className="form-group" id="form-group">
-        <label className="control-label col-sm-1" htmlFor="wadoURL">
+        {/* <label className="control-label col-sm-1" htmlFor="wadoURL">
           &nbsp;
-        </label>
+        </label> */}
         <div id="container" className="container">
           <div
             id="LeftPicture"

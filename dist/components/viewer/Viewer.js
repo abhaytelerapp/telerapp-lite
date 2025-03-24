@@ -283,8 +283,9 @@ const Viewer = () => {
   })))), /*#__PURE__*/_react.default.createElement("span", {
     className: "WindowRevisionParent",
     style: {
-      width: "2%",
-      display: "flex"
+      width: "4%",
+      display: "flex",
+      position: "relative"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "WindowRevision_span",
@@ -319,6 +320,7 @@ const Viewer = () => {
     style: {
       position: "absolute",
       left: 0,
+      top: '45px',
       whiteSpace: "nowrap",
       zIndex: 100,
       width: 500,
@@ -965,10 +967,7 @@ const Viewer = () => {
   }, "Loading DICOM..."), /*#__PURE__*/_react.default.createElement("div", {
     className: "form-group",
     id: "form-group"
-  }, /*#__PURE__*/_react.default.createElement("label", {
-    className: "control-label col-sm-1",
-    htmlFor: "wadoURL"
-  }, "\xA0"), /*#__PURE__*/_react.default.createElement("div", {
+  }, /*#__PURE__*/_react.default.createElement("div", {
     id: "container",
     className: "container"
   }, /*#__PURE__*/_react.default.createElement("div", {

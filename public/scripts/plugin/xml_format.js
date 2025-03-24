@@ -4,6 +4,7 @@ var openWriteXML = false;
 function loadxml_format() {
   var span = document.createElement("SPAN")
   span.style.verticalAlign = "super";
+  span.style.display = "flex";
   span.innerHTML =
     `<img class="img XML" alt="writeXML" id="writeXML" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/xml_off.png" width="30" height="30">
     <img class="img XML" alt="drawXML" id="drawXML" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/GraphicDraw.png" width="30" height="30" style="display:none;" >  

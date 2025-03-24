@@ -6,6 +6,7 @@ var SEGtempRedoStorage = [];
 function loadWriteSEG() {
     var span = document.createElement("SPAN")
     span.style.verticalAlign = "super";
+    span.style.display = "flex";
     span.innerHTML =
         `<img class="img SEG" alt="writeSEG" id="writeSEG" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/seg_off.png" width="30" height="30">
         <img class="img SEG" alt="drawSEG" id="drawSEG" onmouseover="onElementOver(this);" onmouseleave="onElementLeave();" src="../image/icon/lite/GraphicDraw.png" width="30" height="30" style="display:none;" >  
