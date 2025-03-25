@@ -159,13 +159,13 @@ body.dark .custom-size {
   float: left;
   /*left: 100px;*/
   overflow: hidden;
-  border: var(--bordersize)#D3D9FF groove;
+  border: var(--bordersize)#d4d4d4 groove;
   margin: 0px;
 }
 
 .SelectedViewport {
   background-color: rgb(10, 6, 6);
-  border: var(--bordersize) #FFC3FF groove;
+  border: var(--bordersize) #d4d4d4 groove;
 }
 
 .page {
@@ -329,7 +329,7 @@ button:hover {
 }
 
 .OutLeftImg {
-  border: var(--bordersize) #FFA3FF groove;
+  border: var(--bordersize) #d4d4d4 groove;
   padding: 1px 1px 1px 1px;
 }
 

@@ -77,12 +77,13 @@ class ScrollBar {
         this.viewport = viewport;
         this.total = 0;
         this.index = 0;
-        this.width = 20;
+        this.width = 12;
         this.outerDIV = document.createElement("DIV");
         this.innerDIV = document.createElement("DIV");
 
-        this.outerDIV.style.backgroundColor = "rgb(241,241,241)";
-        this.innerDIV.style.backgroundColor = "rgb(193,193,193)";
+        this.outerDIV.style.backgroundColor = "#000";
+        this.innerDIV.style.backgroundColor = "rgb(22,50,57)";
+        this.innerDIV.style.borderRadius = "5px";
 
         this.outerDIV.style.position = "absolute";
         this.innerDIV.style.position = "absolute";

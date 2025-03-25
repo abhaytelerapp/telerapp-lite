@@ -186,11 +186,12 @@ const Viewer = () => {
                     whiteSpace: "nowrap",
                     zIndex: 100,
                     display: "none",
+                    width: 100,
                     backgroundColor: "black",
                   }}
                 >
                   <div style={{display: "flex", flexDirection: "column"}}>
-                    <div>
+                    <div style={{display: 'flex', gap: '5px'}}>
                       <span
                         id="horizontal_flip_span"
                         style={{ verticalAlign: "super" }}
@@ -234,7 +235,7 @@ const Viewer = () => {
                         />
                       </span>
                     </div>
-                    <div>
+                    <div style={{display: 'flex', gap: '5px'}}>
                       <span id="rotate0_span" style={{ verticalAlign: "super" }}>
                         <img
                           className="innerimg"
@@ -274,11 +275,11 @@ const Viewer = () => {
               </span>
               <span
                 className="WindowRevisionParent"
-                style={{ width: "4%", display: "flex", position: "relative" }}
+                style={{ display: "flex", position: "relative" }}
               >
                 <span
                   id="WindowRevision_span"
-                  style={{ verticalAlign: "super" }}
+                  style={{ display: "flex", alignItems: 'center' }}
                 >
                   <img
                     className="cropimg VR MPR SEG"
@@ -442,10 +443,11 @@ const Viewer = () => {
                     zIndex: 100,
                     display: "none",
                     backgroundColor: "black",
+                    width: 170
                   }}
                 >
                   <div style={{display: "flex", flexDirection: "column"}}>
-                    <div>
+                    <div style={{display: 'flex', gap: '5px'}}>
                       <span
                         id="removeAllRuler_span"
                         style={{ verticalAlign: "super" }}
@@ -519,7 +521,7 @@ const Viewer = () => {
                         />
                       </span>
                     </div>
-                    <div style={{textAlign: "start"}}>
+                    <div style={{textAlign: "start", display: "flex", gap: '5px'}}>
                       <span
                         id="AngleRuler_span2"
                         style={{ verticalAlign: "super" }}
@@ -578,7 +580,7 @@ const Viewer = () => {
                         />
                       </span>
                     </div>
-                    <div style={{textAlign: "start"}}>
+                    <div style={{textAlign: "start", display: 'flex', gap: '5px'}}>
                       <span id="arrowRuler_span" style={{ verticalAlign: "super" }}>
                         <img
                           alt="arrow"

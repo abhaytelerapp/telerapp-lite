@@ -204,6 +204,7 @@ const Viewer = () => {
       whiteSpace: "nowrap",
       zIndex: 100,
       display: "none",
+      width: 100,
       backgroundColor: "black"
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
@@ -211,7 +212,12 @@ const Viewer = () => {
       display: "flex",
       flexDirection: "column"
     }
-  }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("span", {
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: '5px'
+    }
+  }, /*#__PURE__*/_react.default.createElement("span", {
     id: "horizontal_flip_span",
     style: {
       verticalAlign: "super"
@@ -250,7 +256,12 @@ const Viewer = () => {
     src: _b_Rotate90DegreesClockwise.default,
     width: "30",
     height: "30"
-  }))), /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("span", {
+  }))), /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: '5px'
+    }
+  }, /*#__PURE__*/_react.default.createElement("span", {
     id: "rotate0_span",
     style: {
       verticalAlign: "super"
@@ -292,14 +303,14 @@ const Viewer = () => {
   })))))), /*#__PURE__*/_react.default.createElement("span", {
     className: "WindowRevisionParent",
     style: {
-      width: "4%",
       display: "flex",
       position: "relative"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "WindowRevision_span",
     style: {
-      verticalAlign: "super"
+      display: "flex",
+      alignItems: 'center'
     }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "cropimg VR MPR SEG",
@@ -448,14 +459,20 @@ const Viewer = () => {
       whiteSpace: "nowrap",
       zIndex: 100,
       display: "none",
-      backgroundColor: "black"
+      backgroundColor: "black",
+      width: 170
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
       display: "flex",
       flexDirection: "column"
     }
-  }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("span", {
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: '5px'
+    }
+  }, /*#__PURE__*/_react.default.createElement("span", {
     id: "removeAllRuler_span",
     style: {
       verticalAlign: "super"
@@ -530,7 +547,9 @@ const Viewer = () => {
     height: "30"
   }))), /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      textAlign: "start"
+      textAlign: "start",
+      display: "flex",
+      gap: '5px'
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "AngleRuler_span2",
@@ -590,7 +609,9 @@ const Viewer = () => {
     height: "30"
   }))), /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      textAlign: "start"
+      textAlign: "start",
+      display: 'flex',
+      gap: '5px'
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "arrowRuler_span",

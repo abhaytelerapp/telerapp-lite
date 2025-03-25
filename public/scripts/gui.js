@@ -123,12 +123,12 @@ class LeftLayout {
 
     setAccent(series) {
         for (var series_div of getClass("LeftImgAndMark")) {
-            series_div.style.border = "5px groove rgb(211, 217, 255)";
+            series_div.style.border = "5px groove #333333";
         }
         if (!series) return;
         if (getClass("LeftImgAndMark").length <= 1) return;
         for (var series_div of getClass("LeftImgAndMark")) {
-            if (series_div.series == series) series_div.style.border = "5px solid rgb(255, 255, 255)";
+            if (series_div.series == series) series_div.style.border = "5px solid rgb(22,50,57)";
         }
     }
 
