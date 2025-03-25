@@ -188,7 +188,7 @@ body.dark #templateSelect-ts-control{
   filter: invert(80%);
 }
 
-.img:hover {
+.img:not(#openTransformationsImg, #unlink, #openMeasureImg, #MeasureRuler, #Calibration):hover {
   filter: invert(80%);
 }
 

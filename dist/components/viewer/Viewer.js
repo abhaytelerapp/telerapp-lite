@@ -203,11 +203,15 @@ const Viewer = () => {
       left: 0,
       whiteSpace: "nowrap",
       zIndex: 100,
-      width: 500,
       display: "none",
       backgroundColor: "black"
     }
-  }, /*#__PURE__*/_react.default.createElement("span", {
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column"
+    }
+  }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("span", {
     id: "horizontal_flip_span",
     style: {
       verticalAlign: "super"
@@ -246,7 +250,7 @@ const Viewer = () => {
     src: _b_Rotate90DegreesClockwise.default,
     width: "30",
     height: "30"
-  })), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("span", {
+  }))), /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("span", {
     id: "rotate0_span",
     style: {
       verticalAlign: "super"
@@ -285,7 +289,7 @@ const Viewer = () => {
     src: _b_Rotate_i.default,
     width: "30",
     height: "30"
-  })))), /*#__PURE__*/_react.default.createElement("span", {
+  })))))), /*#__PURE__*/_react.default.createElement("span", {
     className: "WindowRevisionParent",
     style: {
       width: "4%",
@@ -443,11 +447,15 @@ const Viewer = () => {
       left: 0,
       whiteSpace: "nowrap",
       zIndex: 100,
-      width: 500,
       display: "none",
       backgroundColor: "black"
     }
-  }, /*#__PURE__*/_react.default.createElement("span", {
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column"
+    }
+  }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("span", {
     id: "removeAllRuler_span",
     style: {
       verticalAlign: "super"
@@ -520,7 +528,11 @@ const Viewer = () => {
     src: _b_AngleMeasurement.default,
     width: "30",
     height: "30"
-  })), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("span", {
+  }))), /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      textAlign: "start"
+    }
+  }, /*#__PURE__*/_react.default.createElement("span", {
     id: "AngleRuler_span2",
     style: {
       verticalAlign: "super"
@@ -576,7 +588,11 @@ const Viewer = () => {
     src: _irregular.default,
     width: "30",
     height: "30"
-  })), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("span", {
+  }))), /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      textAlign: "start"
+    }
+  }, /*#__PURE__*/_react.default.createElement("span", {
     id: "arrowRuler_span",
     style: {
       verticalAlign: "super"
@@ -604,7 +620,7 @@ const Viewer = () => {
     src: _T.default,
     width: "30",
     height: "30"
-  })))), /*#__PURE__*/_react.default.createElement("span", {
+  })))))), /*#__PURE__*/_react.default.createElement("span", {
     id: "playvideo_span",
     style: {
       verticalAlign: "super"
@@ -816,31 +832,31 @@ const Viewer = () => {
     defaultValue: "Auto"
   }, /*#__PURE__*/_react.default.createElement("option", {
     id: "AutoColorSelect",
-    value: "Auto"
+    defaultValue: "Auto"
   }, "Auto"), /*#__PURE__*/_react.default.createElement("option", {
     id: "WhiteSelect",
-    value: "White"
+    defaultValue: "White"
   }, "White"), /*#__PURE__*/_react.default.createElement("option", {
     id: "RedSelect",
-    value: "Red"
+    defaultValue: "Red"
   }, "Red"), /*#__PURE__*/_react.default.createElement("option", {
     id: "BlueSelect",
-    value: "Blue"
+    defaultValue: "Blue"
   }, "Blue"), /*#__PURE__*/_react.default.createElement("option", {
     id: "GreenSelect",
-    value: "Green"
+    defaultValue: "Green"
   }, "Green"), /*#__PURE__*/_react.default.createElement("option", {
     id: "YellowSelect",
-    value: "Yellow"
+    defaultValue: "Yellow"
   }, "Yellow"), /*#__PURE__*/_react.default.createElement("option", {
     id: "BrownSelect",
-    value: "Brown"
+    defaultValue: "Brown"
   }, "Brown"), /*#__PURE__*/_react.default.createElement("option", {
     id: "OrangeSelect",
-    value: "Orange"
+    defaultValue: "Orange"
   }, "Orange"), /*#__PURE__*/_react.default.createElement("option", {
     id: "PurpleSelect",
-    value: "Purple"
+    defaultValue: "Purple"
   }, "Purple")), /*#__PURE__*/_react.default.createElement("label", {
     style: {
       color: "#ffffff"
@@ -879,13 +895,13 @@ const Viewer = () => {
     defaultValue: "None"
   }, /*#__PURE__*/_react.default.createElement("option", {
     id: "TableSelectNone",
-    value: "None"
+    defaultValue: "None"
   }, "None"), /*#__PURE__*/_react.default.createElement("option", {
     id: "DICOMTagsSelect",
-    value: "DICOMTags"
+    defaultValue: "DICOMTags"
   }, "DICOMTags"), /*#__PURE__*/_react.default.createElement("option", {
     id: "AIMSelect",
-    value: "AIM"
+    defaultValue: "AIM"
   }, "AIM"))), /*#__PURE__*/_react.default.createElement("span", {
     id: "WindowLevelDiv_span"
   }, /*#__PURE__*/_react.default.createElement("div", {
@@ -916,7 +932,7 @@ const Viewer = () => {
     type: "text",
     className: "drawer",
     id: "textZoom",
-    value: "200"
+    defaultValue: "200"
   }), /*#__PURE__*/_react.default.createElement("font", {
     color: "white",
     className: "drawer",
@@ -925,7 +941,7 @@ const Viewer = () => {
     type: "text",
     className: "drawer",
     id: "textPlay",
-    value: "15"
+    defaultValue: "15"
   }), /*#__PURE__*/_react.default.createElement("span", {
     id: "span_TextAnnotation",
     style: {
@@ -937,7 +953,7 @@ const Viewer = () => {
   }, "Text\uFF1A"), /*#__PURE__*/_react.default.createElement("input", {
     type: "text",
     id: "text_TextAnnotation",
-    value: "text"
+    defaultValue: "text"
   })), /*#__PURE__*/_react.default.createElement("input", {
     type: "file",
     id: "myfile",

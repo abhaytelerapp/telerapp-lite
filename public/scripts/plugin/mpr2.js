@@ -18,7 +18,7 @@ function loadMPR2() {
     var span = document.createElement("SPAN");
     span.id = "ImgMPR2_span";
     span.style.verticalAlign = "super";
-    span.innerHTML = `<img class="img MPR2 MPR_icon" alt="New MPR" id="ImgMPR2" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/b_LocalizerLines.png" width="30" height="30">`;
+    span.innerHTML = `<img class="img MPR2 MPR_icon" alt="MPR 1" id="ImgMPR2" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" src="../image/icon/lite/b_LocalizerLines.png" width="30" height="30">`;
     addIconSpan(span); 
 
     /*var span = document.createElement("SPAN");

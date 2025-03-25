@@ -12,7 +12,7 @@ var origin_openAnnotation;
 function loadMPR() {
     var span = document.createElement("SPAN");
     span.style.verticalAlign = "super";
-    span.innerHTML = `<img class="img MPR" alt="Old MPR" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" id="ImgMPR" src="../image/icon/lite/b_AdvancedMode_off.png" width="30" height="30">`;
+    span.innerHTML = `<img class="img MPR" alt="MPR 2" onmouseover = "onElementOver(this);" onmouseleave = "onElementLeave();" id="ImgMPR" src="../image/icon/lite/b_AdvancedMode_off.png" width="30" height="30">`;
     addIconSpan(span); 
 
     var span = document.createElement("SPAN");

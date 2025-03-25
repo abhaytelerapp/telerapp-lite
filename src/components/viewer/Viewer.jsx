@@ -185,87 +185,91 @@ const Viewer = () => {
                     left: 0,
                     whiteSpace: "nowrap",
                     zIndex: 100,
-                    width: 500,
                     display: "none",
                     backgroundColor: "black",
                   }}
                 >
-                  <span
-                    id="horizontal_flip_span"
-                    style={{ verticalAlign: "super" }}
-                  >
-                    <img
-                      alt="Horizontal Flip"
-                      className="innerimg"
-                      loading="lazy"
-                      id="horizontal_flip"
-                      src={b_FlipHorizontally}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <span
-                    id="vertical_flip_span"
-                    style={{ verticalAlign: "super" }}
-                  >
-                    <img
-                      alt="Vertical Flip"
-                      className="innerimg"
-                      loading="lazy"
-                      id="vertical_flip"
-                      src={b_FlipVertically}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <span
-                    id="MouseRotate_span"
-                    style={{ verticalAlign: "super" }}
-                  >
-                    <img
-                      className="innerimg"
-                      loading="lazy"
-                      alt="rotate"
-                      id="MouseRotate"
-                      src={b_Rotate}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <br />
-                  <span id="rotate0_span" style={{ verticalAlign: "super" }}>
-                    <img
-                      className="innerimg"
-                      loading="lazy"
-                      alt="rotate 0"
-                      id="Rotate_0"
-                      src={b_Rotate_0}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <span id="rotatei90_span" style={{ verticalAlign: "super" }}>
-                    <img
-                      className="innerimg"
-                      loading="lazy"
-                      alt="rotate 90"
-                      id="Rotate_i90"
-                      src={b_Rotate_90}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <span id="rotate90_span" style={{ verticalAlign: "super" }}>
-                    <img
-                      className="innerimg filpx"
-                      loading="lazy"
-                      alt="rotate 90"
-                      id="Rotate_90"
-                      src={b_Rotate_i90}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
+                  <div style={{display: "flex", flexDirection: "column"}}>
+                    <div>
+                      <span
+                        id="horizontal_flip_span"
+                        style={{ verticalAlign: "super" }}
+                      >
+                        <img
+                          alt="Horizontal Flip"
+                          className="innerimg"
+                          loading="lazy"
+                          id="horizontal_flip"
+                          src={b_FlipHorizontally}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                      <span
+                        id="vertical_flip_span"
+                        style={{ verticalAlign: "super" }}
+                      >
+                        <img
+                          alt="Vertical Flip"
+                          className="innerimg"
+                          loading="lazy"
+                          id="vertical_flip"
+                          src={b_FlipVertically}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                      <span
+                        id="MouseRotate_span"
+                        style={{ verticalAlign: "super" }}
+                      >
+                        <img
+                          className="innerimg"
+                          loading="lazy"
+                          alt="rotate"
+                          id="MouseRotate"
+                          src={b_Rotate}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                    </div>
+                    <div>
+                      <span id="rotate0_span" style={{ verticalAlign: "super" }}>
+                        <img
+                          className="innerimg"
+                          loading="lazy"
+                          alt="rotate 0"
+                          id="Rotate_0"
+                          src={b_Rotate_0}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                      <span id="rotatei90_span" style={{ verticalAlign: "super" }}>
+                        <img
+                          className="innerimg"
+                          loading="lazy"
+                          alt="rotate 90"
+                          id="Rotate_i90"
+                          src={b_Rotate_90}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                      <span id="rotate90_span" style={{ verticalAlign: "super" }}>
+                        <img
+                          className="innerimg filpx"
+                          loading="lazy"
+                          alt="rotate 90"
+                          id="Rotate_90"
+                          src={b_Rotate_i90}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </span>
               <span
@@ -436,169 +440,174 @@ const Viewer = () => {
                     left: 0,
                     whiteSpace: "nowrap",
                     zIndex: 100,
-                    width: 500,
                     display: "none",
                     backgroundColor: "black",
                   }}
                 >
-                  <span
-                    id="removeAllRuler_span"
-                    style={{ verticalAlign: "super" }}
-                  >
-                    <img
-                      alt="remove all"
-                      altzhtw="清除所有測量"
-                      className="innerimg"
-                      loading="lazy"
-                      id="removeAllRuler"
-                      src={b_trashcan}
-                      width="30"
-                      height="30"
-                      style={{
-                        filter: "invert(80%)",
-                      }}
-                    />
-                  </span>
-                  <span
-                    id="removeRuler_span"
-                    style={{ verticalAlign: "super" }}
-                  >
-                    <img
-                      alt="remove"
-                      altzhtw="清除測量"
-                      className="innerimg"
-                      loading="lazy"
-                      id="removeRuler"
-                      src={XPng}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <span id="eraseRuler_span" style={{ verticalAlign: "super" }}>
-                    <img
-                      alt="eraser"
-                      altzhtw="橡皮擦"
-                      className="innerimg"
-                      loading="lazy"
-                      id="eraseRuler"
-                      src={b_Eraser}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <span
-                    id="MeasureRuler_span"
-                    style={{ verticalAlign: "super" }}
-                  >
-                    <img
-                      alt="measure"
-                      altzhtw="測量"
-                      className="innerimg"
-                      loading="lazy"
-                      id="MeasureRuler"
-                      src={b_DistanceMeasurement}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <span id="AngleRuler_span" style={{ verticalAlign: "super" }}>
-                    <img
-                      alt="angle"
-                      altzhtw="角度"
-                      className="innerimg"
-                      loading="lazy"
-                      id="AngleRuler"
-                      src={b_AngleMeasurement}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <br />
-                  <span
-                    id="AngleRuler_span2"
-                    style={{ verticalAlign: "super" }}
-                  >
-                    <img
-                      alt="angle"
-                      altzhtw="角度"
-                      className="innerimg"
-                      loading="lazy"
-                      id="AngleRuler2"
-                      src={b_AngleMeasurement2}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <span id="RectRuler_span" style={{ verticalAlign: "super" }}>
-                    <img
-                      alt="Rect shape"
-                      altzhtw="矩形"
-                      className="innerimg"
-                      loading="lazy"
-                      id="RectRuler"
-                      src={b_RectMeasurement}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <span
-                    id="CircleRuler_span"
-                    style={{ verticalAlign: "super" }}
-                  >
-                    <img
-                      alt="Circle shape"
-                      altzhtw="圓形"
-                      className="innerimg"
-                      loading="lazy"
-                      id="CircleRuler"
-                      src={b_CircleMeasurement}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <span
-                    id="IrregularRuler_span"
-                    style={{ verticalAlign: "super" }}
-                  >
-                    <img
-                      alt="irregular shape"
-                      altzhtw="不規則形狀"
-                      className="innerimg"
-                      loading="lazy"
-                      id="IrregularRuler"
-                      src={irregular}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <br />
-                  <span id="arrowRuler_span" style={{ verticalAlign: "super" }}>
-                    <img
-                      alt="arrow"
-                      altzhtw="箭頭"
-                      className="innerimg"
-                      loading="lazy"
-                      id="ArrowRuler"
-                      src={b_arrow}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <span
-                    id="TextAnnotation_span"
-                    style={{ verticalAlign: "super" }}
-                  >
-                    <img
-                      alt="text annotation"
-                      altzhtw="文字註解"
-                      className="innerimg"
-                      loading="lazy"
-                      id="TextAnnotation"
-                      src={TPng}
-                      width="30"
-                      height="30"
-                    />
-                  </span>
+                  <div style={{display: "flex", flexDirection: "column"}}>
+                    <div>
+                      <span
+                        id="removeAllRuler_span"
+                        style={{ verticalAlign: "super" }}
+                      >
+                        <img
+                          alt="remove all"
+                          altzhtw="清除所有測量"
+                          className="innerimg"
+                          loading="lazy"
+                          id="removeAllRuler"
+                          src={b_trashcan}
+                          width="30"
+                          height="30"
+                          style={{
+                            filter: "invert(80%)",
+                          }}
+                        />
+                      </span>
+                      <span
+                        id="removeRuler_span"
+                        style={{ verticalAlign: "super" }}
+                      >
+                        <img
+                          alt="remove"
+                          altzhtw="清除測量"
+                          className="innerimg"
+                          loading="lazy"
+                          id="removeRuler"
+                          src={XPng}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                      <span id="eraseRuler_span" style={{ verticalAlign: "super" }}>
+                        <img
+                          alt="eraser"
+                          altzhtw="橡皮擦"
+                          className="innerimg"
+                          loading="lazy"
+                          id="eraseRuler"
+                          src={b_Eraser}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                      <span
+                        id="MeasureRuler_span"
+                        style={{ verticalAlign: "super" }}
+                      >
+                        <img
+                          alt="measure"
+                          altzhtw="測量"
+                          className="innerimg"
+                          loading="lazy"
+                          id="MeasureRuler"
+                          src={b_DistanceMeasurement}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                      <span id="AngleRuler_span" style={{ verticalAlign: "super" }}>
+                        <img
+                          alt="angle"
+                          altzhtw="角度"
+                          className="innerimg"
+                          loading="lazy"
+                          id="AngleRuler"
+                          src={b_AngleMeasurement}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                    </div>
+                    <div style={{textAlign: "start"}}>
+                      <span
+                        id="AngleRuler_span2"
+                        style={{ verticalAlign: "super" }}
+                      >
+                        <img
+                          alt="angle"
+                          altzhtw="角度"
+                          className="innerimg"
+                          loading="lazy"
+                          id="AngleRuler2"
+                          src={b_AngleMeasurement2}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                      <span id="RectRuler_span" style={{ verticalAlign: "super" }}>
+                        <img
+                          alt="Rect shape"
+                          altzhtw="矩形"
+                          className="innerimg"
+                          loading="lazy"
+                          id="RectRuler"
+                          src={b_RectMeasurement}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                      <span
+                        id="CircleRuler_span"
+                        style={{ verticalAlign: "super" }}
+                      >
+                        <img
+                          alt="Circle shape"
+                          altzhtw="圓形"
+                          className="innerimg"
+                          loading="lazy"
+                          id="CircleRuler"
+                          src={b_CircleMeasurement}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                      <span
+                        id="IrregularRuler_span"
+                        style={{ verticalAlign: "super" }}
+                      >
+                        <img
+                          alt="irregular shape"
+                          altzhtw="不規則形狀"
+                          className="innerimg"
+                          loading="lazy"
+                          id="IrregularRuler"
+                          src={irregular}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                    </div>
+                    <div style={{textAlign: "start"}}>
+                      <span id="arrowRuler_span" style={{ verticalAlign: "super" }}>
+                        <img
+                          alt="arrow"
+                          altzhtw="箭頭"
+                          className="innerimg"
+                          loading="lazy"
+                          id="ArrowRuler"
+                          src={b_arrow}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                      <span
+                        id="TextAnnotation_span"
+                        style={{ verticalAlign: "super" }}
+                      >
+                        <img
+                          alt="text annotation"
+                          altzhtw="文字註解"
+                          className="innerimg"
+                          loading="lazy"
+                          id="TextAnnotation"
+                          src={TPng}
+                          width="30"
+                          height="30"
+                        />
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </span>
 
@@ -802,31 +811,31 @@ const Viewer = () => {
             Color：
           </label>
           <select id="MarkcolorSelect" defaultValue="Auto">
-            <option id="AutoColorSelect" value="Auto">
+            <option id="AutoColorSelect" defaultValue="Auto">
               Auto
             </option>
-            <option id="WhiteSelect" value="White">
+            <option id="WhiteSelect" defaultValue="White">
               White
             </option>
-            <option id="RedSelect" value="Red">
+            <option id="RedSelect" defaultValue="Red">
               Red
             </option>
-            <option id="BlueSelect" value="Blue">
+            <option id="BlueSelect" defaultValue="Blue">
               Blue
             </option>
-            <option id="GreenSelect" value="Green">
+            <option id="GreenSelect" defaultValue="Green">
               Green
             </option>
-            <option id="YellowSelect" value="Yellow">
+            <option id="YellowSelect" defaultValue="Yellow">
               Yellow
             </option>
-            <option id="BrownSelect" value="Brown">
+            <option id="BrownSelect" defaultValue="Brown">
               Brown
             </option>
-            <option id="OrangeSelect" value="Orange">
+            <option id="OrangeSelect" defaultValue="Orange">
               Orange
             </option>
-            <option id="PurpleSelect" value="Purple">
+            <option id="PurpleSelect" defaultValue="Purple">
               Purple
             </option>
           </select>
@@ -855,13 +864,13 @@ const Viewer = () => {
             Table：
           </label>
           <select id="TableSelect" defaultValue="None">
-            <option id="TableSelectNone" value="None">
+            <option id="TableSelectNone" defaultValue="None">
               None
             </option>
-            <option id="DICOMTagsSelect" value="DICOMTags">
+            <option id="DICOMTagsSelect" defaultValue="DICOMTags">
               DICOMTags
             </option>
-            <option id="AIMSelect" value="AIM">
+            <option id="AIMSelect" defaultValue="AIM">
               AIM
             </option>
           </select>
@@ -886,16 +895,16 @@ const Viewer = () => {
         <font color="white" className="drawer" id="labelZoom">
           Zoom：
         </font>
-        <input type="text" className="drawer" id="textZoom" value="200" />
+        <input type="text" className="drawer" id="textZoom" defaultValue="200" />
         <font color="white" className="drawer" id="labelPlay">
           fps：
         </font>
-        <input type="text" className="drawer" id="textPlay" value="15" />
+        <input type="text" className="drawer" id="textPlay" defaultValue="15" />
         <span id="span_TextAnnotation" style={{ display: "none" }}>
           <font color="white" id="label_TextAnnotation">
             Text：
           </font>
-          <input type="text" id="text_TextAnnotation" value="text" />
+          <input type="text" id="text_TextAnnotation" defaultValue="text" />
         </span>
 
         <input

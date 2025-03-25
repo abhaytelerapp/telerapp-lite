@@ -214,7 +214,7 @@ button:hover {
   filter: invert(80%);
 }
 
-.img:hover {
+.img:not(#openTransformationsImg, #unlink, #openMeasureImg, #Calibration, #writeSEG):hover {
   filter: invert(80%);
 }
 
@@ -244,7 +244,7 @@ button:hover {
   filter: invert(80%);
 }
 
-.innerimg:hover {
+.innerimg:not(#MeasureRuler):hover {
   filter: invert(80%);
 }
 
