@@ -949,7 +949,8 @@ const Viewer = () => {
               flexDirection: "column",
               position: "absolute",
               zIndex: 9,
-              // width: 100,
+              maxWidth: '280px',
+              width: '280px',
             }}
           ></div>
           <div id="pages">

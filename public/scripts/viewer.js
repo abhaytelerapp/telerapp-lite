@@ -56,7 +56,7 @@ function wadorsLoader(url, onlyload) {
 
     function getData() {
         var headers = {
-            'user-agent': 'Mozilla/4.0 MDN Example',
+            'user-agent': 'Mozilla/5.0 MDN Example',
             'content-type': 'multipart/related; type=application/dicom;'
         }
         var wadoToken = ConfigLog.WADO.token;

@@ -157,7 +157,7 @@ body.dark .custom-size {
 .DicomViewport {
   position: relative;
   float: left;
-  /*left: 100px;*/
+  left: 130px;
   overflow: hidden;
   border: var(--bordersize)#d4d4d4 groove;
   margin: 0px;
@@ -330,12 +330,18 @@ button:hover {
 
 .OutLeftImg {
   border: var(--bordersize) #d4d4d4 groove;
-  padding: 1px 1px 1px 1px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 2.5px 4px 12px 4px;
 }
 
 .LeftCanvas {
-  width: calc(var(--leftImagePadding) - var(--bordersize) * 5);
-  height: calc(var(--leftImagePadding) - var(--bordersize) * 5);
+  /* width: calc(var(--leftImagePadding) - var(--bordersize) * 5); */
+  width: 100%;
+  height: 118px;
+  border-radius: 4px;
+  /* height: calc(var(--leftImagePadding) - var(--bordersize) * 5); */
 }
 
 .LeftImgAndMark {
@@ -343,6 +349,15 @@ button:hover {
   height: calc(var(--leftImagePadding)/2);
   border: var(--bordersize) #D3D9FF groove;
   /*touch-action: none;*/
+  width: 127px;
+  height: 170px;
+  background-color: #333333;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+body.dark .LeftImgAndMark {
+  background-color: #d4d4d4;
 }
 
 .LeftImgDiv {
@@ -352,11 +367,19 @@ button:hover {
 }
 
 .LeftImgCountLabel {
-  position: absolute;
+  /* position: absolute; */
+  display: flex;
+  align-items: center;
   color: white;
   bottom: 1px;
   right: 1px;
-  background-color: black;
+  font-size: 11px;
+  /* background-color: black; */
+}
+
+.SeriesDescriptionLabel{
+  font-size: 12px;
+  color: #fff;
 }
 
 .LeftShadowLabel {

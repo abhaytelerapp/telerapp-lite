@@ -1021,8 +1021,9 @@ const Viewer = () => {
       display: "flex",
       flexDirection: "column",
       position: "absolute",
-      zIndex: 9
-      // width: 100,
+      zIndex: 9,
+      maxWidth: '280px',
+      width: '280px'
     }
   }), /*#__PURE__*/_react.default.createElement("div", {
     id: "pages"

@@ -123,7 +123,7 @@ class LeftLayout {
 
     setAccent(series) {
         for (var series_div of getClass("LeftImgAndMark")) {
-            series_div.style.border = "5px groove #333333";
+            series_div.style.border = "2px groove #333333";
         }
         if (!series) return;
         if (getClass("LeftImgAndMark").length <= 1) return;
@@ -200,6 +200,10 @@ class LeftLayout {
             leftCanvas.className = "LeftCanvas";
             ImgDiv.appendChild(leftCanvas);
             displayLeftCanvas(leftCanvas, image, pixelData);
+            var descriptionLabel = document.createElement("label");
+            descriptionLabel.className = "SeriesDescriptionLabel"; // CSS class for styling
+            series_div.series_descriptionLabel = descriptionLabel;
+            ImgDiv.appendChild(descriptionLabel);
             var label = document.createElement("label");
             label.className = "LeftImgCountLabel";
             series_div.series_label = label;
@@ -208,13 +212,87 @@ class LeftLayout {
         this.refreshNumberOfFramesOrSops(image);
     }
 
+    // refreshNumberOfFramesOrSops(image) {
+    //     var series_div = this.findSeries(image.SeriesInstanceUID);
+    //     if (!series_div) return;
+    //     series_div.series_label.innerText = "" + htmlEntities(ImageManager.findSeries(image.SeriesInstanceUID).Sop.length);
+    //     // if (image.NumberOfFrames > 1) series_div.series_label.innerText = htmlEntities("" + image.NumberOfFrames);
+    //     // else if (image.haveSameInstanceNumber) series_div.series_label.innerText = "";
+    //     // else series_div.series_label.innerText = "" + htmlEntities(ImageManager.findSeries(image.SeriesInstanceUID).Sop.length);
+    // }
+    // refreshNumberOfFramesOrSops(image) {
+    //     var series_div = this.findSeries(image.SeriesInstanceUID);
+    //     if (!series_div) return;
+        
+    //     // Clear previous content inside the label
+    //     series_div.series_label.innerHTML = "";
+    //     // Create an image element
+    //     var img = document.createElement("img");
+    //     img.src = "../image/icon/lite/info-series.png"; // Replace with the actual image URL or path
+    //     img.alt = "Icon";
+    //     img.style.width = "12px"; // Adjust the width as needed
+    //     img.style.height = "12px"; // Adjust the height as needed
+    //     img.style.marginRight = "5px"; // Add spacing between image and text
+        
+    //     // Append the image to the label
+    //     series_div.series_label.appendChild(img);
+        
+    //     console.log(ImageManager.findSeries(image.SeriesInstanceUID).Sop[0].Image.seriesDescription,'ImageManager.findSeries(image.SeriesInstanceUID)')
+    //     // Append the text value
+    //     var textNode = document.createTextNode(
+    //         htmlEntities(ImageManager.findSeries(image.SeriesInstanceUID).Sop.length)
+    //         // htmlEntities(ImageManager.findSeries(image.SeriesInstanceUID).Sop.length)
+    //     );
+    //     series_div.series_label.appendChild(textNode);
+    // }
+    
     refreshNumberOfFramesOrSops(image) {
         var series_div = this.findSeries(image.SeriesInstanceUID);
         if (!series_div) return;
-        if (image.NumberOfFrames > 1) series_div.series_label.innerText = htmlEntities("" + image.NumberOfFrames);
-        else if (image.haveSameInstanceNumber) series_div.series_label.innerText = "";
-        else series_div.series_label.innerText = "" + htmlEntities(ImageManager.findSeries(image.SeriesInstanceUID).Sop.length);
+    
+        // Clear previous content inside the series label
+        series_div.series_label.innerHTML = "";
+    
+        // Create an image element
+        var img = document.createElement("img");
+        img.src = "../image/icon/lite/info-series.png"; // Replace with the actual image URL or path
+        img.alt = "Icon";
+        img.style.width = "12px";
+        img.style.height = "12px";
+        img.style.marginRight = "5px";
+    
+        // Append the image to the label
+        series_div.series_label.appendChild(img);
+    
+        // Fetch the series data
+        var seriesData = ImageManager.findSeries(image.SeriesInstanceUID);
+        var sopLength = seriesData.Sop.length;
+        var seriesDescription = seriesData.Sop[0]?.Image?.seriesDescription ; // Fallback if missing
+    
+        // Append the SOP length text
+        var textNode = document.createTextNode(htmlEntities(sopLength));
+        series_div.series_label.appendChild(textNode);
+    
+        // Check if a seriesDescription label already exists
+        var existingDescriptionLabel = series_div.querySelector(".SeriesDescriptionLabel");
+    
+        if (!existingDescriptionLabel) {
+            // If it doesn't exist, create a new label
+            var descriptionLabel = document.createElement("label");
+            descriptionLabel.className = "SeriesDescriptionLabel"; // CSS class for styling
+    
+            // Append the series description text
+            var descriptionTextNode = document.createTextNode(htmlEntities(seriesDescription));
+            descriptionLabel.appendChild(descriptionTextNode);
+    
+            // Append the new label to the series div
+            series_div.appendChild(descriptionLabel);
+        } else {
+            // If it exists, just update the text
+            existingDescriptionLabel.textContent = htmlEntities(seriesDescription);
+        }
     }
+       
 
     refleshMarkWithSeries(series) {
         var series_div = this.findSeries(series);
@@ -395,7 +473,7 @@ function SetTable(row0, col0) {
     try {
         for (var r = 0; r < row; r++) {
             for (var c = 0; c < col; c++) {
-                GetViewport(r * col + c).div.style.width = `calc(${100 / col}% - ${bordersize * 2}px)`;
+                GetViewport(r * col + c).div.style.width = `calc(${100 / col}% - ${bordersize * 2}px - 121px)`;
                 GetViewport(r * col + c).div.style.height = `calc(${100 / row}% - ${bordersize * 2}px)`;
             }
         }
