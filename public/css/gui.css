@@ -181,7 +181,7 @@ body.dark .custom-size {
 #LeftPicture {
   width: calc(var(--leftImagePadding) + var(--leftScrollSize)*var(--ishaveLeftScroll));
   height: 100%;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 
 select,
@@ -316,6 +316,9 @@ button:hover {
   flex-direction: column;
   position: absolute;
   z-index: 9;
+  scrollbar-gutter: auto;
+  scrollbar-width: inherit;
+  scrollbar-color: #163239 transparent;
 }
 
 .filpx {
@@ -333,7 +336,8 @@ button:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  padding: 2.5px 4px 12px 4px;
+  padding: 2.5px 0 12px 4px;
+  overflow-y: auto;
 }
 
 .LeftCanvas {
@@ -382,8 +386,9 @@ body.dark .LeftImgAndMark {
   color: #fff;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: none;
+  display: block;
   width: 110px;
+  text-wrap: nowrap;
 }
 
 .LeftShadowLabel {

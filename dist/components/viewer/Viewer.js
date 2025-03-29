@@ -1017,13 +1017,13 @@ const Viewer = () => {
   }, /*#__PURE__*/_react.default.createElement("div", {
     id: "LeftPicture",
     style: {
-      overflowY: "auto",
+      // overflowY: "auto",
       display: "flex",
       flexDirection: "column",
       position: "absolute",
       zIndex: 9,
-      maxWidth: '295px',
-      width: '295px'
+      maxWidth: '287px',
+      width: '287px'
     }
   }), /*#__PURE__*/_react.default.createElement("div", {
     id: "pages"
