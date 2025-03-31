@@ -1007,8 +1007,6 @@ const Viewer = () => {
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "infinite-loading-bar-quantum-lite"
   })))), /*#__PURE__*/_react.default.createElement("div", {
-    id: "dicom-loader"
-  }, "Loading DICOM..."), /*#__PURE__*/_react.default.createElement("div", {
     className: "form-group",
     id: "form-group"
   }, /*#__PURE__*/_react.default.createElement("div", {

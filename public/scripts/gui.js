@@ -26,7 +26,6 @@ onloadFunction.push2Last(
 );
 
 function HideElemByID(Elem) {
-    console.log(Elem, 'Elem');
     // if (Elem.constructor.name == "Array") {
     //     for (let elem of Elem) {
     //         let el = getByid(elem);
@@ -252,26 +251,41 @@ class LeftLayout {
     
         // Clear previous content inside the series label
         series_div.series_label.innerHTML = "";
-    
+
+        // Fetch the series data
+        var seriesData = ImageManager.findSeries(image.SeriesInstanceUID);
+
+        var sopLength = seriesData.Sop.length;
+        var seriesDescription = seriesData.Sop[0]?.Image?.seriesDescription ; // Fallback if missing
+        var seriesNumber = seriesData.Sop[0]?.Image?.seriesNumber ; // Fallback if missing
+        var numOfInstance = seriesData.Sop[0]?.Image?.totalInstancesInSeries?.instanceNumberOfSeries ; // Fallback if missing
+
+         // Create a span for SOP length and image together
+        var sopSpan = document.createElement("span");
+
         // Create an image element
         var img = document.createElement("img");
-        img.src = "../image/icon/lite/info-series.png"; // Replace with the actual image URL or path
+        img.src = "../image/icon/lite/info-series.png"; // Replace with actual image URL
         img.alt = "Icon";
         img.style.width = "12px";
         img.style.height = "12px";
-        img.style.marginRight = "5px";
-    
-        // Append the image to the label
-        series_div.series_label.appendChild(img);
-    
-        // Fetch the series data
-        var seriesData = ImageManager.findSeries(image.SeriesInstanceUID);
-        var sopLength = seriesData.Sop.length;
-        var seriesDescription = seriesData.Sop[0]?.Image?.seriesDescription ; // Fallback if missing
-    
+        img.style.marginRight = "5px"; // Add spacing between icon and text
+
         // Append the SOP length text
-        var textNode = document.createTextNode(htmlEntities(sopLength));
-        series_div.series_label.appendChild(textNode);
+        var textNode = document.createTextNode(htmlEntities(`${sopLength} / ${numOfInstance && numOfInstance}`));
+
+        // Append the image and text inside the SOP span
+        sopSpan.style.display = "flex"
+        sopSpan.style.alignItems = "center"
+        sopSpan.appendChild(img);
+        sopSpan.appendChild(textNode);
+        series_div.series_label.appendChild(sopSpan);
+
+        // Create a span for series number
+        var seriesNumberSpan = document.createElement("span");
+        seriesNumberSpan.textContent = `S: ${seriesNumber}`;
+        seriesNumberSpan.style.marginRight = "8px"; // Add some spacing
+        series_div.series_label.appendChild(seriesNumberSpan);
     
         // Check if a seriesDescription label already exists
         var existingDescriptionLabel = series_div.querySelector(".SeriesDescriptionLabel");

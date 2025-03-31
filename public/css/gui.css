@@ -72,19 +72,6 @@ html {
   overflow: hidden;
 }
 
-#dicom-loader {
-  display: none;
-  position: fixed;
-  bottom: 0%;
-  left: 6%;
-  transform: translate(-50%, -50%);
-  background: #fff;
-  color: #000;
-  padding: 15px 20px;
-  border-radius: 5px;
-  z-index: 99;
-}
-
 #loader {
   position: absolute;
   top: 50%;
@@ -378,6 +365,9 @@ body.dark .LeftImgAndMark {
   bottom: 1px;
   right: 1px;
   font-size: 11px;
+  gap: 8px;
+  align-items: center;
+  margin-top: 2px;
   /* background-color: black; */
 }
 

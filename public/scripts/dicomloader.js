@@ -1,6 +1,6 @@
 
-function loadImageFromDataSet(dataSet, type, loadimage = true, url, fromLocal = false) {
-    var imageObj = getDefaultImageObj(dataSet, type, url, loadimage);
+function loadImageFromDataSet(dataSet, type, loadimage = true, url, fromLocal = false, seriesInstanceNumber) {
+    var imageObj = getDefaultImageObj(dataSet, type, url, loadimage, seriesInstanceNumber);
     if (type == 'pdf') setPDF(imageObj);
     if (type == 'ecg' && openECG) setECG(imageObj);
     var Sop = ImageManager.pushStudy(imageObj); //註冊此Image至Viewer
@@ -38,7 +38,7 @@ function setPDF(imageObj) {
     imageObj.pdf = pdf;
 }
 
-function getDefaultImageObj(dataSet, type, url, imageDataLoaded) {
+function getDefaultImageObj(dataSet, type, url, imageDataLoaded, seriesInstanceNumber) {
     var imageObj = {};
     imageObj.windowCenter = dataSet.intString('x00281050');
     imageObj.windowWidth = dataSet.intString('x00281051');
@@ -73,6 +73,8 @@ function getDefaultImageObj(dataSet, type, url, imageDataLoaded) {
     imageObj.SeriesInstanceUID = dataSet.string(Tag.SeriesInstanceUID);
     imageObj.SOPInstanceUID = dataSet.string(Tag.SOPInstanceUID);
     imageObj.PhotometricInterpretation = dataSet.string(Tag.PhotometricInterpretation);
+
+    imageObj.totalInstancesInSeries = seriesInstanceNumber;
 
     if (dataSet.elements[Tag.GridFrameOffsetVector]) {
         imageObj.GridFrameOffsetVector = dataSet.string(Tag.GridFrameOffsetVector).split("\\");

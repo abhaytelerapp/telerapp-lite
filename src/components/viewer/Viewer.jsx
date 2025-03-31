@@ -938,7 +938,7 @@ const Viewer = () => {
           </div>
         </div>
       </div>
-      <div id="dicom-loader">Loading DICOM...</div>
+
       <div className="form-group" id="form-group">
         <div id="container" className="container">
           <div

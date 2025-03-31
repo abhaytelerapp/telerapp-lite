@@ -51,7 +51,7 @@ VIEWPORT.loadViewport = function (viewport, image, viewportNum) {
 //VIEWPORT.loadViewportList = ['initTransform', 'putLabel2Element', 'delPDFView', 'settype'];
 VIEWPORT.loadViewportList = ['initTransform', 'putLabel2Element'];
 
-function wadorsLoader(url, onlyload) {
+function wadorsLoader(url, onlyload, seriesInstanceNumber) {
     var data = [];
 
     function getData() {
@@ -78,8 +78,8 @@ function wadorsLoader(url, onlyload) {
                 }
 
                 var url = await stowMultipartRelated(string);
-                if (onlyload == true) loadDICOMFromUrl(url, false);
-                else loadDICOMFromUrl(url);
+                if (onlyload == true) loadDICOMFromUrl(url, false, seriesInstanceNumber);
+                else loadDICOMFromUrl(url, undefined, seriesInstanceNumber);;
             })
             .catch(function (err) { })
     }
@@ -305,7 +305,7 @@ function loadPicture(url) {
     img.src = url;
 }
 
-function loadDicomDataSet(fileData, loadimage = true, url, fromLocal = false) {
+function loadDicomDataSet(fileData, loadimage = true, url, fromLocal = false, seriesInstanceNumber) {
     var byteArray = new Uint8Array(fileData);
     try {
         var dataSet = dicomParser.parseDicom(byteArray);
@@ -317,7 +317,7 @@ function loadDicomDataSet(fileData, loadimage = true, url, fromLocal = false) {
 
     //PDF
     if (dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.EncapsulatedPDFStorage)
-        loadImageFromDataSet(dataSet, 'pdf', loadimage, url, fromLocal);
+        loadImageFromDataSet(dataSet, 'pdf', loadimage, url, fromLocal, seriesInstanceNumber);
 
     //Mark
     else if (dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.RTStructureSetStorage)//RTSS
@@ -329,30 +329,30 @@ function loadDicomDataSet(fileData, loadimage = true, url, fromLocal = false) {
 
     //ECG
     else if (dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID._12_leadECGWaveformStorage) {
-        if (openECG) loadImageFromDataSet(dataSet, 'ecg', loadimage, url, fromLocal);
+        if (openECG) loadImageFromDataSet(dataSet, 'ecg', loadimage, url, fromLocal, seriesInstanceNumber);
         throw "not support ECG";
     }
 
     //DiCOM Image
     else if (dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.MRImageStorage)//MR
-        loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal);
+        loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal, seriesInstanceNumber);
     else if (dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.CTImageStorage)//CT
-        loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal);
+        loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal, seriesInstanceNumber);
     else if (dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.ComputedRadiographyImageStorage)//X-Ray
-        loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal);
+        loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal, seriesInstanceNumber);
 
     //DiCOM Image(Multi-Frame)
     else if (dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.Multi_frameSingleBitSecondaryCaptureImageStorage)
-        loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal);
+        loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal, seriesInstanceNumber);
     else if (dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.Multi_frameGrayscaleByteSecondaryCaptureImageStorage)
-        loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal);
+        loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal, seriesInstanceNumber);
     else if (dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.Multi_frameGrayscaleWordSecondaryCaptureImageStorage)
-        loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal);
+        loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal, seriesInstanceNumber);
     else if (dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.Multi_frameTrueColorSecondaryCaptureImageStorage)
-        loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal);
+        loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal, seriesInstanceNumber);
 
     //try parse
-    else loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal);
+    else loadImageFromDataSet(dataSet, dataSet.intString(Tag.NumberOfFrames) > 1 ? 'frame' : 'sop', loadimage, url, fromLocal, seriesInstanceNumber);
     //else if (dataSet.intString(Tag.NumberOfFrames) > 1) loadImageFromDataSet(dataSet, 'frame', loadimage, url);
     //else loadImageFromDataSet(dataSet, 'sop', loadimage, url);
 
@@ -365,12 +365,7 @@ function showLoader(show) {
     document.getElementById("loader").style.display = show ? "inline-flex" : "none";
 }
 
-function showDicomLoader(show) {
-    console.log(show, 'showDicomLoaders')
-    document.getElementById("dicom-loader").style.display = show ? "block" : "none";
-}
-
-function loadDICOMFromUrl(url, loadimage = true) {
+function loadDICOMFromUrl(url, loadimage = true, seriesInstanceNumber) {
     showLoader(false)
     var oReq = new XMLHttpRequest();
     try { oReq.open("get", url, true); }
@@ -380,12 +375,12 @@ function loadDICOMFromUrl(url, loadimage = true) {
     if (loadimage) {
         oReq.onreadystatechange = function (oEvent) {
             if (oReq.readyState == 4 && oReq.status == 200)
-                loadDicomDataSet(oReq.response, true, url, false);
+                loadDicomDataSet(oReq.response, true, url, false, seriesInstanceNumber);
         }
     } else {
         oReq.onreadystatechange = function (oEvent) {
             if (oReq.readyState == 4 && oReq.status == 200)
-                loadDicomDataSet(oReq.response, false, url, false);
+                loadDicomDataSet(oReq.response, false, url, false, seriesInstanceNumber);
         }
     }
     oReq.send();

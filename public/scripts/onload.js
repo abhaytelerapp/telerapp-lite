@@ -431,7 +431,7 @@ async function getJsonBySeriesRequest(SeriesRequest) {
 
     // Process instance responses
     responses.forEach((InstanceRequest, index) => {
-      getJsonByInstanceRequest(SeriesResponse, InstanceRequest, index);
+      getJsonByInstanceRequest(SeriesResponse, InstanceRequest, index, InstanceRequest[0]['0020000E'].Value[0]);
     });
 
   } catch (error) {
@@ -451,7 +451,17 @@ async function fetchInstanceMetadata(url) {
   return response.json();
 }
 
-async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instance) {
+async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instance, seriesInstanceUid) {
+
+  const foundItem = InstanceRequest.find(item => item["0020000E"]?.Value?.includes(seriesInstanceUid));
+  let seriesInstanceNumber;
+  if (foundItem) {
+    seriesInstanceNumber = {
+      seriesInstanceUID: seriesInstanceUid,
+      instanceNumberOfSeries: InstanceRequest.length
+    };
+  }
+
   let DicomResponse = InstanceRequest;
   if (!DicomResponse || DicomResponse.length === 0) return;
 
@@ -467,9 +477,9 @@ async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instanc
 
     if (getValue(dicomData["00200013"]) === minInstance || DicomResponse.length === 1) {
       firstUrl = url;
-      ConfigLog.WADO.WADOType === "URI" ? loadDICOMFromUrl(url) : wadorsLoader(url);
+      ConfigLog.WADO.WADOType === "URI" ? loadDICOMFromUrl(url) : wadorsLoader(url, undefined, seriesInstanceNumber);
     } else {
-      loadTasks.push(loadDeferredDicom(url));
+      loadTasks.push(loadDeferredDicom(url, seriesInstanceNumber));
     }
   }
 
@@ -486,10 +496,10 @@ function buildWADOUrl(dicomData) {
 }
 
 // Load images with a delay to avoid API congestion
-async function loadDeferredDicom(url) {
+async function loadDeferredDicom(url, seriesInstanceNumber) {
   await new Promise(resolve => setTimeout(resolve, Math.random() * 2000)); // Random delay for load balancing
   try {
-    ConfigLog.WADO.WADOType === "RS" ? wadorsLoader(url, true) : loadDICOMFromUrl(url, false);
+    ConfigLog.WADO.WADOType === "RS" ? wadorsLoader(url, true, seriesInstanceNumber) : loadDICOMFromUrl(url, false);
   } catch (error) {
     console.error("Failed to load DICOM:", error);
   }
