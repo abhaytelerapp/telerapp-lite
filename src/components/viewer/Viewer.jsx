@@ -679,14 +679,13 @@ const Viewer = () => {
                     left: 0,
                     whiteSpace: "nowrap",
                     zIndex: 100,
-                    width: 500,
                     display: "none",
                     backgroundColor: "black",
                   }}
                 >
                   <span
                     id="clearViewport_span"
-                    style={{ verticalAlign: "super" }}
+                    style={{ verticalAlign: "super", display: "inline-block" }}
                   >
                     <img
                       altzhtw="清除視窗"
@@ -705,7 +704,7 @@ const Viewer = () => {
                   <br />
                   <span
                     id="downloadImg_span"
-                    style={{ verticalAlign: "super" }}
+                    style={{ verticalAlign: "super", display: "inline-block" }}
                   >
                     <img
                       altzhtw="下載圖片"
@@ -721,7 +720,7 @@ const Viewer = () => {
                   <br />
                   <span
                     id="downloadDcm_span"
-                    style={{ verticalAlign: "super" }}
+                    style={{ verticalAlign: "super", display: "inline-block" }}
                   >
                     <img
                       altzhtw="下載DICOM"

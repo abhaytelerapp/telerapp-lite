@@ -718,14 +718,14 @@ const Viewer = () => {
       left: 0,
       whiteSpace: "nowrap",
       zIndex: 100,
-      width: 500,
       display: "none",
       backgroundColor: "black"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "clearViewport_span",
     style: {
-      verticalAlign: "super"
+      verticalAlign: "super",
+      display: "inline-block"
     }
   }, /*#__PURE__*/_react.default.createElement("img", {
     altzhtw: "\u6E05\u9664\u8996\u7A97",
@@ -742,7 +742,8 @@ const Viewer = () => {
   })), " ", /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("span", {
     id: "downloadImg_span",
     style: {
-      verticalAlign: "super"
+      verticalAlign: "super",
+      display: "inline-block"
     }
   }, /*#__PURE__*/_react.default.createElement("img", {
     altzhtw: "\u4E0B\u8F09\u5716\u7247",
@@ -756,7 +757,8 @@ const Viewer = () => {
   })), " ", /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("span", {
     id: "downloadDcm_span",
     style: {
-      verticalAlign: "super"
+      verticalAlign: "super",
+      display: "inline-block"
     }
   }, /*#__PURE__*/_react.default.createElement("img", {
     altzhtw: "\u4E0B\u8F09DICOM",

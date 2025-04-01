@@ -488,7 +488,7 @@ function SetTable(row0, col0) {
         for (var r = 0; r < row; r++) {
             for (var c = 0; c < col; c++) {
                 // GetViewport(r * col + c).div.style.width = `calc(${100 / col}% - ${bordersize * 2}px - 121px)`;
-                GetViewport(r * col + c).div.style.width = "100%";
+                GetViewport(r * col + c).div.style.width = `calc(${100 / col}%)`;
                 GetViewport(r * col + c).div.style.height = `calc(${100 / row}% - ${bordersize * 2}px)`;
             }
         }

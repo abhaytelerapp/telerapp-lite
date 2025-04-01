@@ -147,7 +147,8 @@ body.dark .custom-size {
   float: left;
   /* left: 130px; */
   overflow: hidden;
-  border: var(--bordersize)#d4d4d4 groove;
+  border: 2px #d4d4d4 groove;
+  border-radius: 4px;
   margin: 0px;
 }
 
@@ -206,6 +207,13 @@ button:hover {
 .img:not(#openTransformationsImg, #unlink, #openMeasureImg, #Calibration, #writeSEG):hover {
   filter: invert(80%);
 }
+
+#ImgVR, #writeGSPS, #writeXML, #writeRTSS{
+  background-color: #000 !important;
+  border-radius: 8px;
+}
+
+
 
 /* #WindowRevision {
   max-width: calc(min(4.0%, 38px));

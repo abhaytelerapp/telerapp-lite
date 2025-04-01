@@ -126,7 +126,7 @@ function loadVR_UI() {
         img.src = getByid("MouseOperation").src;
         img.id = "MouseOperation_VR";
         img.className = "VR_icon";
-        img.width = img.height = "50";
+        img.width = img.height = "30";
         img.style.filter = "invert(80%)"
         getByid("MouseOperation_span").appendChild(img);
     }
