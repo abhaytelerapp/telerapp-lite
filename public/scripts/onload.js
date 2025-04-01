@@ -458,7 +458,8 @@ async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instanc
   if (foundItem) {
     seriesInstanceNumber = {
       seriesInstanceUID: seriesInstanceUid,
-      instanceNumberOfSeries: InstanceRequest.length
+      instanceNumberOfSeries: InstanceRequest.length,
+      SeriesResponse: SeriesResponse.length
     };
   }
 

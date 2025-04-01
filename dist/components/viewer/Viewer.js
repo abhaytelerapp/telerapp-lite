@@ -985,12 +985,39 @@ const Viewer = () => {
       display: "none"
     }
   })), /*#__PURE__*/_react.default.createElement("div", {
+    className: "form-group",
+    id: "form-group"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    id: "container",
+    className: "container"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    id: "LeftPicture",
+    style: {
+      // overflowY: "auto",
+      display: "flex",
+      flexDirection: "column",
+      position: "relative",
+      zIndex: 9,
+      maxWidth: '280px',
+      width: '280px'
+    }
+  }), /*#__PURE__*/_react.default.createElement("div", {
+    id: "pages"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "page",
+    id: "DicomPage",
+    style: {
+      position: "relative"
+    }
+  }, /*#__PURE__*/_react.default.createElement("div", {
     id: "loader",
     style: {
-      zIndex: "999999999",
+      zIndex: "999",
       width: "100%",
-      height: "100vh",
-      backgroundColor: "#000"
+      height: "100%",
+      backgroundColor: "#000",
+      border: "2px #d4d4d4 groove",
+      borderRadius: '4px'
     }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "custom-size",
@@ -1006,29 +1033,7 @@ const Viewer = () => {
     id: "loading"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "infinite-loading-bar-quantum-lite"
-  })))), /*#__PURE__*/_react.default.createElement("div", {
-    className: "form-group",
-    id: "form-group"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    id: "container",
-    className: "container"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    id: "LeftPicture",
-    style: {
-      // overflowY: "auto",
-      display: "flex",
-      flexDirection: "column",
-      position: "absolute",
-      zIndex: 9,
-      maxWidth: '287px',
-      width: '287px'
-    }
-  }), /*#__PURE__*/_react.default.createElement("div", {
-    id: "pages"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "page",
-    id: "DicomPage"
-  }), /*#__PURE__*/_react.default.createElement("div", {
+  }))))), /*#__PURE__*/_react.default.createElement("div", {
     className: "page",
     id: "PdfPage",
     style: {

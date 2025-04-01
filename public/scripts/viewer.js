@@ -366,7 +366,16 @@ function showLoader(show) {
 }
 
 function loadDICOMFromUrl(url, loadimage = true, seriesInstanceNumber) {
-    showLoader(false)
+    // Initialize counter if not defined
+    if (typeof loadDICOMFromUrl.callCount === "undefined") {
+        loadDICOMFromUrl.callCount = 0;
+    }
+    // Increment the counter
+    loadDICOMFromUrl.callCount++;
+
+    if (seriesInstanceNumber?.SeriesResponse < loadDICOMFromUrl.callCount) {
+        showLoader(false);
+    }
     var oReq = new XMLHttpRequest();
     try { oReq.open("get", url, true); }
     catch (e) { console.log(e); }

@@ -137,6 +137,13 @@ const userToken = async (accessToken) => {
   token = await response.json();
 };
 
+const fetchPatientReportByStudy = async (studyInstanceUid) => {
+  if(studyInstanceUid){
+    const response = await fetch(`http://localhost:4000/report-by-study?studyInstanceUid=${studyInstanceUid}`);
+    return await response.json();
+  }
+};
+
 const fetchDocumentUpload = async () => {
   const response = await fetch(`http://localhost:4000/document-upload`);
   documentUploadDetails = await response.json();
@@ -239,9 +246,10 @@ async function fetchPatientData() {
   await fetchPatientReports();
   await fetchDefaultReportTemplates();
 
-  const patient = await patientReportsDetails.find(
-    (item) => item.study_UIDs === studyData[0]?.MainDicomTags?.StudyInstanceUID
-  );
+  // const patient = await patientReportsDetails.find(
+  //   (item) => item.study_UIDs === studyData[0]?.MainDicomTags?.StudyInstanceUID
+  // );
+  const patient = await fetchPatientReportByStudy(studyData[0]?.MainDicomTags?.StudyInstanceUID);
   patientReportDetail = patient;
   const priorityData =
     patientReportsDetails &&

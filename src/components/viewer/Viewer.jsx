@@ -917,28 +917,7 @@ const Viewer = () => {
           style={{ display: "none" }}
         ></input>
       </header>
-
-      <div
-        id="loader"
-        style={{
-          zIndex: "999999999",
-          width: "100%",
-          height: "100vh",
-          backgroundColor: "#000",
-        }}
-      >
-        <img
-          className="custom-size"
-          src={loaderLogo}
-          style={{ width: "192px" }}
-        />
-        <div style={{ width: "12rem" }}>
-          <div id="loading">
-            <div className="infinite-loading-bar-quantum-lite"></div>
-          </div>
-        </div>
-      </div>
-
+      
       <div className="form-group" id="form-group">
         <div id="container" className="container">
           <div
@@ -947,14 +926,37 @@ const Viewer = () => {
               // overflowY: "auto",
               display: "flex",
               flexDirection: "column",
-              position: "absolute",
+              position: "relative",
               zIndex: 9,
-              maxWidth: '287px',
-              width: '287px',
+              maxWidth: '280px',
+              width: '280px',
             }}
           ></div>
           <div id="pages">
-            <div className="page" id="DicomPage"></div>
+            <div className="page" id="DicomPage" style={{position: "relative"}}>
+              <div
+                id="loader"
+                style={{
+                  zIndex: "999",
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "#000",
+                  border: "2px #d4d4d4 groove",
+                  borderRadius: '4px',
+                }}
+              >
+                <img
+                  className="custom-size"
+                  src={loaderLogo}
+                  style={{ width: "192px" }}
+                />
+                <div style={{ width: "12rem" }}>
+                  <div id="loading">
+                    <div className="infinite-loading-bar-quantum-lite"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div
               className="page"
               id="PdfPage"

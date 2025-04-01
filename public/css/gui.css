@@ -67,8 +67,8 @@
 
 body,
 html {
-  /*margin: 0;
-    padding: 0;*/
+  margin: 0;
+  padding: 0;
   overflow: hidden;
 }
 
@@ -137,14 +137,15 @@ body.dark .custom-size {
 }
 
 #pages {
-  width: 100%;
+  /* width: 100%; */
+  flex: 1 1 0%;
   height: 100%;
 }
 
 .DicomViewport {
   position: relative;
   float: left;
-  left: 130px;
+  /* left: 130px; */
   overflow: hidden;
   border: var(--bordersize)#d4d4d4 groove;
   margin: 0px;
@@ -152,12 +153,13 @@ body.dark .custom-size {
 
 .SelectedViewport {
   background-color: rgb(10, 6, 6);
-  border: var(--bordersize) #d4d4d4 groove;
+  border: 2px #d4d4d4 groove;
+  border-radius: 4px;
 }
 
 .page {
-  width: calc(100% - var(--leftImagePadding) - var(--bordersize) * 1 - var(--leftScrollSize)*var(--ishaveLeftScroll));
-  left: calc(var(--leftImagePadding) + var(--bordersize) * 1 + var(--leftScrollSize)*var(--ishaveLeftScroll));
+  /* width: calc(100% - var(--leftImagePadding) - var(--bordersize) * 1 - var(--leftScrollSize)*var(--ishaveLeftScroll));
+  left: calc(var(--leftImagePadding) + var(--bordersize) * 1 + var(--leftScrollSize)*var(--ishaveLeftScroll)); */
   height: 100%;
   position: relative;
   overflow: hidden;
@@ -319,7 +321,6 @@ button:hover {
 }
 
 .OutLeftImg {
-  border: var(--bordersize) #d4d4d4 groove;
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
