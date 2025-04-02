@@ -30,7 +30,7 @@ function loadMPR_UI() {
         img.src = getByid("MouseOperation").src;
         img.id = "MouseOperation_MPR";
         img.className = "MPR_icon";
-        img.width = img.height = "50";
+        img.width = img.height = "30";
         img.style.filter = "invert(80%)"
         getByid("MouseOperation_span").appendChild(img);
     }
@@ -48,7 +48,7 @@ function loadMPR_UI() {
         img.src = getByid("b_Scroll").src;
         img.id = "b_Scroll_MPR";
         img.className = "MPR_icon";
-        img.width = img.height = "50";
+        img.width = img.height = "30";
         img.style.filter = "invert(80%)"
         getByid("b_Scroll_span").appendChild(img);
     }
@@ -57,7 +57,7 @@ function loadMPR_UI() {
         img.src = getByid("MouseRotate").src;
         img.id = "MouseRotate_MPR";
         img.className = "MPR_icon";
-        img.width = img.height = "50";
+        img.width = img.height = "30";
         img.style.filter = "sepia(100%)"
         getByid("MouseRotate_span").appendChild(img);
     }

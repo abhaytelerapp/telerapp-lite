@@ -53,7 +53,7 @@ function loadMPR2_UI() {
         img.src = getByid("b_Scroll").src;
         img.id = "b_Scroll_MPR";
         img.className = "img MPR_icon_hide";
-        img.width = img.height = "50";
+        img.width = img.height = "30";
         img.style.filter = "invert(80%)"
         getByid("b_Scroll_span").appendChild(img);
     }

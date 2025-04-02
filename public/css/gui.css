@@ -208,7 +208,7 @@ button:hover {
   filter: invert(80%);
 }
 
-#ImgVR, #writeGSPS, #writeXML, #writeRTSS{
+#ImgVR, #writeGSPS, #writeXML, #writeRTSS, #ImgMPR{
   background-color: #000 !important;
   border-radius: 8px;
 }
