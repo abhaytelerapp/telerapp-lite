@@ -123,6 +123,18 @@ class LeftLayout {
     setAccent(series) {
         for (var series_div of getClass("LeftImgAndMark")) {
             series_div.style.border = "2px groove #333333";
+
+            // Add click event listener if not already added
+            if (!series_div.dataset.clickAttached) {
+                // Attach double-click event to load remaining instances
+                series_div.addEventListener("click", (event) => {
+                    let clickedSeries = series_div.series; // Assuming series is stored in div
+                    if (clickedSeries) {
+                        handleSeriesDoubleClick(clickedSeries);
+                    }
+                });
+                series_div.dataset.clickAttached = "true"; // Prevent multiple event bindings
+            }
         }
         if (!series) return;
         if (getClass("LeftImgAndMark").length <= 1) return;

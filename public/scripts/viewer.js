@@ -52,6 +52,7 @@ VIEWPORT.loadViewport = function (viewport, image, viewportNum) {
 VIEWPORT.loadViewportList = ['initTransform', 'putLabel2Element'];
 
 function wadorsLoader(url, onlyload, seriesInstanceNumber) {
+    showLoaderMain(false);
     var data = [];
 
     function getData() {
@@ -365,6 +366,10 @@ function showLoader(show) {
     document.getElementById("loader").style.display = show ? "inline-flex" : "none";
 }
 
+function showLoaderMain(show) {
+    document.getElementById("loaderMain").style.display = show ? "inline-flex" : "none";
+}
+
 function loadDICOMFromUrl(url, loadimage = true, seriesInstanceNumber) {
     // Initialize counter if not defined
     if (typeof loadDICOMFromUrl.callCount === "undefined") {
@@ -373,7 +378,7 @@ function loadDICOMFromUrl(url, loadimage = true, seriesInstanceNumber) {
     // Increment the counter
     loadDICOMFromUrl.callCount++;
 
-    if (seriesInstanceNumber?.SeriesResponse < loadDICOMFromUrl.callCount) {
+    if (seriesInstanceNumber?.SeriesResponse <= loadDICOMFromUrl.callCount) {
         showLoader(false);
     }
     var oReq = new XMLHttpRequest();

@@ -987,6 +987,30 @@ const Viewer = () => {
       display: "none"
     }
   })), /*#__PURE__*/_react.default.createElement("div", {
+    id: "loaderMain",
+    style: {
+      zIndex: "9999",
+      width: "100%",
+      height: "100%",
+      backgroundColor: "#000",
+      border: "2px #d4d4d4 groove",
+      borderRadius: '4px'
+    }
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    className: "custom-size",
+    src: _telerapp_logo.default,
+    style: {
+      width: "192px"
+    }
+  }), /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      width: "12rem"
+    }
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    id: "loading"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "infinite-loading-bar-quantum-lite"
+  })))), /*#__PURE__*/_react.default.createElement("div", {
     className: "form-group",
     id: "form-group"
   }, /*#__PURE__*/_react.default.createElement("div", {

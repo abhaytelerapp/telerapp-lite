@@ -84,6 +84,18 @@ html {
   gap: 1.25rem; /* Equivalent to space-y-5 */
 }
 
+#loaderMain {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem; /* Equivalent to space-y-5 */
+}
+
 #loading {
   background-color: #091731;
   height: 8px;
@@ -204,13 +216,19 @@ button:hover {
   filter: invert(80%);
 }
 
-.img:not(#openTransformationsImg, #unlink, #openMeasureImg, #Calibration, #writeSEG):hover {
+.img:hover {
   filter: invert(80%);
 }
-
-#ImgVR, #writeGSPS, #writeXML, #writeRTSS, #ImgMPR{
+#ImgVR, #writeGSPS, #writeXML, #writeRTSS, #ImgMPR, #unlink, #openMeasureImg, #writeSEG, #openTransformationsImg, #Calibration{
   background-color: #000 !important;
+}
+
+#ImgVR:hover, #writeGSPS:hover, #writeXML:hover, #writeRTSS:hover, #ImgMPR:hover, #unlink:hover, #openMeasureImg:hover, #writeSEG:hover, #openTransformationsImg:hover, #Calibration:hover{
   border-radius: 8px;
+}
+
+#ImgMPR{
+  height: 25px;
 }
 
 
@@ -350,14 +368,16 @@ button:hover {
   border: var(--bordersize) #D3D9FF groove;
   /*touch-action: none;*/
   width: 127px;
-  height: 170px;
-  background-color: #333333;
+  height: 185px;
+  background-color: #d4d4d4;
+  color: #000;
   padding: 4px;
   border-radius: 4px;
 }
 
 body.dark .LeftImgAndMark {
-  background-color: #d4d4d4;
+  background-color: #333333;
+  color: #fff;
 }
 
 .LeftImgDiv {
@@ -370,7 +390,7 @@ body.dark .LeftImgAndMark {
   /* position: absolute; */
   display: flex;
   align-items: center;
-  color: white;
+  color: #000;
   bottom: 1px;
   right: 1px;
   font-size: 11px;
@@ -380,9 +400,21 @@ body.dark .LeftImgAndMark {
   /* background-color: black; */
 }
 
+.LeftImgCountLabel img{
+  filter: invert(100%);
+}
+
+body.dark .LeftImgCountLabel img{
+  filter: invert(100%);
+}
+
+body.dark .LeftImgCountLabel {
+  color: white;
+}
+
 .SeriesDescriptionLabel{
   font-size: 12px;
-  color: #fff;
+  color: #000;
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
@@ -390,8 +422,17 @@ body.dark .LeftImgAndMark {
   text-wrap: nowrap;
 }
 
+body.dark .SeriesDescriptionLabel{
+  color: #fff;
+}
+
 .LeftShadowLabel {
   text-shadow: 0px 0px 10px #fff, 0px 0px 10px #fff, 0px 0px 10px #fff, 0px 0px 10px #fff, 0px 0px 10px #fff, 0px 0px 10px #fff, 0px 0px 10px #fff;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 3px;
 }
 
 .innerLabel {

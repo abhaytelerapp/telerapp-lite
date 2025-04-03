@@ -451,41 +451,92 @@ async function fetchInstanceMetadata(url) {
   return response.json();
 }
 
+// async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instance, seriesInstanceUid) {
+
+//   const foundItem = InstanceRequest.find(item => item["0020000E"]?.Value?.includes(seriesInstanceUid));
+//   let seriesInstanceNumber;
+//   if (foundItem) {
+//     seriesInstanceNumber = {
+//       seriesInstanceUID: seriesInstanceUid,
+//       instanceNumberOfSeries: InstanceRequest.length,
+//       SeriesResponse: SeriesResponse.length
+//     };
+//   }
+
+//   let DicomResponse = InstanceRequest;
+//   if (!DicomResponse || DicomResponse.length === 0) return;
+
+//   let minInstance = Math.min(...DicomResponse.map(d => getValue(d["00200013"]) || Infinity));
+//   let firstUrl = null;
+
+//   // Load first image quickly, defer others
+//   let loadTasks = [];
+
+//   for (let dicomData of DicomResponse) {
+//     let url = buildWADOUrl(dicomData);
+//     url = fitUrl(url);
+
+//     if (getValue(dicomData["00200013"]) === minInstance || DicomResponse.length === 1) {
+//       firstUrl = url;
+//       ConfigLog.WADO.WADOType === "URI" ? loadDICOMFromUrl(url) : wadorsLoader(url, undefined, seriesInstanceNumber);
+//     } else {
+//       loadTasks.push(loadDeferredDicom(url, seriesInstanceNumber));
+//     }
+//   }
+
+//   // Batch deferred image loads with delays
+//   await Promise.all(loadTasks);
+// }
+
+// Function to handle double-click and load remaining instances
+
+// Store deferred load tasks globally (to be triggered on double-click)
+let deferredLoadTasks = new Map();
+
 async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instance, seriesInstanceUid) {
-
-  const foundItem = InstanceRequest.find(item => item["0020000E"]?.Value?.includes(seriesInstanceUid));
-  let seriesInstanceNumber;
-  if (foundItem) {
-    seriesInstanceNumber = {
-      seriesInstanceUID: seriesInstanceUid,
-      instanceNumberOfSeries: InstanceRequest.length,
-      SeriesResponse: SeriesResponse.length
-    };
-  }
-
-  let DicomResponse = InstanceRequest;
-  if (!DicomResponse || DicomResponse.length === 0) return;
-
-  let minInstance = Math.min(...DicomResponse.map(d => getValue(d["00200013"]) || Infinity));
-  let firstUrl = null;
-
-  // Load first image quickly, defer others
-  let loadTasks = [];
-
-  for (let dicomData of DicomResponse) {
-    let url = buildWADOUrl(dicomData);
-    url = fitUrl(url);
-
-    if (getValue(dicomData["00200013"]) === minInstance || DicomResponse.length === 1) {
-      firstUrl = url;
-      ConfigLog.WADO.WADOType === "URI" ? loadDICOMFromUrl(url) : wadorsLoader(url, undefined, seriesInstanceNumber);
-    } else {
-      loadTasks.push(loadDeferredDicom(url, seriesInstanceNumber));
+    const foundItem = InstanceRequest.find(item => item["0020000E"]?.Value?.includes(seriesInstanceUid));
+    let seriesInstanceNumber;
+    if (foundItem) {
+        seriesInstanceNumber = {
+            seriesInstanceUID: seriesInstanceUid,
+            instanceNumberOfSeries: InstanceRequest.length,
+            SeriesResponse: SeriesResponse.length
+        };
     }
-  }
 
-  // Batch deferred image loads with delays
-  await Promise.all(loadTasks);
+    let DicomResponse = InstanceRequest;
+    if (!DicomResponse || DicomResponse.length === 0) return;
+
+    let minInstance = Math.min(...DicomResponse.map(d => getValue(d["00200013"]) || Infinity));
+    let firstUrl = null;
+    let loadTasks = [];
+
+    // Iterate through instances
+    for (let dicomData of DicomResponse) {
+        let url = buildWADOUrl(dicomData);
+        url = fitUrl(url);
+
+        if (getValue(dicomData["00200013"]) === minInstance || DicomResponse.length === 1) {
+            // Load first instance immediately
+            firstUrl = url;
+            ConfigLog.WADO.WADOType === "URI" ? loadDICOMFromUrl(url) : wadorsLoader(url, undefined, seriesInstanceNumber);
+        } else {
+            // Store deferred tasks in the global map
+            if (!deferredLoadTasks.has(seriesInstanceUid)) {
+                deferredLoadTasks.set(seriesInstanceUid, []);
+            }
+            deferredLoadTasks.get(seriesInstanceUid).push(() => loadDeferredDicom(url, undefined, seriesInstanceNumber));
+        }
+    }
+}
+
+async function handleSeriesDoubleClick(seriesInstanceUID) {
+  if (deferredLoadTasks.has(seriesInstanceUID)) {
+      console.log(`Loading remaining instances for series: ${seriesInstanceUID}`);
+      let tasks = deferredLoadTasks.get(seriesInstanceUID);
+      await Promise.all(tasks.map(task => task()));
+      deferredLoadTasks.delete(seriesInstanceUID); // Remove tasks after execution
+  }
 }
 
 // Construct WADO URL dynamically
@@ -507,6 +558,7 @@ async function loadDeferredDicom(url, seriesInstanceNumber) {
 }
 
 function readJson(url) {
+  showLoaderMain(true);
   //向伺服器請求資料
   if (ConfigLog.WADO.https == "https") url = url.replace("http:", "https:");
   let SeriesRequest = new XMLHttpRequest();

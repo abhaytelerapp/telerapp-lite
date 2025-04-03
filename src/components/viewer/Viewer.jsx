@@ -916,7 +916,28 @@ const Viewer = () => {
           style={{ display: "none" }}
         ></input>
       </header>
-      
+      <div
+        id="loaderMain"
+        style={{
+          zIndex: "9999",
+          width: "100%",
+          height: "100%",
+          backgroundColor: "#000",
+          border: "2px #d4d4d4 groove",
+          borderRadius: '4px',
+        }}
+      >
+        <img
+          className="custom-size"
+          src={loaderLogo}
+          style={{ width: "192px" }}
+        />
+        <div style={{ width: "12rem" }}>
+          <div id="loading">
+            <div className="infinite-loading-bar-quantum-lite"></div>
+          </div>
+        </div>
+      </div>
       <div className="form-group" id="form-group">
         <div id="container" className="container">
           <div
