@@ -1117,7 +1117,7 @@ const handlerCriticalToggle = () => {
   const criticalBtn = document.getElementById('criticalBtn');
   const isCritical = data ? !data.critical : true;
   if (isCritical) {
-    criticalBtn.style.backgroundColor = 'red';
+    criticalBtn.style.backgroundColor = '#63b3ed';
   } else {
     criticalBtn.style.backgroundColor = '#404048';
   } 

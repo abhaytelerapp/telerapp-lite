@@ -492,6 +492,7 @@ async function fetchInstanceMetadata(url) {
 
 // Store deferred load tasks globally (to be triggered on double-click)
 let deferredLoadTasks = new Map();
+let activeSeriesUID = null; // Tracks the currently active series
 
 async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instance, seriesInstanceUid) {
     const foundItem = InstanceRequest.find(item => item["0020000E"]?.Value?.includes(seriesInstanceUid));
@@ -531,12 +532,28 @@ async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instanc
 }
 
 async function handleSeriesDoubleClick(seriesInstanceUID) {
-  if (deferredLoadTasks.has(seriesInstanceUID)) {
-      console.log(`Loading remaining instances for series: ${seriesInstanceUID}`);
-      let tasks = deferredLoadTasks.get(seriesInstanceUID);
-      await Promise.all(tasks.map(task => task()));
-      deferredLoadTasks.delete(seriesInstanceUID); // Remove tasks after execution
+  // if (deferredLoadTasks.has(seriesInstanceUID)) {
+  //     console.log(`Loading remaining instances for series: ${seriesInstanceUID}`);
+  //     let tasks = deferredLoadTasks.get(seriesInstanceUID);
+  //     await Promise.all(tasks.map(task => task()));
+  //     deferredLoadTasks.delete(seriesInstanceUID); // Remove tasks after execution
+  // }
+  if (!deferredLoadTasks.has(seriesInstanceUID)) return;
+  activeSeriesUID = seriesInstanceUID; // Update the active series
+
+  let tasks = deferredLoadTasks.get(seriesInstanceUID);
+  
+  while (tasks.length > 0) {
+    if (activeSeriesUID !== seriesInstanceUID) return; // Stop fetching if switched
+
+    let batch = tasks.splice(0, 5); // Fetch 5 instances at a time
+    await Promise.all(batch.map(task => task()));
   }
+
+  if(tasks.length == 0){
+    deferredLoadTasks.delete(seriesInstanceUID);
+  }
+
 }
 
 // Construct WADO URL dynamically

@@ -50,6 +50,7 @@ function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return 
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 const Viewer = () => {
   const [isFullscreen, setIsFullscreen] = (0, _react.useState)(false);
+  const [isLeftClose, setIsLeftClose] = (0, _react.useState)(false);
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       // Request fullscreen on the document (or any element)
@@ -63,6 +64,25 @@ const Viewer = () => {
         console.error("Error attempting to exit fullscreen mode:", err);
       });
       setIsFullscreen(false);
+    }
+  };
+  const leftPannel = () => {
+    setIsLeftClose(!isLeftClose);
+    const outLeftImg = document.querySelector(".OutLeftImg");
+    const leftPicture = document.querySelector("#LeftPicture");
+    if (outLeftImg) {
+      if (outLeftImg.style.display === "none") {
+        outLeftImg.style.display = "flex";
+      } else {
+        outLeftImg.style.display = "none";
+      }
+    }
+    if (leftPicture) {
+      if (leftPicture.style.marginLeft === "-251px") {
+        leftPicture.style.marginLeft = "0px";
+      } else {
+        leftPicture.style.marginLeft = "-251px";
+      }
     }
   };
   return /*#__PURE__*/_react.default.createElement("div", {
@@ -1027,7 +1047,15 @@ const Viewer = () => {
       maxWidth: '280px',
       width: '280px'
     }
-  }), /*#__PURE__*/_react.default.createElement("div", {
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "leftPannelCloseOpen"
+  }, /*#__PURE__*/_react.default.createElement("span", null, "Studies"), isLeftClose ? /*#__PURE__*/_react.default.createElement("i", {
+    className: "fa-solid fa-arrow-right left-icon",
+    onClick: leftPannel
+  }) : /*#__PURE__*/_react.default.createElement("i", {
+    className: "fa-solid fa-arrow-left left-icon",
+    onClick: leftPannel
+  }))), /*#__PURE__*/_react.default.createElement("div", {
     id: "pages"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "page",

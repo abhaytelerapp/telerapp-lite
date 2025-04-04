@@ -42,6 +42,7 @@ import loaderLogo from "../image/icon/lite/telerapp_logo.png";
 
 const Viewer = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isLeftClose, setIsLeftClose] = useState(false);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -58,6 +59,26 @@ const Viewer = () => {
       setIsFullscreen(false);
     }
   };
+
+  const leftPannel = () => {
+    setIsLeftClose(!isLeftClose);
+    const outLeftImg = document.querySelector(".OutLeftImg");
+    const leftPicture = document.querySelector("#LeftPicture");
+    if (outLeftImg) {
+      if (outLeftImg.style.display === "none") {
+        outLeftImg.style.display = "flex";
+      } else {
+        outLeftImg.style.display = "none";
+      }
+    }
+    if (leftPicture) {
+      if (leftPicture.style.marginLeft === "-251px") {
+        leftPicture.style.marginLeft = "0px";
+      } else {
+        leftPicture.style.marginLeft = "-251px";
+      }
+    }
+  }
 
   return (
     <div style={{ backgroundColor: "#000000" }} onWheel={() => {}}>
@@ -951,7 +972,16 @@ const Viewer = () => {
               maxWidth: '280px',
               width: '280px',
             }}
-          ></div>
+          >
+            <div className="leftPannelCloseOpen">
+              <span>Studies</span>
+              {isLeftClose ? (
+                <i className="fa-solid fa-arrow-right left-icon" onClick={leftPannel}></i>
+              ) : (
+                <i className="fa-solid fa-arrow-left left-icon" onClick={leftPannel}></i>
+              )}
+            </div>
+          </div>
           <div id="pages">
             <div className="page" id="DicomPage" style={{position: "relative"}}>
               <div

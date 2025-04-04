@@ -520,7 +520,13 @@ function GetViewportMark(num) {
 
 function renderPixelData2Cnavas(image, pixelData, canvas, info = {}) {
     var ctx = canvas.getContext("2d");
-    var imgData = ctx.createImageData(image.width, image.height);
+    // var imgData = ctx.createImageData(image.width, image.height);
+    
+    // Ensure width and height are valid integers
+    var width = Math.floor(image.width) || 1;
+    var height = Math.floor(image.height) || 1;
+
+    var imgData = ctx.createImageData(width, height);
     //預先填充不透明度為255
     new Uint32Array(imgData.data.buffer).fill(0xFF000000);
 
@@ -550,25 +556,48 @@ function renderPixelData2Cnavas(image, pixelData, canvas, info = {}) {
     const multiplication = 255 / ((high - low)) * slope;
     const addition = (- low + intercept) / (high - low) * 255;
     const data = imgData.data;
-    if (image.color == true) {
-        if (("" + image.PhotometricInterpretation).includes("YBR") || ("" + image.PhotometricInterpretation).includes("RGB")) {
-            for (var i = 0, j = 0; i < data.length; i += 4, j += 3) {
-                data[i + 0] = pixelData[j] * multiplication + addition;
-                data[i + 1] = pixelData[j + 1] * multiplication + addition;
-                data[i + 2] = pixelData[j + 2] * multiplication + addition;
+    // if (image.color == true) {
+    //     if (("" + image.PhotometricInterpretation).includes("YBR") || ("" + image.PhotometricInterpretation).includes("RGB")) {
+    //         for (var i = 0, j = 0; i < data.length; i += 4, j += 3) {
+    //             data[i + 0] = pixelData[j] * multiplication + addition;
+    //             data[i + 1] = pixelData[j + 1] * multiplication + addition;
+    //             data[i + 2] = pixelData[j + 2] * multiplication + addition;
+    //         }
+    //     } else {
+    //         for (var i = 0; i < data.length; i += 4) {
+    //             data[i + 0] = pixelData[i] * multiplication + addition;
+    //             data[i + 1] = pixelData[i + 1] * multiplication + addition;
+    //             data[i + 2] = pixelData[i + 2] * multiplication + addition;
+    //         }
+    //     }
+    // } else {
+    //     for (var i = 0, j = 0; i < data.length; i += 4, j++) {
+    //         // data[i + 0] = data[i + 1] = data[i + 2] = pixelData[j] * multiplication + addition;
+    //         data[i] = data[i + 1] = data[i + 2] = pixelData[j] * multiplication + addition;
+    //     }
+    // }
+    if (pixelData != null && pixelData !== undefined) {
+        if (image.color == true) {
+            if (("" + image.PhotometricInterpretation).includes("YBR") || ("" + image.PhotometricInterpretation).includes("RGB")) {
+                for (var i = 0, j = 0; i < data.length; i += 4, j += 3) {
+                    data[i + 0] = pixelData[j] * multiplication + addition;
+                    data[i + 1] = pixelData[j + 1] * multiplication + addition;
+                    data[i + 2] = pixelData[j + 2] * multiplication + addition;
+                }
+            } else {
+                for (var i = 0; i < data.length; i += 4) {
+                    data[i + 0] = pixelData[i] * multiplication + addition;
+                    data[i + 1] = pixelData[i + 1] * multiplication + addition;
+                    data[i + 2] = pixelData[i + 2] * multiplication + addition;
+                }
             }
         } else {
-            for (var i = 0; i < data.length; i += 4) {
-                data[i + 0] = pixelData[i] * multiplication + addition;
-                data[i + 1] = pixelData[i + 1] * multiplication + addition;
-                data[i + 2] = pixelData[i + 2] * multiplication + addition;
+            for (var i = 0, j = 0; i < data.length; i += 4, j++) {
+                data[i] = data[i + 1] = data[i + 2] = pixelData[j] * multiplication + addition;
             }
         }
-    } else {
-        for (var i = 0, j = 0; i < data.length; i += 4, j++) {
-            data[i + 0] = data[i + 1] = data[i + 2] = pixelData[j] * multiplication + addition;
-        }
     }
+    
     ctx.putImageData(imgData, 0, 0);
     var shouldReDraw = false;
     ctx.save();

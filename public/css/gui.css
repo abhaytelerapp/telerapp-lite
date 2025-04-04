@@ -405,7 +405,7 @@ body.dark .LeftImgAndMark {
 }
 
 body.dark .LeftImgCountLabel img{
-  filter: invert(100%);
+  filter: invert(0%);
 }
 
 body.dark .LeftImgCountLabel {
@@ -532,4 +532,33 @@ body.dark .SeriesDescriptionLabel{
   background-color: #00306044;
   color: #ffffff;
   height: 25px;
+}
+
+.leftPannelCloseOpen{
+  position: relative;
+  background-color: #fff;
+  color: #000;
+  padding: 6px 0 2px 0;
+  border-radius: 0 4px 4px 0;
+  text-align: center;
+  margin-right: 8px;
+  font-size: 13px;
+}
+
+body.dark .leftPannelCloseOpen{
+  background-color: #282828;
+  color: #fff;
+}
+
+.left-icon{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 4px;
+  color: #000;
+  cursor: pointer;
+}
+
+body.dark .left-icon{
+  color: #fff;
 }
