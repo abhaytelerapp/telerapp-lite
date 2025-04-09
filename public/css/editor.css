@@ -2,12 +2,14 @@
   border-bottom: 1px solid #ccc;
   padding: 5px;
   background: #f5f5f5;
+  display: none;
 }
 #editor {
   height: 92%;
   border: 1px solid #ccc;
   margin-bottom: 12px;
   font-size: 12px;
+  display: none;
 }
 
 .report-editor-container {
@@ -16,6 +18,8 @@
     border: 1px solid #ccc;
     padding: 4px;
     background: #f9f9f9;
+    width: 100%;
+    margin-left: 4px;
 }
 
 .toolbar {
@@ -45,6 +49,7 @@
   
   .editor_table {
     height: 91% !important;
+    position: relative;
   }
 /* 
   @media (min-width: ) {
@@ -216,8 +221,8 @@
       opacity: 0;
     }
   }
-  
-  .loader01 {
+
+  #loaderEditor {
     width: 48px;
     height: 48px;
     border: 5px solid #000;
@@ -226,6 +231,9 @@
     display: inline-block;
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
     }
   
     @keyframes rotation {

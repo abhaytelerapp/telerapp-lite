@@ -679,6 +679,13 @@ async function editor() {
   let saveReports = "";
   let lineHeightEditor;
 
+  const editorElement = document.querySelector("#editor");
+
+  if (editorElement) {
+      document.getElementById("loaderEditor").style.display = "none"; // Hide loader
+      editorElement.style.display = "block"; // Show editor
+  }
+
   function initializeEditor() {
     const editorElement = document.querySelector("#editor");
     const toolbarContainer = document.querySelector("#toolbar-container");

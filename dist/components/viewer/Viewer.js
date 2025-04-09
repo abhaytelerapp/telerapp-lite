@@ -1125,6 +1125,8 @@ const Viewer = () => {
       height: "90%"
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
+    id: "loaderEditor"
+  }), /*#__PURE__*/_react.default.createElement("div", {
     id: "toolbar-container"
   }), /*#__PURE__*/_react.default.createElement("div", {
     id: "editor"

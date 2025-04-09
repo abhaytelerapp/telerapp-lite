@@ -1036,6 +1036,7 @@ const Viewer = () => {
               </button>
             </div>
             <div className="editor_table" style={{ height: "90%" }}>
+              <div id="loaderEditor"></div>
               <div id="toolbar-container"></div>
               <div id="editor"></div>
             </div>
