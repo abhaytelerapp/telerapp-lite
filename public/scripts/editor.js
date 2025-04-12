@@ -680,10 +680,12 @@ async function editor() {
   let lineHeightEditor;
 
   const editorElement = document.querySelector("#editor");
+  const toolbarContainer = document.querySelector("#toolbar-container");
 
   if (editorElement) {
       document.getElementById("loaderEditor").style.display = "none"; // Hide loader
       editorElement.style.display = "block"; // Show editor
+      toolbarContainer.style.display = "block"; // Show toolbar
   }
 
   function initializeEditor() {

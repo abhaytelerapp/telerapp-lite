@@ -39,6 +39,9 @@ import download_dcm from "../image/icon/lite/download_dcm.png";
 import edit_patient from "../image/icon/lite/edit_patient.png";
 import quantum_logo from "../image/icon/lite/quantum-logo.png";
 import loaderLogo from "../image/icon/lite/telerapp_logo.png";
+import attachemnt from "../image/icon/lite/attachment.png";
+import clinical from "../image/icon/lite/clinical.png";
+import Tooltip from "./Tooltip";
 
 const Viewer = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -72,10 +75,10 @@ const Viewer = () => {
       }
     }
     if (leftPicture) {
-      if (leftPicture.style.marginLeft === "-251px") {
+      if (leftPicture.style.marginLeft === "-120px") {
         leftPicture.style.marginLeft = "0px";
       } else {
-        leftPicture.style.marginLeft = "-251px";
+        leftPicture.style.marginLeft = "-120px";
       }
     }
   }
@@ -121,7 +124,7 @@ const Viewer = () => {
                 flexWrap: "wrap"
               }}
             >
-              <span id="openFile_span" style={{ verticalAlign: "super" }}>
+              {/* <span id="openFile_span" style={{ verticalAlign: "super" }}>
                 <img
                   className="img pdf ecg"
                   type="file"
@@ -131,7 +134,7 @@ const Viewer = () => {
                   width="30"
                   height="30"
                 />
-              </span>
+              </span> */}
               <span id="MouseOperation_span" style={{ verticalAlign: "super" }}>
                 <img
                   className="img VR MPR SEG"
@@ -771,10 +774,9 @@ const Viewer = () => {
               height="30"
             />
           </span>
-          <div style={{ display: "flex", width: '40%', justifyContent: 'end' }}>
+          <div style={{ display: "flex", width: '40%', justifyContent: 'end', alignItems: "center" }}>
             <div
               style={{
-                filter: "invert(80%)",
                 display: "flex",
                 alignItems: "center",
                 marginRight: "10px",
@@ -785,14 +787,17 @@ const Viewer = () => {
               onClick={toggleFullscreen}
             >
               {isFullscreen ? (
-                <i className="fa-solid fa-compress"></i>
+                <Tooltip text="Exit Full Screen" position="bottom">
+                  <i className="fa-solid fa-compress" style={{filter: "invert(80%)",}}></i>
+                </Tooltip>
               ) : (
-                <i className="fa-solid fa-expand"></i>
+                <Tooltip text="Full Screen" position="bottom">
+                  <i className="fa-solid fa-expand" style={{filter: "invert(80%)",}}></i>
+                </Tooltip>  
               )}
             </div>
             <div
               style={{
-                filter: "invert(80%)",
                 display: "flex",
                 alignItems: "center",
                 marginRight: "10px",
@@ -802,18 +807,22 @@ const Viewer = () => {
               id="darkLightMode"
               // onClick={toggleFullscreen}
             >
-              <i className="fa-solid fa-moon"></i>
+              <Tooltip text="Light Mode" position="bottom">
+                <i className="fa-solid fa-moon" style={{filter: "invert(80%)",}}></i>
+              </Tooltip>
             </div>
-            <img
-              className=""
-              alt="Report Editor"
-              loading="lazy"
-              id="reportEditor"
-              src={edit_patient}
-              style={{ filter: "invert(80%)" }}
-              width="30"
-              height="30"
-            />
+            <Tooltip text="Report Editor" position="bottom">
+              <img
+                className=""
+                alt="Report Editor"
+                loading="lazy"
+                id="reportEditor"
+                src={edit_patient}
+                style={{ filter: "invert(80%)", cursor: "pointer", verticalAlign: "middle" }}
+                width="24"
+                height="24"
+              />
+            </Tooltip>
             <img
               className=""
               alt=""
@@ -969,8 +978,8 @@ const Viewer = () => {
               flexDirection: "column",
               position: "relative",
               zIndex: 9,
-              maxWidth: '280px',
-              width: '280px',
+              maxWidth: '147px',
+              width: '147px',
             }}
           >
             <div className="leftPannelCloseOpen">
@@ -1028,12 +1037,34 @@ const Viewer = () => {
               }}
             >
               <select id="templateSelect"></select>
-              <button id="openModal" className="btn">
-                Attachment
-              </button>
-              <button id="openClinicalModel" className="button">
-                Clinical History
-              </button>
+              <div style={{display: "flex", gap: "8px"}}>
+                <Tooltip text="Attachment" position="left">
+                  <button id="openModal" className="btn">
+                    <img
+                      className=""
+                      alt="Attachment"
+                      loading="lazy"
+                      id="quantume"
+                      src={attachemnt}
+                      width="24"
+                      height="24"
+                    />
+                  </button>
+                </Tooltip>
+                <Tooltip text="Clinical" position="left">
+                  <button id="openClinicalModel" className="button">
+                    <img
+                      className=""
+                      alt="Clinical"
+                      loading="lazy"
+                      id="quantume"
+                      src={clinical}
+                      width="24"
+                      height="24"
+                    />
+                  </button>
+                </Tooltip>
+              </div>
             </div>
             <div className="editor_table" style={{ height: "90%" }}>
               <div id="loaderEditor"></div>
@@ -1045,16 +1076,20 @@ const Viewer = () => {
               <button id="draftBtn">Draft</button>
               <button id="criticalBtn">Critical</button>
               <button id="discardBtn">Discard</button>
-              <button id="captureBtn">
-                <i className="fa-solid fa-camera" style={{ fontSize: 15 }}></i>
-              </button>
-              <button id="downloadPDF">
-                {" "}
-                <i
-                  className="fa-solid fa-file-arrow-down"
-                  style={{ fontSize: 15 }}
-                ></i>
-              </button>
+              <Tooltip text="Capture Image" position="top">
+                <button id="captureBtn">
+                  <i className="fa-solid fa-camera" style={{ fontSize: 16 }}></i>
+                </button>
+              </Tooltip>
+              <Tooltip text="Download PDF" position="top">
+                <button id="downloadPDF">
+                  {" "}
+                  <i
+                    className="fa-solid fa-file-arrow-down"
+                    style={{ fontSize: 16 }}
+                  ></i>
+                </button>
+              </Tooltip>
             </div>
           </div>
         </div>

@@ -2,10 +2,10 @@ var BorderList_Icon = ["MouseOperation", "WindowRevision", "MeasureRuler", "Mous
 
 function html_onload() {
   document.body.style.overscrollBehavior = "none";
-  getByid("openFile").onclick = function () {
-    if (this.enable == false) return;
-    getByid('myfile').click();
-  }
+  // getByid("openFile").onclick = function () {
+  //   if (this.enable == false) return;
+  //   getByid('myfile').click();
+  // }
 
   //點到其他地方時，關閉抽屜
   getByid("container").addEventListener("mousedown", hideAllDrawer, false);

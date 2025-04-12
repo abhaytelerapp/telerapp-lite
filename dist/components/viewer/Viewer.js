@@ -45,6 +45,9 @@ var _download_dcm = _interopRequireDefault(require("../image/icon/lite/download_
 var _edit_patient = _interopRequireDefault(require("../image/icon/lite/edit_patient.png"));
 var _quantumLogo = _interopRequireDefault(require("../image/icon/lite/quantum-logo.png"));
 var _telerapp_logo = _interopRequireDefault(require("../image/icon/lite/telerapp_logo.png"));
+var _attachment = _interopRequireDefault(require("../image/icon/lite/attachment.png"));
+var _clinical = _interopRequireDefault(require("../image/icon/lite/clinical.png"));
+var _Tooltip = _interopRequireDefault(require("./Tooltip"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -78,10 +81,10 @@ const Viewer = () => {
       }
     }
     if (leftPicture) {
-      if (leftPicture.style.marginLeft === "-251px") {
+      if (leftPicture.style.marginLeft === "-120px") {
         leftPicture.style.marginLeft = "0px";
       } else {
-        leftPicture.style.marginLeft = "-251px";
+        leftPicture.style.marginLeft = "-120px";
       }
     }
   };
@@ -134,19 +137,6 @@ const Viewer = () => {
       flexWrap: "wrap"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
-    id: "openFile_span",
-    style: {
-      verticalAlign: "super"
-    }
-  }, /*#__PURE__*/_react.default.createElement("img", {
-    className: "img pdf ecg",
-    type: "file",
-    alt: "Open File",
-    id: "openFile",
-    src: _openfile.default,
-    width: "30",
-    height: "30"
-  })), /*#__PURE__*/_react.default.createElement("span", {
     id: "MouseOperation_span",
     style: {
       verticalAlign: "super"
@@ -809,11 +799,11 @@ const Viewer = () => {
     style: {
       display: "flex",
       width: '40%',
-      justifyContent: 'end'
+      justifyContent: 'end',
+      alignItems: "center"
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      filter: "invert(80%)",
       display: "flex",
       alignItems: "center",
       marginRight: "10px",
@@ -822,13 +812,24 @@ const Viewer = () => {
     },
     id: "fullScreen",
     onClick: toggleFullscreen
-  }, isFullscreen ? /*#__PURE__*/_react.default.createElement("i", {
-    className: "fa-solid fa-compress"
-  }) : /*#__PURE__*/_react.default.createElement("i", {
-    className: "fa-solid fa-expand"
-  })), /*#__PURE__*/_react.default.createElement("div", {
+  }, isFullscreen ? /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
+    text: "Exit Full Screen",
+    position: "bottom"
+  }, /*#__PURE__*/_react.default.createElement("i", {
+    className: "fa-solid fa-compress",
     style: {
-      filter: "invert(80%)",
+      filter: "invert(80%)"
+    }
+  })) : /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
+    text: "Full Screen",
+    position: "bottom"
+  }, /*#__PURE__*/_react.default.createElement("i", {
+    className: "fa-solid fa-expand",
+    style: {
+      filter: "invert(80%)"
+    }
+  }))), /*#__PURE__*/_react.default.createElement("div", {
+    style: {
       display: "flex",
       alignItems: "center",
       marginRight: "10px",
@@ -837,20 +838,31 @@ const Viewer = () => {
     },
     id: "darkLightMode"
     // onClick={toggleFullscreen}
+  }, /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
+    text: "Light Mode",
+    position: "bottom"
   }, /*#__PURE__*/_react.default.createElement("i", {
-    className: "fa-solid fa-moon"
-  })), /*#__PURE__*/_react.default.createElement("img", {
+    className: "fa-solid fa-moon",
+    style: {
+      filter: "invert(80%)"
+    }
+  }))), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
+    text: "Report Editor",
+    position: "bottom"
+  }, /*#__PURE__*/_react.default.createElement("img", {
     className: "",
     alt: "Report Editor",
     loading: "lazy",
     id: "reportEditor",
     src: _edit_patient.default,
     style: {
-      filter: "invert(80%)"
+      filter: "invert(80%)",
+      cursor: "pointer",
+      verticalAlign: "middle"
     },
-    width: "30",
-    height: "30"
-  }), /*#__PURE__*/_react.default.createElement("img", {
+    width: "24",
+    height: "24"
+  })), /*#__PURE__*/_react.default.createElement("img", {
     className: "",
     alt: "",
     loading: "lazy",
@@ -1044,8 +1056,8 @@ const Viewer = () => {
       flexDirection: "column",
       position: "relative",
       zIndex: 9,
-      maxWidth: '280px',
-      width: '280px'
+      maxWidth: '147px',
+      width: '147px'
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "leftPannelCloseOpen"
@@ -1113,13 +1125,40 @@ const Viewer = () => {
     }
   }, /*#__PURE__*/_react.default.createElement("select", {
     id: "templateSelect"
-  }), /*#__PURE__*/_react.default.createElement("button", {
+  }), /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      display: "flex",
+      gap: "8px"
+    }
+  }, /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
+    text: "Attachment",
+    position: "left"
+  }, /*#__PURE__*/_react.default.createElement("button", {
     id: "openModal",
     className: "btn"
-  }, "Attachment"), /*#__PURE__*/_react.default.createElement("button", {
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    className: "",
+    alt: "Attachment",
+    loading: "lazy",
+    id: "quantume",
+    src: _attachment.default,
+    width: "24",
+    height: "24"
+  }))), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
+    text: "Clinical",
+    position: "left"
+  }, /*#__PURE__*/_react.default.createElement("button", {
     id: "openClinicalModel",
     className: "button"
-  }, "Clinical History")), /*#__PURE__*/_react.default.createElement("div", {
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    className: "",
+    alt: "Clinical",
+    loading: "lazy",
+    id: "quantume",
+    src: _clinical.default,
+    width: "24",
+    height: "24"
+  }))))), /*#__PURE__*/_react.default.createElement("div", {
     className: "editor_table",
     style: {
       height: "90%"
@@ -1147,21 +1186,27 @@ const Viewer = () => {
     id: "criticalBtn"
   }, "Critical"), /*#__PURE__*/_react.default.createElement("button", {
     id: "discardBtn"
-  }, "Discard"), /*#__PURE__*/_react.default.createElement("button", {
+  }, "Discard"), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
+    text: "Capture Image",
+    position: "top"
+  }, /*#__PURE__*/_react.default.createElement("button", {
     id: "captureBtn"
   }, /*#__PURE__*/_react.default.createElement("i", {
     className: "fa-solid fa-camera",
     style: {
-      fontSize: 15
+      fontSize: 16
     }
-  })), /*#__PURE__*/_react.default.createElement("button", {
+  }))), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
+    text: "Download PDF",
+    position: "top"
+  }, /*#__PURE__*/_react.default.createElement("button", {
     id: "downloadPDF"
   }, " ", /*#__PURE__*/_react.default.createElement("i", {
     className: "fa-solid fa-file-arrow-down",
     style: {
-      fontSize: 15
+      fontSize: 16
     }
-  }))))), /*#__PURE__*/_react.default.createElement("div", {
+  })))))), /*#__PURE__*/_react.default.createElement("div", {
     id: "attachmentModal",
     className: "modal"
   }, /*#__PURE__*/_react.default.createElement("div", {

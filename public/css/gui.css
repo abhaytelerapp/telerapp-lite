@@ -204,6 +204,11 @@ button:hover {
   filter: invert(80%);
 }
 
+#submitBtn, #draftBtn, #criticalBtn, #discardBtn, #captureBtn, #downloadPDF, #openClinicalModel, #openModal{
+  padding: 4px 10px !important;
+  cursor: pointer;
+}
+
 /* .img {
   flex: 0 0 4.0%;
   max-width: calc(min(4.0%, 50px));
@@ -561,4 +566,33 @@ body.dark .leftPannelCloseOpen{
 
 body.dark .left-icon{
   color: #fff;
+}
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-container .tooltip-text {
+  visibility: hidden;
+  width: max-content;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px 8px;
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: -83px;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }

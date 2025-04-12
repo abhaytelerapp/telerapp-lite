@@ -185,12 +185,18 @@ class LeftLayout {
             event.preventDefault();
             dragged = this;
         }
+  
+        ImgDiv.ondragend = function () {
+            let clickedSeries = QRLevel.series; // Assuming series is stored in div
+            if (clickedSeries) {
+                handleSeriesDoubleClick(clickedSeries);
+            }
+        };
 
         ImgDiv.canvas = function () {
             if (!this.getElementsByClassName("LeftCanvas")[0]) return null;
             else return this.getElementsByClassName("LeftCanvas")[0];
         }
-
         series_div.appendChild(ImgDiv);
         series_div.ImgDiv = ImgDiv;
         //series_div.appendChild(smallDiv);
