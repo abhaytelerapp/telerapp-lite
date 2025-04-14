@@ -596,3 +596,17 @@ body.dark .left-icon{
   visibility: visible;
   opacity: 1;
 }
+
+
+.rightHeader{
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  width: 30%;
+  @media (min-width:1444px) {
+    width: 40%;
+  }
+  @media (min-width:1008px) {
+    width: 20%;
+  }
+}

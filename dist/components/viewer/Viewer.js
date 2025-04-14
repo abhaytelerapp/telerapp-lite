@@ -452,7 +452,12 @@ const Viewer = () => {
     style: {
       verticalAlign: "super"
     }
-  }, /*#__PURE__*/_react.default.createElement("img", {
+  }, /*#__PURE__*/_react.default.createElement("span", {
+    style: {
+      display: "flex",
+      alignItems: "center"
+    }
+  }, /*#__PURE__*/_react.default.createElement("span", null, /*#__PURE__*/_react.default.createElement("img", {
     className: "img",
     id: "openMeasureImg",
     altzhtw: "\u6E2C\u91CF",
@@ -460,7 +465,19 @@ const Viewer = () => {
     src: _M.default,
     width: "30",
     height: "30"
-  }), /*#__PURE__*/_react.default.createElement("div", {
+  })), /*#__PURE__*/_react.default.createElement("span", {
+    id: "WindowRevisionOption_span",
+    style: {
+      verticalAlign: "super"
+    }
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    className: "cropimg VR MPR SEG",
+    alt: "Window Level",
+    id: "openMeasureImgOption",
+    src: _b_Window_Presets_right.default,
+    width: "12",
+    height: "30"
+  }))), /*#__PURE__*/_react.default.createElement("div", {
     id: "openMeasureDIv",
     className: "drawer",
     style: {
@@ -711,7 +728,12 @@ const Viewer = () => {
     style: {
       verticalAlign: "super"
     }
-  }, /*#__PURE__*/_react.default.createElement("img", {
+  }, /*#__PURE__*/_react.default.createElement("span", {
+    style: {
+      display: "flex",
+      alignItems: "center"
+    }
+  }, /*#__PURE__*/_react.default.createElement("span", null, /*#__PURE__*/_react.default.createElement("img", {
     className: "img",
     loading: "lazy",
     altzhtw: "\u5176\u4ED6",
@@ -720,7 +742,19 @@ const Viewer = () => {
     src: _b_CineTools.default,
     width: "30",
     height: "30"
-  }), /*#__PURE__*/_react.default.createElement("div", {
+  })), /*#__PURE__*/_react.default.createElement("span", {
+    id: "WindowRevisionOption_span",
+    style: {
+      verticalAlign: "super"
+    }
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    className: "cropimg VR MPR SEG",
+    alt: "Window Level",
+    id: "OtherImgParentOption",
+    src: _b_Window_Presets_right.default,
+    width: "12",
+    height: "30"
+  }))), /*#__PURE__*/_react.default.createElement("div", {
     id: "othereDIv",
     className: "drawer",
     style: {
@@ -796,12 +830,7 @@ const Viewer = () => {
     width: "30",
     height: "30"
   })), /*#__PURE__*/_react.default.createElement("div", {
-    style: {
-      display: "flex",
-      width: '40%',
-      justifyContent: 'end',
-      alignItems: "center"
-    }
+    className: "rightHeader"
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
       display: "flex",

@@ -448,15 +448,32 @@ const Viewer = () => {
                 />
               </span>
               <span id="MeasureImgParent" style={{ verticalAlign: "super" }}>
-                <img
-                  className="img"
-                  id="openMeasureImg"
-                  altzhtw="測量"
-                  alt="Measure"
-                  src={MPng}
-                  width="30"
-                  height="30"
-                />
+                <span style={{display: "flex", alignItems: "center"}}>
+                  <span>
+                    <img
+                      className="img"
+                      id="openMeasureImg"
+                      altzhtw="測量"
+                      alt="Measure"
+                      src={MPng}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <span
+                    id="WindowRevisionOption_span"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      className="cropimg VR MPR SEG"
+                      alt="Window Level"
+                      id="openMeasureImgOption"
+                      src={b_Window_Presets_right}
+                      width="12"
+                      height="30"
+                    />
+                  </span>
+                </span>
                 <div
                   id="openMeasureDIv"
                   className="drawer"
@@ -685,16 +702,33 @@ const Viewer = () => {
                 />
               </span>
               <span id="OtherImgParent" style={{ verticalAlign: "super" }}>
-                <img
-                  className="img"
-                  loading="lazy"
-                  altzhtw="其他"
-                  alt="other"
-                  id="OtherImg"
-                  src={b_CineTools}
-                  width="30"
-                  height="30"
-                />
+                <span style={{display: "flex", alignItems: "center"}}>
+                  <span>
+                    <img
+                      className="img"
+                      loading="lazy"
+                      altzhtw="其他"
+                      alt="other"
+                      id="OtherImg"
+                      src={b_CineTools}
+                      width="30"
+                      height="30"
+                    />
+                  </span>
+                  <span
+                    id="WindowRevisionOption_span"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <img
+                      className="cropimg VR MPR SEG"
+                      alt="Window Level"
+                      id="OtherImgParentOption"
+                      src={b_Window_Presets_right}
+                      width="12"
+                      height="30"
+                    />
+                  </span>
+                </span>
                 <div
                   id="othereDIv"
                   className="drawer"
@@ -774,7 +808,7 @@ const Viewer = () => {
               height="30"
             />
           </span>
-          <div style={{ display: "flex", width: '40%', justifyContent: 'end', alignItems: "center" }}>
+          <div className="rightHeader">
             <div
               style={{
                 display: "flex",

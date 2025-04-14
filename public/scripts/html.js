@@ -319,27 +319,63 @@ function html_onload() {
     }
   }
 
-  getByid("OtherImg").onclick = function () {
-    if (this.enable == false) return;
+  // getByid("OtherImg").onclick = function () {
+  //   if (this.enable == false) return;
+  //   hideAllDrawer("othereDIv");
+  //   invertDisplayById('othereDIv');
+  //   if (getByid("othereDIv").style.display == "none") getByid("OtherImgParent").style.position = "";
+  //   else {
+  //     getByid("OtherImgParent").style.position = "relative";
+  //     //onElementLeave();
+  //   }
+  // }
+
+  function handleOtherImgClick() {
+    if (getByid("OtherImg").enable === false) return;
     hideAllDrawer("othereDIv");
     invertDisplayById('othereDIv');
-    if (getByid("othereDIv").style.display == "none") getByid("OtherImgParent").style.position = "";
-    else {
+  
+    if (getByid("othereDIv").style.display === "none") {
+      getByid("OtherImgParent").style.position = "";
+    } else {
       getByid("OtherImgParent").style.position = "relative";
       //onElementLeave();
     }
   }
+  
+  // Assign to both buttons
+  getByid("OtherImg").onclick = handleOtherImgClick;
+  getByid("OtherImgParentOption").onclick = handleOtherImgClick;
+  
 
-  getByid("openMeasureImg").onclick = function () {
-    if (this.enable == false) return;
+  // getByid("openMeasureImg").onclick = function () {
+  //   if (this.enable == false) return;
+  //   hideAllDrawer("openMeasureDIv");
+  //   invertDisplayById('openMeasureDIv');
+  //   if (getByid("openMeasureDIv").style.display == "none") getByid("MeasureImgParent").style.position = "";
+  //   else {
+  //     getByid("MeasureImgParent").style.position = "relative";
+  //     onElementLeave();
+  //   }
+  // }
+
+  function handleMeasureClick() {
+    if (this.enable === false) return;
+  
     hideAllDrawer("openMeasureDIv");
     invertDisplayById('openMeasureDIv');
-    if (getByid("openMeasureDIv").style.display == "none") getByid("MeasureImgParent").style.position = "";
-    else {
+  
+    if (getByid("openMeasureDIv").style.display === "none") {
+      getByid("MeasureImgParent").style.position = "";
+    } else {
       getByid("MeasureImgParent").style.position = "relative";
       onElementLeave();
     }
   }
+  
+  // Attach the same handler to both elements
+  getByid("openMeasureImgOption").onclick = handleMeasureClick;
+  getByid("openMeasureImg").onclick = handleMeasureClick;  
 
   getByid("openTransformationsImg").onclick = function () {
     if (this.enable == false) return;
