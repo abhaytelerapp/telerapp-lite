@@ -14,12 +14,25 @@
 
 .report-editor-container {
     display: none;
-    max-width: 465px;
     border: 1px solid #ccc;
     padding: 4px;
     background: #f9f9f9;
-    width: 100%;
     margin-left: 4px;
+    position: relative;
+    resize: horizontal;
+    overflow: auto;
+}
+
+.report-editor-container::after {
+  content: "<";
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  width: 10px;
+  height: 10px;
+  cursor: ew-resize;
 }
 
 .toolbar {

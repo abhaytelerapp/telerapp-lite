@@ -739,7 +739,46 @@ function html_onload() {
       editorContainer.style.display === ""
         ? "inline-block"
         : "none";
+
+    // Set initial width to 465px when showing the editor
+    if (editorContainer.style.display === "inline-block") {
+      editorContainer.style.width = "465px";
+      initializeResize(editorContainer);
+    }
   };
+
+  // Add resize functionality
+  function initializeResize(element) {
+    let x = 0;
+    let w = 0;
+    let startX = 0;
+
+    function mouseDownHandler(e) {
+        x = e.clientX;
+        startX = element.getBoundingClientRect().left;
+        const styles = window.getComputedStyle(element);
+        w = parseInt(styles.width, 10);
+
+        document.addEventListener('mousemove', mouseMoveHandler);
+        document.addEventListener('mouseup', mouseUpHandler);
+    }
+
+    function mouseMoveHandler(e) {
+        const dx = e.clientX - x;
+        const newWidth = w - dx; // Subtract dx since we're resizing from left
+        if (newWidth >= 465 && newWidth <= 1300) { // Min 465px, max 1300px
+            element.style.width = `${newWidth}px`;
+        }
+    }
+
+    function mouseUpHandler() {
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
+    }
+
+    const resizer = element;
+    resizer.addEventListener('mousedown', mouseDownHandler);
+  } 
 
   getByid("openModal").onclick = function () {
     openModal();

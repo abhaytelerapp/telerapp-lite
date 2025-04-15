@@ -433,6 +433,10 @@ async function getJsonBySeriesRequest(SeriesRequest) {
     responses.forEach((InstanceRequest, index) => {
       getJsonByInstanceRequest(SeriesResponse, InstanceRequest, index, InstanceRequest[0]['0020000E'].Value[0]);
     });
+    // Process all series in parallel to load their first instances
+    // await Promise.all(responses.map((InstanceRequest, index) => {
+    //   return getJsonByInstanceRequest(SeriesResponse, InstanceRequest, index, InstanceRequest[0]['0020000E'].Value[0]);
+    // }));
 
   } catch (error) {
     console.error("Error fetching instance metadata:", error);
@@ -511,22 +515,67 @@ async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instanc
     let minInstance = Math.min(...DicomResponse.map(d => getValue(d["00200013"]) || Infinity));
     let firstUrl = null;
     let loadTasks = [];
+    
+     // Check if this is the first series (instance === 0)
+     const isFirstSeries = instance === 0;
 
     // Iterate through instances
-    for (let dicomData of DicomResponse) {
-        let url = buildWADOUrl(dicomData);
-        url = fitUrl(url);
+    // for (let dicomData of DicomResponse) {
+    //     let url = buildWADOUrl(dicomData);
+    //     url = fitUrl(url);
 
-        if (getValue(dicomData["00200013"]) === minInstance || DicomResponse.length === 1) {
-            // Load first instance immediately
-            firstUrl = url;
-            ConfigLog.WADO.WADOType === "URI" ? loadDICOMFromUrl(url) : wadorsLoader(url, undefined, seriesInstanceNumber);
-        } else {
-            // Store deferred tasks in the global map
-            if (!deferredLoadTasks.has(seriesInstanceUid)) {
-                deferredLoadTasks.set(seriesInstanceUid, []);
+    //     if (getValue(dicomData["00200013"]) === minInstance || DicomResponse.length === 1) {
+    //         // Load first instance immediately
+    //         firstUrl = url;
+    //         ConfigLog.WADO.WADOType === "URI" ? loadDICOMFromUrl(url) : wadorsLoader(url, undefined, seriesInstanceNumber);
+    //     } else {
+    //         // Store deferred tasks in the global map
+    //         if (!deferredLoadTasks.has(seriesInstanceUid)) {
+    //             deferredLoadTasks.set(seriesInstanceUid, []);
+    //         }
+    //         deferredLoadTasks.get(seriesInstanceUid).push(() => loadDeferredDicom(url, undefined, seriesInstanceNumber));
+    //     }
+    // }
+
+    // First, load only the first instance for all series
+    for (let dicomData of DicomResponse) {
+      let url = buildWADOUrl(dicomData);
+      url = fitUrl(url);
+
+      if (getValue(dicomData["00200013"]) === minInstance || DicomResponse.length === 1) {
+          // Load first instance immediately for all series
+          firstUrl = url;
+          ConfigLog.WADO.WADOType === "URI" ? loadDICOMFromUrl(url) : wadorsLoader(url, undefined, seriesInstanceNumber);
+          break; // Only load the first instance for now
+      }
+    }
+
+    // If this is the first series, load all remaining instances after a small delay
+    if (isFirstSeries) {
+      // Add a small delay to ensure first instances of all series are loaded first
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Now load all remaining instances for the first series
+      for (let dicomData of DicomResponse) {
+          let url = buildWADOUrl(dicomData);
+          url = fitUrl(url);
+
+          if (getValue(dicomData["00200013"]) !== minInstance && DicomResponse.length !== 1) {
+              ConfigLog.WADO.WADOType === "URI" ? loadDICOMFromUrl(url) : wadorsLoader(url, undefined, seriesInstanceNumber);
+          }
+      }
+    } else {
+        // For other series, store remaining instances for later loading
+        for (let dicomData of DicomResponse) {
+            let url = buildWADOUrl(dicomData);
+            url = fitUrl(url);
+
+            if (getValue(dicomData["00200013"]) !== minInstance && DicomResponse.length !== 1) {
+                if (!deferredLoadTasks.has(seriesInstanceUid)) {
+                    deferredLoadTasks.set(seriesInstanceUid, []);
+                }
+                deferredLoadTasks.get(seriesInstanceUid).push(() => loadDeferredDicom(url, undefined, seriesInstanceNumber));
             }
-            deferredLoadTasks.get(seriesInstanceUid).push(() => loadDeferredDicom(url, undefined, seriesInstanceNumber));
         }
     }
 }
@@ -538,6 +587,7 @@ async function handleSeriesDoubleClick(seriesInstanceUID) {
   //     await Promise.all(tasks.map(task => task()));
   //     deferredLoadTasks.delete(seriesInstanceUID); // Remove tasks after execution
   // }
+  
   if (!deferredLoadTasks.has(seriesInstanceUID)) return;
   activeSeriesUID = seriesInstanceUID; // Update the active series
 
