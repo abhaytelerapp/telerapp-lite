@@ -38,7 +38,7 @@
 .toolbar {
     display: flex;
     gap: 10px;
-    margin-bottom: 10px;
+    margin:8px 0 8px 8px;
 }
 
 .editor {
@@ -271,4 +271,14 @@
     top: 20px;
     right: 20px;
     z-index: 9999;
+}
+
+.btn-report{
+  background-color: #fff;
+  border-color: #fff;
+}
+
+.btn-report:hover{
+  background-color: #dedede;
+  border-color: #dedede;
 }

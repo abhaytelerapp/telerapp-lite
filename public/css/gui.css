@@ -200,13 +200,21 @@ input {
   border: 2px solid #555;
 }
 
-button:hover {
+#openClinicalModel:hover, #openModal:hover {
+  background-color: #dedede !important;
+}
+
+button:not(.btn-report):hover {
   filter: invert(80%);
 }
 
-#submitBtn, #draftBtn, #criticalBtn, #discardBtn, #captureBtn, #downloadPDF, #openClinicalModel, #openModal{
+#submitBtn, #draftBtn, #criticalBtn, #discardBtn, #captureBtn, #downloadPDF{
   padding: 4px 10px !important;
   cursor: pointer;
+  min-width: 32px;
+  height: 32px;
+  line-height: 1.2;
+  font-weight: 600;
 }
 
 /* .img {

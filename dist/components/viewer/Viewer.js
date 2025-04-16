@@ -1164,29 +1164,29 @@ const Viewer = () => {
     position: "left"
   }, /*#__PURE__*/_react.default.createElement("button", {
     id: "openModal",
-    className: "btn"
+    className: "btn-report"
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "",
     alt: "Attachment",
     loading: "lazy",
     id: "quantume",
     src: _attachment.default,
-    width: "24",
-    height: "24"
+    width: "20",
+    height: "20"
   }))), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
     text: "Clinical",
     position: "left"
   }, /*#__PURE__*/_react.default.createElement("button", {
     id: "openClinicalModel",
-    className: "button"
+    className: "btn-report"
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "",
     alt: "Clinical",
     loading: "lazy",
     id: "quantume",
     src: _clinical.default,
-    width: "24",
-    height: "24"
+    width: "20",
+    height: "20"
   }))))), /*#__PURE__*/_react.default.createElement("div", {
     className: "editor_table",
     style: {

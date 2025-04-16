@@ -1073,28 +1073,28 @@ const Viewer = () => {
               <select id="templateSelect"></select>
               <div style={{display: "flex", gap: "8px"}}>
                 <Tooltip text="Attachment" position="left">
-                  <button id="openModal" className="btn">
+                  <button id="openModal" className="btn-report">
                     <img
                       className=""
                       alt="Attachment"
                       loading="lazy"
                       id="quantume"
                       src={attachemnt}
-                      width="24"
-                      height="24"
+                      width="20"
+                      height="20"
                     />
                   </button>
                 </Tooltip>
                 <Tooltip text="Clinical" position="left">
-                  <button id="openClinicalModel" className="button">
+                  <button id="openClinicalModel" className="btn-report">
                     <img
                       className=""
                       alt="Clinical"
                       loading="lazy"
                       id="quantume"
                       src={clinical}
-                      width="24"
-                      height="24"
+                      width="20"
+                      height="20"
                     />
                   </button>
                 </Tooltip>
