@@ -370,7 +370,7 @@ function showLoaderMain(show) {
     document.getElementById("loaderMain").style.display = show ? "inline-flex" : "none";
 }
 
-function loadDICOMFromUrl(url, loadimage = true, seriesInstanceNumber) {
+async function loadDICOMFromUrl(url, loadimage = true, seriesInstanceNumber) {
     // Initialize counter if not defined
     if (typeof loadDICOMFromUrl.callCount === "undefined") {
         loadDICOMFromUrl.callCount = 0;
@@ -378,9 +378,6 @@ function loadDICOMFromUrl(url, loadimage = true, seriesInstanceNumber) {
     // Increment the counter
     loadDICOMFromUrl.callCount++;
 
-    if (seriesInstanceNumber?.SeriesResponse <= loadDICOMFromUrl.callCount) {
-        showLoader(false);
-    }
     var oReq = new XMLHttpRequest();
     try { oReq.open("get", url, true); }
     catch (e) { console.log(e); }
@@ -398,6 +395,10 @@ function loadDICOMFromUrl(url, loadimage = true, seriesInstanceNumber) {
         }
     }
     oReq.send();
+    if (seriesInstanceNumber?.SeriesResponse <= loadDICOMFromUrl.callCount) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        showLoader(false);
+    }
 }
 
 function initNewCanvas() {
