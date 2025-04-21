@@ -135,8 +135,11 @@ class ScrollBar {
         this.outerDIV.style.height = "100%";//this.viewport.clientHeight + "px";
         if (this.total <= 1) this.innerDIV.style.height = "0%";//this.viewport.clientHeight + "px";
         else {
-            this.innerDIV.style.height = this.total >= 100 ? "1%" : parseFloat(100 / this.total) + "%";
-            this.innerDIV.style.top = ((((this.index) / this.total) * 100)) + "%";
+            // this.innerDIV.style.height = this.total >= 100 ? "1%" : parseFloat(100 / this.total) + "%";
+            // this.innerDIV.style.top = ((((this.index) / this.total) * 100)) + "%";
+            const heightPercent = Math.max(1, 100 / this.total);
+            this.innerDIV.style.height = heightPercent + "%";
+            this.innerDIV.style.top = (this.index / this.total) * 100 + "%";
         }
 
         //避免擋到Label

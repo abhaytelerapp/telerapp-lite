@@ -282,7 +282,7 @@ class BlueLightViewPort {
 
     specifiedFrame(index) {
         if (this.enable == false) return;
-        if (this.QRLevel == "series" && this.tags && this.tags.length) {
+        if ((this.QRLevel == "series" || this.QRLevel == "sop") && this.tags && this.tags.length) {
             var Sop = SortArrayByElem(ImageManager.findSeries(this.QRLevels.series).Sop, "InstanceNumber")[index];
             //var Sop = ImageManager.getTargetSopByQRLevelsAndInstanceNumber(this.QRLevels, index);
             if (Sop != undefined) this.loadImgBySop(Sop);
