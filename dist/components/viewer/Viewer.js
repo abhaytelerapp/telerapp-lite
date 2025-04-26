@@ -56,8 +56,8 @@ const Viewer = props => {
   const [isLeftClose, setIsLeftClose] = (0, _react.useState)(false);
   const [data, setData] = (0, _react.useState)();
   (0, _react.useEffect)(() => {
-    if (props?.message) {
-      setData(props?.message);
+    if (props) {
+      setData(props);
     }
   }, [props]);
   console.log(data, 'data props');

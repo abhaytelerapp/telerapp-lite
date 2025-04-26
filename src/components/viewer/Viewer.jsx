@@ -49,8 +49,8 @@ const Viewer = (props) => {
   const [data, setData] = useState()
 
   useEffect(()=>{
-    if(props?.message){
-      setData(props?.message)
+    if(props){
+      setData(props)
     }
   },[props])
 
