@@ -43,7 +43,7 @@ import attachemnt from "../image/icon/lite/attachment.png";
 import clinical from "../image/icon/lite/clinical.png";
 import Tooltip from "./Tooltip";
 
-const Viewer = () => {
+const Viewer = (props) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLeftClose, setIsLeftClose] = useState(false);
 
@@ -82,7 +82,7 @@ const Viewer = () => {
       }
     }
   }
-
+console.log(props,'props')
   return (
     <div style={{ backgroundColor: "#000000" }} onWheel={() => {}}>
       <header
