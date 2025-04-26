@@ -8,6 +8,7 @@ var _react = _interopRequireDefault(require("react"));
 var _Viewer = _interopRequireDefault(require("./components/viewer/Viewer"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function App(props) {
+  console.log(props, props?.message, 'props?.message');
   return /*#__PURE__*/_react.default.createElement(_Viewer.default, {
     props: props
   });

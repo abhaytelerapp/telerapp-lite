@@ -55,7 +55,10 @@ const Viewer = props => {
   const [isFullscreen, setIsFullscreen] = (0, _react.useState)(false);
   const [isLeftClose, setIsLeftClose] = (0, _react.useState)(false);
   const [data, setData] = (0, _react.useState)();
+  const callCount = (0, _react.useRef)(0);
   (0, _react.useEffect)(() => {
+    callCount.current += 1;
+    console.log('Function called', callCount.current, 'times');
     if (props) {
       setData(props);
     }

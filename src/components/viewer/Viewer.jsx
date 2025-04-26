@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import b_Annotation from "../image/icon/lite/b_Annotation.png";
 import openfile from "../image/icon/lite/openfile.png";
 import left from "../image/icon/lite/left.png";
@@ -47,8 +47,10 @@ const Viewer = (props) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLeftClose, setIsLeftClose] = useState(false);
   const [data, setData] = useState()
-
+  const callCount = useRef(0);
   useEffect(()=>{
+    callCount.current += 1;
+    console.log('Function called', callCount.current, 'times');
     if(props){
       setData(props)
     }
