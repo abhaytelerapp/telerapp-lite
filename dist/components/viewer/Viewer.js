@@ -54,6 +54,13 @@ function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; 
 const Viewer = props => {
   const [isFullscreen, setIsFullscreen] = (0, _react.useState)(false);
   const [isLeftClose, setIsLeftClose] = (0, _react.useState)(false);
+  const [data, setData] = (0, _react.useState)();
+  (0, _react.useEffect)(() => {
+    if (props?.message) {
+      setData(props?.message);
+    }
+  }, [props]);
+  console.log(data, 'data props');
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       // Request fullscreen on the document (or any element)

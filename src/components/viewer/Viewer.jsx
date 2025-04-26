@@ -46,6 +46,15 @@ import Tooltip from "./Tooltip";
 const Viewer = (props) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLeftClose, setIsLeftClose] = useState(false);
+  const [data, setData] = useState()
+
+  useEffect(()=>{
+    if(props?.message){
+      setData(props?.message)
+    }
+  },[props])
+
+  console.log(data,'data props')
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
