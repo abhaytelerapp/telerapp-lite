@@ -1,8 +1,12 @@
 import React from "react";
 import Viewer from "./components/viewer/Viewer";
 
-function App(props) {
-  console.log(props, props?.message, 'props?.message' )
+function App() {
+// function App(props) {
+
+  const props = {
+    data :"http://localhost:4000"
+  }
   return <Viewer props={props}/>;
 }
 

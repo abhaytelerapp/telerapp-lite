@@ -52,7 +52,7 @@ const Viewer = (props) => {
     callCount.current += 1;
     console.log('Function called', callCount.current, 'times');
     if(props){
-      setData(props)
+      setData(props?.props?.data)
     }
   },[props])
 
@@ -93,7 +93,7 @@ const Viewer = (props) => {
       }
     }
   }
-console.log(props,'props')
+
   return (
     <div style={{ backgroundColor: "#000000" }} onWheel={() => {}}>
       <header
