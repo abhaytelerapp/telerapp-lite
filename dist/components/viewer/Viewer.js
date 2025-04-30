@@ -48,22 +48,25 @@ var _telerapp_logo = _interopRequireDefault(require("../image/icon/lite/telerapp
 var _attachment = _interopRequireDefault(require("../image/icon/lite/attachment.png"));
 var _clinical = _interopRequireDefault(require("../image/icon/lite/clinical.png"));
 var _Tooltip = _interopRequireDefault(require("./Tooltip"));
+var _index = _interopRequireDefault(require("./ReportEditor/index"));
+var _reactRouterDom = require("react-router-dom");
+var _reactResizable = require("react-resizable");
+require("react-resizable/css/styles.css");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 const Viewer = props => {
   const [isFullscreen, setIsFullscreen] = (0, _react.useState)(false);
   const [isLeftClose, setIsLeftClose] = (0, _react.useState)(false);
+  const [editorWidth, setEditorWidth] = (0, _react.useState)(450);
   const [data, setData] = (0, _react.useState)();
-  const callCount = (0, _react.useRef)(0);
   (0, _react.useEffect)(() => {
-    callCount.current += 1;
-    console.log('Function called', callCount.current, 'times');
     if (props) {
-      setData(props);
+      setData(props?.props);
     }
   }, [props]);
-  console.log(data, 'data props');
+  const [isModelOpen, setIsModelOpen] = (0, _react.useState)(false);
+  const [toggleDisplayReportEditor, setToggleDisplayReportEditor] = (0, _react.useState)(false);
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       // Request fullscreen on the document (or any element)
@@ -98,7 +101,12 @@ const Viewer = props => {
       }
     }
   };
-  console.log(props, 'props');
+  const toggleDisplayReportEditorView = () => {
+    setToggleDisplayReportEditor(show => !show);
+    setIsModelOpen(false);
+    const pages = document.getElementById("pages");
+    pages.style.width = toggleDisplayReportEditor ? "75%" : "100%";
+  };
   return /*#__PURE__*/_react.default.createElement("div", {
     style: {
       backgroundColor: "#000000"
@@ -901,7 +909,8 @@ const Viewer = props => {
       verticalAlign: "middle"
     },
     width: "24",
-    height: "24"
+    height: "24",
+    onClick: toggleDisplayReportEditorView
   })), /*#__PURE__*/_react.default.createElement("img", {
     className: "",
     alt: "",
@@ -1087,7 +1096,7 @@ const Viewer = props => {
     id: "form-group"
   }, /*#__PURE__*/_react.default.createElement("div", {
     id: "container",
-    className: "container"
+    className: "container01"
   }, /*#__PURE__*/_react.default.createElement("div", {
     id: "LeftPicture",
     style: {
@@ -1151,186 +1160,35 @@ const Viewer = props => {
     style: {
       display: "none"
     }
-  })), /*#__PURE__*/_react.default.createElement("div", {
-    className: "report-editor-container",
-    style: {
-      position: "relative"
-    }
+  })), toggleDisplayReportEditor && /*#__PURE__*/_react.default.createElement(_reactResizable.Resizable, {
+    width: editorWidth,
+    height: 0,
+    minConstraints: [window.innerWidth * 0.25] // Minimum width
+    ,
+    maxConstraints: [window.innerWidth * 0.75] // Maximum width
+    ,
+    onResize: (e, _ref) => {
+      let {
+        size
+      } = _ref;
+      return setEditorWidth(size.width);
+    },
+    axis: "x",
+    resizeHandles: ['w'] // Resize from the left side only
   }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "toolbar",
     style: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center"
-    }
-  }, /*#__PURE__*/_react.default.createElement("select", {
-    id: "templateSelect"
-  }), /*#__PURE__*/_react.default.createElement("div", {
-    style: {
-      display: "flex",
-      gap: "8px"
-    }
-  }, /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
-    text: "Attachment",
-    position: "left"
-  }, /*#__PURE__*/_react.default.createElement("button", {
-    id: "openModal",
-    className: "btn-report"
-  }, /*#__PURE__*/_react.default.createElement("img", {
-    className: "",
-    alt: "Attachment",
-    loading: "lazy",
-    id: "quantume",
-    src: _attachment.default,
-    width: "20",
-    height: "20"
-  }))), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
-    text: "Clinical",
-    position: "left"
-  }, /*#__PURE__*/_react.default.createElement("button", {
-    id: "openClinicalModel",
-    className: "btn-report"
-  }, /*#__PURE__*/_react.default.createElement("img", {
-    className: "",
-    alt: "Clinical",
-    loading: "lazy",
-    id: "quantume",
-    src: _clinical.default,
-    width: "20",
-    height: "20"
-  }))))), /*#__PURE__*/_react.default.createElement("div", {
-    className: "editor_table",
-    style: {
-      height: "90%"
-    }
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    id: "loaderEditor"
-  }), /*#__PURE__*/_react.default.createElement("div", {
-    id: "toolbar-container"
-  }), /*#__PURE__*/_react.default.createElement("div", {
-    id: "editor"
-  })), /*#__PURE__*/_react.default.createElement("div", {
-    className: "controls",
-    style: {
-      display: "flex",
-      gap: "12px",
-      position: "absolute",
-      left: "5px",
-      bottom: "5px"
-    }
-  }, /*#__PURE__*/_react.default.createElement("button", {
-    id: "submitBtn"
-  }, "Submit"), /*#__PURE__*/_react.default.createElement("button", {
-    id: "draftBtn"
-  }, "Draft"), /*#__PURE__*/_react.default.createElement("button", {
-    id: "criticalBtn"
-  }, "Critical"), /*#__PURE__*/_react.default.createElement("button", {
-    id: "discardBtn"
-  }, "Discard"), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
-    text: "Capture Image",
-    position: "top"
-  }, /*#__PURE__*/_react.default.createElement("button", {
-    id: "captureBtn"
-  }, /*#__PURE__*/_react.default.createElement("i", {
-    className: "fa-solid fa-camera",
-    style: {
-      fontSize: 16
-    }
-  }))), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
-    text: "Download PDF",
-    position: "top"
-  }, /*#__PURE__*/_react.default.createElement("button", {
-    id: "downloadPDF"
-  }, " ", /*#__PURE__*/_react.default.createElement("i", {
-    className: "fa-solid fa-file-arrow-down",
-    style: {
-      fontSize: 16
-    }
+      width: editorWidth
+    },
+    className: "z-10 h-full w-1/3 flex-initial bg-gray-100 ml-[5px]"
+    // dangerouslySetInnerHTML={{ __html: reportEditorTemplate }}
+  }, /*#__PURE__*/_react.default.createElement(_reactRouterDom.BrowserRouter, null, /*#__PURE__*/_react.default.createElement(_index.default, {
+    apiData: data?.data,
+    keycloak_url: data?.keycloak_url,
+    user: data?.user,
+    isModelOpen: isModelOpen,
+    setToggleDisplayReportEditor: setToggleDisplayReportEditor,
+    toggleDisplayReportEditor: toggleDisplayReportEditor
   })))))), /*#__PURE__*/_react.default.createElement("div", {
-    id: "attachmentModal",
-    className: "modal"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "modal-content"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "modal-header"
-  }, /*#__PURE__*/_react.default.createElement("span", null, "Attachment"), /*#__PURE__*/_react.default.createElement("button", {
-    id: "closeModal"
-  }, "X")), /*#__PURE__*/_react.default.createElement("div", {
-    className: "modal-body"
-  }, /*#__PURE__*/_react.default.createElement("p", {
-    id: "patientName"
-  }, "Patient: "), /*#__PURE__*/_react.default.createElement("div", {
-    style: {
-      display: "flex",
-      alignItems: "center",
-      gap: 12
-    }
-  }, /*#__PURE__*/_react.default.createElement("input", {
-    type: "file",
-    id: "fileInput",
-    accept: ".pdf, .png, .jpg, .doc, .docx, .mp4",
-    style: {
-      width: "100%"
-    }
-  }), /*#__PURE__*/_react.default.createElement("button", {
-    id: "uploadDocument"
-  }, "Upload")), /*#__PURE__*/_react.default.createElement("table", {
-    id: "documentTable"
-  }, /*#__PURE__*/_react.default.createElement("thead", null, /*#__PURE__*/_react.default.createElement("tr", null, /*#__PURE__*/_react.default.createElement("th", null, "Document Name"), /*#__PURE__*/_react.default.createElement("th", null, "Preview"), /*#__PURE__*/_react.default.createElement("th", null, "Remove"))), /*#__PURE__*/_react.default.createElement("tbody", {
-    id: "documentList"
-  }))))), /*#__PURE__*/_react.default.createElement("div", {
-    id: "clinicalHistoryModal",
-    className: "modal"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "modal-content"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "modal-header"
-  }, /*#__PURE__*/_react.default.createElement("span", null, "Clinical History")), /*#__PURE__*/_react.default.createElement("div", {
-    className: "modal-body"
-  }, /*#__PURE__*/_react.default.createElement("p", {
-    id: "patientNameDisplay"
-  }), /*#__PURE__*/_react.default.createElement("textarea", {
-    id: "clinicalHistory",
-    className: "textarea",
-    rows: "4",
-    placeholder: "Enter Clinical History"
-  }), /*#__PURE__*/_react.default.createElement("div", {
-    className: "modal-buttons"
-  }, /*#__PURE__*/_react.default.createElement("button", {
-    id: "handleClinicalHistoryChange",
-    style: {
-      fontSize: "0.75rem",
-      paddingTop: "0.5rem",
-      paddingBottom: "0.5rem",
-      paddingRight: "0.75rem",
-      paddingLeft: "0.75rem"
-    }
-  }, "Save"), /*#__PURE__*/_react.default.createElement("button", {
-    id: "closeClinicalModal"
-  }, "Cancel")))))), /*#__PURE__*/_react.default.createElement("div", {
-    id: "popupOverlay"
-  }), /*#__PURE__*/_react.default.createElement("div", {
-    id: "previewPopup"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "modal-content",
-    style: {
-      width: "100%"
-    }
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "modal-header"
-  }, /*#__PURE__*/_react.default.createElement("span", null, "Attachment Preview"), /*#__PURE__*/_react.default.createElement("button", {
-    id: "closePreview"
-  }, "X")), /*#__PURE__*/_react.default.createElement("div", {
-    className: "modal-body"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    style: {
-      width: "100%",
-      height: "72vh"
-    }
-  }, /*#__PURE__*/_react.default.createElement("iframe", {
-    id: "previewIframe",
-    title: "Attachment Preview"
-  }))))), /*#__PURE__*/_react.default.createElement("div", {
     id: "magnifierDiv",
     style: {
       zIndex: 40,

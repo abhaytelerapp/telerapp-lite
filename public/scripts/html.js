@@ -727,25 +727,6 @@ function html_onload() {
     displayAllMark()
   }
 
-  getByid("reportEditor").onclick = function () {
-    toggleDisplayReportEditorView()
-
-    // Select the page element
-    const editorContainer = document.querySelector(".report-editor-container");
-
-    // Toggle display property
-    editorContainer.style.display =
-      editorContainer.style.display === "none" ||
-      editorContainer.style.display === ""
-        ? "inline-block"
-        : "none";
-
-    // Set initial width to 465px when showing the editor
-    if (editorContainer.style.display === "inline-block") {
-      editorContainer.style.width = "465px";
-      initializeResize(editorContainer);
-    }
-  };
 
   // Add resize functionality
   function initializeResize(element) {
@@ -780,67 +761,6 @@ function html_onload() {
     resizer.addEventListener('mousedown', mouseDownHandler);
   } 
 
-  getByid("openModal").onclick = function () {
-    openModal();
-  };
-
-  getByid("closeModal").onclick = function () {
-    closeModal();
-  };
- 
-  getByid("closePreview").onclick = function () {
-    closePreview();
-  };
-
-  getByid("openClinicalModel").onclick = function () {
-    openClinicalModel();
-  };
-
-  getByid("closeClinicalModal").onclick = function () {
-    closeClinicalModal();
-  };
-  
-  getByid("uploadDocument").onclick = function () {
-    uploadDocument();
-  };
-
-  getByid("handleClinicalHistoryChange").onclick = function () {
-    handleClinicalHistoryChange();
-  };
-
-  getByid("downloadPDF").onclick = function () {
-    downloadPDF();
-  };
-
-  getByid("discardBtn").onclick = function () {
-    toggleDisplayReportEditorView()
-
-    // Select the page element
-    const editorContainer = document.querySelector(".report-editor-container");
-
-    // Toggle display property
-    editorContainer.style.display =
-      editorContainer.style.display === "none" ||
-      editorContainer.style.display === ""
-        ? "inline-block"
-        : "none";
-  };
-
-  getByid("submitBtn").onclick = function () {
-    submitReport();
-  };
-
-  getByid("draftBtn").onclick = function () {
-    draftReport();
-  };
-
-  getByid("criticalBtn").onclick = function () {
-    handlerCriticalToggle();
-  };
-
-  getByid("captureBtn").onclick = function () {
-    handleCaptureImage();
-  };
 
   getByid("returnHomePage").onclick = function () {
     const { pathname, search } = window.location;

@@ -1,0 +1,332 @@
+/* .select-css {
+  @apply border-black w-full rounded bg-black text-sm leading-tight text-white shadow transition duration-300;
+} */
+
+/* Styles when inputId is 'select_study' */
+.select-study-custom .customSelect__control {
+  @apply border-black w-full rounded border-0 dark:bg-primary-dark bg-primary-light text-xl font-medium leading-tight dark:text-white text-black transition duration-300;
+}
+
+.select-study-custom .customSelect__indicator-separator {
+  @apply hidden;
+}
+
+.select-study-custom .customSelect__dropdown-indicator {
+  /* padding-left: 2px; */
+  @apply dark:text-white text-black;
+  font-size: 50px;
+}
+
+.select-study-custom .customSelect__option {
+  color: #282828;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  @apply flex flex-row items-center;
+}
+
+body.dark .select-study-custom .customSelect__option {
+  color: #fff;
+}
+
+.select-study-custom .customSelect__option--is-selected {
+  @apply bg-transparent;
+}
+
+.select-study-custom .customSelect__single-value {
+  @apply dark:text-white text-black font-semibold pl-1;
+  /* max-width: calc(100% - 20px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; */
+}
+
+.select-study-custom.customSelect--is-disabled {
+  @apply pointer-events-auto cursor-not-allowed;
+}
+
+.select-study-custom .customSelect__value-container--is-multi {
+  /* @apply inline-block truncate px-3 py-2; */
+  @apply truncate px-3 py-2;
+}
+
+.select-study-custom .customSelect__menu {
+  background-color: transparent !important;
+  border-radius: 6px;
+  width: 100%;
+  z-index: 10000 !important;
+}
+
+@media (min-width: 431px) {
+  .select-study-custom .customSelect__menu {
+    width: 200px; /* Fixed width for larger screens */
+  }
+
+  .select-study-custom .customSelect__menu {
+    width: 200px; /* Fixed width for larger screens */
+  }
+}
+
+.select-study-customs .customSelect__menu {
+  background-color: transparent !important;
+  border-radius: 6px;
+  width: 100%;
+  z-index: 10000 !important;
+}
+
+.select-study-custom.custom-select-sex .customSelect__menu {
+  position: relative !important;
+}
+
+.select-study-custom .customSelect__menu-list {
+  overflow-x: hidden !important;
+  margin: 4px;
+  padding-top: 0px !important;
+}
+
+.select-study-custom .customSelect__menu-list::-webkit-scrollbar {
+  width: 6px;
+  border-radius: 10px;
+}
+
+.select-study-custom .customSelect__placeholder {
+  @apply dark:text-white text-black font-semibold pl-1.5;
+}
+
+.select-study-custom .customSelect__menu-list::-webkit-scrollbar-thumb {
+  /* background-color: #0944b3; */
+  @apply dark:bg-primary-light bg-secondary-light text-black;
+  border-radius: 10px;
+}
+
+body.dark .select-study-custom .customSelect__option:hover {
+  /* background-color: #0944b391; */
+  background-color: #414141;
+  color: #fff;
+  /* @apply dark:bg-primary-light bg-secondary-light text-black; */
+}
+body.dark  .select-study-custom .customSelect__menu{
+  background-color: #282828 !important;
+  color: #fff;
+}
+
+.select-study-custom .customSelect__option:hover {
+  /* background-color: #0944b391; */
+  background-color: #d4d4d4;
+  color: #000;
+  /* @apply dark:bg-primary-light bg-secondary-light text-black; */
+}
+
+.select-study-custom .customSelect__menu {
+  border: 2px solid #a7adba;
+  border-radius: 6px;
+  background-color: #fff !important;
+  color: #000;
+  /* @apply dark:bg-secondary-light bg-primary-light dark:border-secondary-light border-primary-light dark:text-white text-black ; */
+}
+
+body.dark .select-study-custom .customSelect__menu {
+  border: 2px solid #6d6d6d;
+}
+
+.select-study-custom .css-tj5bde-Svg {
+  height: 30px;
+  width: 30px;
+}
+
+
+/* ------------------------- */
+
+.customSelect__wrapper .customSelect__control {
+  @apply w-full rounded border border-secondary-dark focus:border-inputfield-focus font-medium text-sm leading-tight shadow transition duration-300;
+  min-height: 33px;
+  background-color: #d4d4d4  !important;
+  color: #000;
+  width: 100%;
+  border-radius: 0.25rem /* 4px */;
+  border-color: rgb(40 40 40 / var(--tw-border-opacity)) /* #282828 */;
+  font-weight: 500;
+  font-size: 0.75rem /* 12px */;
+  line-height: 1.25;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-duration: 300ms;
+}
+
+.customSelect__wrapper .customSelect__control:focus {
+  border-color: rgb(255 255 255 / var(--tw-border-opacity)) /* #ffffff */;
+}
+
+
+body.dark .customSelect__wrapper .customSelect__control {
+  min-height: 33px;
+  background-color: #282828 !important;
+  border-color: #6d6d6d ;
+  color: #fff;
+  border-color: rgb(40 40 40 / var(--tw-border-opacity)) /* #282828 */;
+}
+
+body.dark .customSelect__wrapper .customSelect__control:focus {
+  border-color: rgb(255 255 255 / var(--tw-border-opacity)) /* #ffffff */;
+}
+
+.customSelect__wrapper .customSelect__control:hover {
+  border-color: rgb(160 174 192 / var(--tw-border-opacity)) /* #a0aec0 */;
+}
+
+.customSelect__wrapper .customSelect__control:focus,
+.customSelect__wrapper .customSelect__control--menu-is-open {
+  border-color: rgb(160 174 192 / var(--tw-border-opacity)) /* #a0aec0 */;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.customSelect--is-disabled .customSelect__control--is-disabled {
+  pointer-events: none;
+}
+
+.css-1hwfws3 {
+  padding: 0;
+}
+
+.customSelect__wrapper .customSelect__indicator-separator {
+  display: none;
+}
+
+.customSelect__wrapper .customSelect__dropdown-indicator {
+  padding: 4px;
+  color: rgb(0 0 0 / var(--tw-text-opacity)) /* #000000 */;
+}
+
+body.dark .customSelect__wrapper .customSelect__dropdown-indicator {
+  padding: 4px;
+  color: rgb(255 255 255 / var(--tw-text-opacity)) /* #ffffff */;
+}
+
+.customSelect__wrapper .customSelect__option {
+  color: #0c0b0b;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.customSelect__wrapper .customSelect__option--is-selected {
+  background-color: transparent;
+}
+
+.customSelect__wrapper .customSelect__single-value {
+  @apply dark:text-white text-black pl-1;
+  max-width: calc(100% - 20px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgb(0 0 0 / var(--tw-text-opacity)) /* #000000 */;
+  padding-left: 0.25rem /* 4px */;
+}
+
+body.dark .customSelect__wrapper .customSelect__single-value {
+  color: rgb(255 255 255 / var(--tw-text-opacity)) /* #ffffff */;
+}
+
+.customSelect__wrapper.customSelect--is-disabled {
+  @apply pointer-events-auto cursor-not-allowed;
+}
+
+.customSelect__wrapper .customSelect__value-container--is-multi {
+  /* @apply inline-block truncate px-3 py-2; */
+  @apply truncate px-3 py-2;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  overflow:auto !important;
+}
+
+.customSelect__control .css-i06g2x-control{
+  overflow-x: auto !important;
+}
+
+.css-1k1vpu9-multiValue{
+  width: 60px !important;
+}
+
+.telerapp-select .customSelect__menu {
+  background-color: transparent !important;
+  border-radius: 6px;
+  z-index: 10000 !important;
+}
+
+.telerapp-select.custom-select-sex .customSelect__menu {
+  position: relative !important;
+}
+
+.telerapp-select .customSelect__menu-list {
+  /* overflow-x: hidden !important; */
+  margin: 4px;
+  padding-top: 0px !important;
+}
+
+.telerapp-select .customSelect__menu-list::-webkit-scrollbar {
+  width: 6px;
+  border-radius: 10px;
+}
+
+.telerapp-select .customSelect__placeholder {
+  @apply dark:text-white text-black pl-1.5;
+}
+
+body.dark .telerapp-select .customSelect__menu-list::-webkit-scrollbar-thumb {
+  background-color: #414141;
+  border-radius: 10px;
+}
+
+.telerapp-select .customSelect__menu-list::-webkit-scrollbar-thumb {
+  background-color: #6d6d6d;
+  border-radius: 10px;
+}
+
+.customSelect__option--is-focused {
+  /* background-color: #0944b391 !important; */
+  @apply dark:bg-primary-light bg-secondary-light text-black;
+}
+
+body.dark .telerapp-select .customSelect__option{
+  color: #fff;
+}
+.telerapp-select .customSelect__option{
+  color: #000000;
+}
+
+.telerapp-select .customSelect__option:hover {
+  background-color: #d4d4d4;
+  color: #282828;
+}
+body.dark .telerapp-select .customSelect__option:hover {
+  background-color: #414141;
+  color: #fff;
+}
+body.dark .telerapp-select .customSelect__menu {
+  border: 2px solid #6d6d6d;
+  border-radius: 6px;
+  background-color: #282828 !important;
+  color:#fff !important;
+}
+
+.telerapp-select .customSelect__menu {
+  border: 2px solid #a7adba;
+  border-radius: 6px;
+  background-color: #fff !important;
+}
+
+.css-1hwfws3 {
+  all: unset !important;
+}
+.customSelect__input{
+color: white !important;
+}
+
+.customSelect__input-container .customSelect__input{
+  @apply dark:text-white text-black
+}
+.css-t3ipsp-control:hover{
+  @apply border-secondary-dark;
+}

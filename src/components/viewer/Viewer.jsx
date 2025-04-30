@@ -42,21 +42,25 @@ import loaderLogo from "../image/icon/lite/telerapp_logo.png";
 import attachemnt from "../image/icon/lite/attachment.png";
 import clinical from "../image/icon/lite/clinical.png";
 import Tooltip from "./Tooltip";
+import ReportEditor from "./ReportEditor/index";
+import { BrowserRouter } from "react-router-dom";
+import { Resizable } from 'react-resizable';
+import 'react-resizable/css/styles.css';
 
 const Viewer = (props) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLeftClose, setIsLeftClose] = useState(false);
+  const [editorWidth, setEditorWidth] = useState(450);
   const [data, setData] = useState()
-  const callCount = useRef(0);
+
   useEffect(()=>{
-    callCount.current += 1;
-    console.log('Function called', callCount.current, 'times');
     if(props){
-      setData(props?.props?.data)
+      setData(props?.props)
     }
   },[props])
-
-  console.log(data,'data props')
+  
+  const [isModelOpen, setIsModelOpen] = useState(false);
+  const [toggleDisplayReportEditor, setToggleDisplayReportEditor] = useState(false);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -92,6 +96,13 @@ const Viewer = (props) => {
         leftPicture.style.marginLeft = "-120px";
       }
     }
+  }
+
+  const toggleDisplayReportEditorView = () => {
+    setToggleDisplayReportEditor((show) => !show);
+    setIsModelOpen(false)
+    const pages = document.getElementById("pages");
+    pages.style.width = toggleDisplayReportEditor ? "75%" : "100%";
   }
 
   return (
@@ -866,6 +877,7 @@ const Viewer = (props) => {
                 style={{ filter: "invert(80%)", cursor: "pointer", verticalAlign: "middle" }}
                 width="24"
                 height="24"
+                onClick={toggleDisplayReportEditorView}
               />
             </Tooltip>
             <img
@@ -1014,7 +1026,7 @@ const Viewer = (props) => {
         </div>
       </div>
       <div className="form-group" id="form-group">
-        <div id="container" className="container">
+        <div id="container" className="container01">
           <div
             id="LeftPicture"
             style={{
@@ -1072,150 +1084,37 @@ const Viewer = (props) => {
               style={{ display: "none" }}
             ></div>
           </div>
-          <div className="report-editor-container" style={{position: "relative"}}>
-            <div
-              className="toolbar"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
+          {toggleDisplayReportEditor && (
+            <Resizable
+              width={editorWidth}
+              height={0}
+              minConstraints={[window.innerWidth * 0.25]} // Minimum width
+              maxConstraints={[window.innerWidth * 0.75]} // Maximum width
+              onResize={(e, { size }) => setEditorWidth(size.width)}
+              axis="x"
+              resizeHandles={['w']} // Resize from the left side only
             >
-              <select id="templateSelect"></select>
-              <div style={{display: "flex", gap: "8px"}}>
-                <Tooltip text="Attachment" position="left">
-                  <button id="openModal" className="btn-report">
-                    <img
-                      className=""
-                      alt="Attachment"
-                      loading="lazy"
-                      id="quantume"
-                      src={attachemnt}
-                      width="20"
-                      height="20"
-                    />
-                  </button>
-                </Tooltip>
-                <Tooltip text="Clinical" position="left">
-                  <button id="openClinicalModel" className="btn-report">
-                    <img
-                      className=""
-                      alt="Clinical"
-                      loading="lazy"
-                      id="quantume"
-                      src={clinical}
-                      width="20"
-                      height="20"
-                    />
-                  </button>
-                </Tooltip>
+              <div
+                style={{ width: editorWidth }}
+                className="z-10 h-full w-1/3 flex-initial bg-gray-100 ml-[5px]"
+              // dangerouslySetInnerHTML={{ __html: reportEditorTemplate }}
+              >
+                <BrowserRouter>
+                  <ReportEditor 
+                    apiData={data?.data} 
+                    keycloak_url={data?.keycloak_url} 
+                    user={data?.user} 
+                    isModelOpen={isModelOpen}
+                    setToggleDisplayReportEditor={setToggleDisplayReportEditor}
+                    toggleDisplayReportEditor={toggleDisplayReportEditor}
+                  />
+                </BrowserRouter>
               </div>
-            </div>
-            <div className="editor_table" style={{ height: "90%" }}>
-              <div id="loaderEditor"></div>
-              <div id="toolbar-container"></div>
-              <div id="editor"></div>
-            </div>
-            <div className="controls" style={{ display: "flex", gap: "12px", position: "absolute", left: "5px", bottom: "5px"}}>
-              <button id="submitBtn">Submit</button>
-              <button id="draftBtn">Draft</button>
-              <button id="criticalBtn">Critical</button>
-              <button id="discardBtn">Discard</button>
-              <Tooltip text="Capture Image" position="top">
-                <button id="captureBtn">
-                  <i className="fa-solid fa-camera" style={{ fontSize: 16 }}></i>
-                </button>
-              </Tooltip>
-              <Tooltip text="Download PDF" position="top">
-                <button id="downloadPDF">
-                  {" "}
-                  <i
-                    className="fa-solid fa-file-arrow-down"
-                    style={{ fontSize: 16 }}
-                  ></i>
-                </button>
-              </Tooltip>
-            </div>
-          </div>
-        </div>
-
-        <div id="attachmentModal" className="modal">
-          <div className="modal-content">
-            <div className="modal-header">
-              <span>Attachment</span>
-              <button id="closeModal">X</button>
-            </div>
-            <div className="modal-body">
-              <p id="patientName">Patient: </p>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <input
-                  type="file"
-                  id="fileInput"
-                  accept=".pdf, .png, .jpg, .doc, .docx, .mp4"
-                  style={{ width: "100%" }}
-                />
-                <button id="uploadDocument">Upload</button>
-              </div>
-              <table id="documentTable">
-                <thead>
-                  <tr>
-                    <th>Document Name</th>
-                    <th>Preview</th>
-                    <th>Remove</th>
-                  </tr>
-                </thead>
-                <tbody id="documentList"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div id="clinicalHistoryModal" className="modal">
-          <div className="modal-content">
-            <div className="modal-header">
-              <span>Clinical History</span>
-            </div>
-            <div className="modal-body">
-              <p id="patientNameDisplay"></p>
-              <textarea
-                id="clinicalHistory"
-                className="textarea"
-                rows="4"
-                placeholder="Enter Clinical History"
-              ></textarea>
-              <div className="modal-buttons">
-                <button
-                  id="handleClinicalHistoryChange"
-                  style={{
-                    fontSize: "0.75rem",
-                    paddingTop: "0.5rem",
-                    paddingBottom: "0.5rem",
-                    paddingRight: "0.75rem",
-                    paddingLeft: "0.75rem",
-                  }}
-                >
-                  Save
-                </button>
-                <button id="closeClinicalModal">Cancel</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="popupOverlay"></div>
-
-      <div id="previewPopup">
-        <div className="modal-content" style={{ width: "100%" }}>
-          <div className="modal-header">
-            <span>Attachment Preview</span>
-            <button id="closePreview">X</button>
-          </div>
-          <div className="modal-body">
-            <div style={{ width: "100%", height: "72vh" }}>
-              <iframe id="previewIframe" title="Attachment Preview"></iframe>
-            </div>
-          </div>
+            </Resizable>
+          )}
+          {/* <BrowserRouter>
+            <ReportEditor apiData={data} isModelOpen={isModelOpen}/>
+          </BrowserRouter> */}
         </div>
       </div>
       <div

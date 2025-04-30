@@ -16,7 +16,7 @@
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <link rel="stylesheet" type="text/css" href="./css/gui.css" />
-    <link rel="stylesheet" type="text/css" href="./css/editor.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="./css/editor.css" /> -->
     <link rel="stylesheet" type="text/css" href="./css/model.css" />
     <link rel="stylesheet" type="text/css" href="./css/vr.css" />
     <link
@@ -47,6 +47,7 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -71,7 +72,7 @@
       import { decodeImageFrame } from "./scripts/external/cornerstone/decode/decodeImageFrame.js";
       window.decodeImage = decodeImageFrame;
     </script>
-
+    <script src="./ckeditor.js"></script>
     <script src="./scripts/onload.js"></script>
     <script src="./scripts/patient.js"></script>
     <script src="./scripts/viewport.js"></script>
@@ -95,7 +96,7 @@
     <!--<script src="./scripts/mtss.js"></script>-->
     <script src="./scripts/cine.js" async></script>
     <script src="./scripts/html.js"></script>
-    <script src="./scripts/editor.js"></script>
+    <!-- <script src="./scripts/editor.js"></script> -->
     <script src="./scripts/study.js"></script>
     <script src="./scripts/newscript/mousetool.js"></script>
     <script src="./scripts/plugin/plugin.js"></script>
@@ -113,7 +114,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/decoupled-document/ckeditor.js"></script>
+    <!-- <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/decoupled-document/ckeditor.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
   </body>
 </html>
