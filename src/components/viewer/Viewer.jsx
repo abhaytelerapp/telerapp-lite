@@ -1099,7 +1099,7 @@ const Viewer = (props) => {
                 className="z-10 h-full w-1/3 flex-initial bg-gray-100 ml-[5px]"
               // dangerouslySetInnerHTML={{ __html: reportEditorTemplate }}
               >
-                <BrowserRouter>
+                {/* <BrowserRouter> */}
                   <ReportEditor 
                     apiData={data?.data} 
                     keycloak_url={data?.keycloak_url} 
@@ -1108,7 +1108,7 @@ const Viewer = (props) => {
                     setToggleDisplayReportEditor={setToggleDisplayReportEditor}
                     toggleDisplayReportEditor={toggleDisplayReportEditor}
                   />
-                </BrowserRouter>
+                {/* </BrowserRouter> */}
               </div>
             </Resizable>
           )}
