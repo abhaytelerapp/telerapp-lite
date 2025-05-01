@@ -130,7 +130,7 @@ class LeftLayout {
                 series_div.addEventListener("click", (event) => {
                     let clickedSeries = series_div.series; // Assuming series is stored in div
                     if (clickedSeries) {
-                        handleSeriesDoubleClick(clickedSeries);
+                        handleSeriesDoubleClick(clickedSeries, true); // false => only one active series
                     }
                 });
                 series_div.dataset.clickAttached = "true"; // Prevent multiple event bindings
@@ -189,7 +189,7 @@ class LeftLayout {
         ImgDiv.ondragend = function () {
             let clickedSeries = QRLevel.series; // Assuming series is stored in div
             if (clickedSeries) {
-                handleSeriesDoubleClick(clickedSeries);
+                handleSeriesDoubleClick(clickedSeries, true);
             }
         };
 

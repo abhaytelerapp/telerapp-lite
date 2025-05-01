@@ -497,6 +497,9 @@ async function fetchInstanceMetadata(url) {
 // Store deferred load tasks globally (to be triggered on double-click)
 let deferredLoadTasks = new Map();
 let activeSeriesUID = null; // Tracks the currently active series
+let seriesQueue = [];
+let currentSeriesUID = null;
+let sequentialLoadingActive = false;
 
 async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instance, seriesInstanceUid) {
     const foundItem = InstanceRequest.find(item => item["0020000E"]?.Value?.includes(seriesInstanceUid));
@@ -514,7 +517,6 @@ async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instanc
 
     let minInstance = Math.min(...DicomResponse.map(d => getValue(d["00200013"]) || Infinity));
     let firstUrl = null;
-    let loadTasks = [];
     
      // Check if this is the first series (instance === 0)
      const isFirstSeries = instance === 0;
@@ -550,84 +552,102 @@ async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instanc
       }
     }
 
-    // If this is the first series, load all remaining instances after a small delay
     if (isFirstSeries) {
-      // Add a small delay to ensure first instances of all series are loaded first
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Load next 2-3 instances of first series
-      let nextInstances = DicomResponse
+      await new Promise(resolve => setTimeout(resolve, 100)); // Let first instance show
+    
+      const nextInstances = DicomResponse
         .filter(d => getValue(d["00200013"]) !== minInstance && DicomResponse.length !== 1)
-        .slice(0, 2); // Take first 1 instances after the minimum
-
+        .slice(0, 5);
+    
       for (let dicomData of nextInstances) {
-          let url = buildWADOUrl(dicomData);
-          url = fitUrl(url);
-          ConfigLog.WADO.WADOType === "URI" ? loadDICOMFromUrl(url) : wadorsLoader(url, undefined, seriesInstanceNumber);
+        const url = fitUrl(buildWADOUrl(dicomData));
+        ConfigLog.WADO.WADOType === "URI"
+          ? loadDICOMFromUrl(url)
+          : wadorsLoader(url, undefined, seriesInstanceNumber);
       }
-
-      // Add remaining instances to deferredLoadTasks for automatic loading
-      if (!deferredLoadTasks.has(seriesInstanceUid)) {
-          deferredLoadTasks.set(seriesInstanceUid, []);
+    
+      // Prepare deferred
+      const deferred = DicomResponse.filter(
+        d => getValue(d["00200013"]) !== minInstance && !nextInstances.includes(d)
+      ).map(dicomData => {
+        const url = fitUrl(buildWADOUrl(dicomData));
+        return () => loadDeferredDicom(url, undefined, seriesInstanceNumber);
+      });
+    
+      if (deferred.length > 0) {
+        deferredLoadTasks.set(seriesInstanceUid, deferred);
+        seriesQueue.push(seriesInstanceUid);
+    
+        // Load remaining first series instances
+        await handleSeriesDoubleClick(seriesInstanceUid, true);
+    
       }
-
-      // Add remaining instances to deferredLoadTasks
-      for (let dicomData of DicomResponse) {
-          let url = buildWADOUrl(dicomData);
-          url = fitUrl(url);
-
-          if (getValue(dicomData["00200013"]) !== minInstance && 
-              DicomResponse.length !== 1 && 
-              !nextInstances.includes(dicomData)) {
-              deferredLoadTasks.get(seriesInstanceUid).push(() => loadDeferredDicom(url, undefined, seriesInstanceNumber));
-          }
-      }
-
-      // Automatically start loading remaining instances
-      handleSeriesDoubleClick(seriesInstanceUid);
     } else {
-        // For other series, store remaining instances for later loading
-        for (let dicomData of DicomResponse) {
-            let url = buildWADOUrl(dicomData);
-            url = fitUrl(url);
-
-            if (getValue(dicomData["00200013"]) !== minInstance && DicomResponse.length !== 1) {
-                if (!deferredLoadTasks.has(seriesInstanceUid)) {
-                    deferredLoadTasks.set(seriesInstanceUid, []);
-                }
-                deferredLoadTasks.get(seriesInstanceUid).push(() => loadDeferredDicom(url, undefined, seriesInstanceNumber));
-            }
-        }
+      // Other series
+      const deferred = DicomResponse.filter(
+        d => getValue(d["00200013"]) !== minInstance
+      ).map(dicomData => {
+        const url = fitUrl(buildWADOUrl(dicomData));
+        return () => loadDeferredDicom(url, undefined, seriesInstanceNumber);
+      });
+    
+      if (deferred.length > 0) {
+        deferredLoadTasks.set(seriesInstanceUid, deferred);
+        seriesQueue.push(seriesInstanceUid);
+      }
+    
+      // If this is the last series being processed, and first is done, start queue
+      if (!sequentialLoadingActive && instance === SeriesResponse.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        startSequentialSeriesLoading();
+      }
     }
 }
 
-async function handleSeriesDoubleClick(seriesInstanceUID) {
-  // if (deferredLoadTasks.has(seriesInstanceUID)) {
-  //     console.log(`Loading remaining instances for series: ${seriesInstanceUID}`);
-  //     let tasks = deferredLoadTasks.get(seriesInstanceUID);
-  //     await Promise.all(tasks.map(task => task()));
-  //     deferredLoadTasks.delete(seriesInstanceUID); // Remove tasks after execution
-  // }
-  
+async function startSequentialSeriesLoading() {
+  sequentialLoadingActive = true;
+
+  while (seriesQueue.length > 0) {
+    const seriesUID = seriesQueue.shift();
+    currentSeriesUID = seriesUID;
+
+    // Skip if series was already loaded by user click
+    if (!deferredLoadTasks.has(seriesUID)) continue;
+
+    let tasks = deferredLoadTasks.get(seriesUID);
+    while (tasks.length > 0) {
+      // Respect current active user interaction
+      if (activeSeriesUID && activeSeriesUID !== seriesUID) break;
+
+      const batch = tasks.splice(0, 5);
+      await Promise.all(batch.map(task => task()));
+    }
+
+    deferredLoadTasks.delete(seriesUID);
+  }
+
+  currentSeriesUID = null;
+  sequentialLoadingActive = false;
+}
+
+async function handleSeriesDoubleClick(seriesInstanceUID, isConcurrent = false) {
   if (!deferredLoadTasks.has(seriesInstanceUID)) return;
-  activeSeriesUID = seriesInstanceUID; // Update the active series
+
+  if (!isConcurrent) {
+    activeSeriesUID = seriesInstanceUID; // Lock interaction
+  }
 
   let tasks = deferredLoadTasks.get(seriesInstanceUID);
-  
-  while (tasks.length > 0) {
-    if (activeSeriesUID !== seriesInstanceUID) return; // Stop fetching if switched
 
-    let batch = tasks.splice(0, 5); // Fetch 5 instances at a time
+  while (tasks.length > 0) {
+    if (!isConcurrent && activeSeriesUID !== seriesInstanceUID) return; // Allow interruption
+    const batch = tasks.splice(0, 5);
     await Promise.all(batch.map(task => task()));
   }
 
-  if(tasks.length == 0){
-    deferredLoadTasks.delete(seriesInstanceUID);
-  }
-
+  deferredLoadTasks.delete(seriesInstanceUID);
 }
 
-// Construct WADO URL dynamically
 function buildWADOUrl(dicomData) {
   let baseUrl = `${ConfigLog.WADO.https}://${ConfigLog.WADO.hostname}:${ConfigLog.WADO.PORT}/${ConfigLog.WADO.service}`;
   return ConfigLog.WADO.WADOType === "URI"
