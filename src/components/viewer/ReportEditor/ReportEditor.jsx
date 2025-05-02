@@ -1993,8 +1993,8 @@ const ReportEditor = (props) => {
               : templateData1
           );
           const templateData = compiledTemplate(patientData);
-
-          const updatedTemplateData = templateData.replace(
+          const cleanedTemplateData = templateData.replace(/Default Template/g, "");
+          const updatedTemplateData = cleanedTemplateData.replace(
             /(<td[^>]*>\s*<strong>\s*Institution Name:\s*<\/strong>\s*<\/td>\s*<td[^>]*>)(\s*<\/td>)/i,
             (match, prefix, emptyTd) => {
               return `${prefix}${institutionNameFromStorage}</td>`;

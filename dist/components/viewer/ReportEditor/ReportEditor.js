@@ -1338,7 +1338,8 @@ const ReportEditor = props => {
         if (typeof _handlebars.default !== "undefined") {
           const compiledTemplate = _handlebars.default.compile(patientReportDetail?.reportdetails ? patientTemaplateDataReport : templateData1);
           const templateData = compiledTemplate(patientData);
-          const updatedTemplateData = templateData.replace(/(<td[^>]*>\s*<strong>\s*Institution Name:\s*<\/strong>\s*<\/td>\s*<td[^>]*>)(\s*<\/td>)/i, (match, prefix, emptyTd) => {
+          const cleanedTemplateData = templateData.replace(/Default Template/g, "");
+          const updatedTemplateData = cleanedTemplateData.replace(/(<td[^>]*>\s*<strong>\s*Institution Name:\s*<\/strong>\s*<\/td>\s*<td[^>]*>)(\s*<\/td>)/i, (match, prefix, emptyTd) => {
             return `${prefix}${institutionNameFromStorage}</td>`;
           });
           setEditorData(updatedTemplateData);
