@@ -1181,14 +1181,14 @@ const Viewer = props => {
     },
     className: "z-10 h-full w-1/3 flex-initial bg-gray-100 ml-[5px]"
     // dangerouslySetInnerHTML={{ __html: reportEditorTemplate }}
-  }, /*#__PURE__*/_react.default.createElement(_index.default, {
+  }, /*#__PURE__*/_react.default.createElement(_reactRouterDom.BrowserRouter, null, /*#__PURE__*/_react.default.createElement(_index.default, {
     apiData: data?.data,
     keycloak_url: data?.keycloak_url,
     user: data?.user,
     isModelOpen: isModelOpen,
     setToggleDisplayReportEditor: setToggleDisplayReportEditor,
     toggleDisplayReportEditor: toggleDisplayReportEditor
-  }))))), /*#__PURE__*/_react.default.createElement("div", {
+  })))))), /*#__PURE__*/_react.default.createElement("div", {
     id: "magnifierDiv",
     style: {
       zIndex: 40,

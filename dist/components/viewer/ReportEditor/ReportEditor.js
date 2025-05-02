@@ -1442,6 +1442,28 @@ const ReportEditor = props => {
           initialData += `<p> Addendum begin &lt; &gt; Addendum end </p>`;
         }
         instance.setData(initialData);
+        if (patientReportDetail?.document_status === "Approved") {
+          const imageUrl = assignUserDataFind?.attributes?.uploadSignature[0]; // Replace with your actual image URL
+          instance.model.change(writer => {
+            const imageElement = writer.createElement('imageBlock', {
+              src: imageUrl,
+              alt: 'Doctor Signature',
+              style: 'height:80px;',
+              alignment: 'left' // key part
+            });
+
+            // Insert image at the END of the document
+            const root = instance.model.document.getRoot();
+            const endPosition = writer.createPositionAt(root, 'end');
+            instance.model.insertContent(imageElement, endPosition);
+          });
+          // Make editor read-only after inserting the image
+          instance.enableReadOnlyMode("approved-mode");
+          const editorTable = document?.querySelector('.editor_table');
+          if (editorTable) {
+            editorTable.classList.remove('editor_table');
+          }
+        }
 
         // Apply read-only mode if approved
         const editorTable = document?.querySelector(".editor_table");

@@ -202,3 +202,16 @@
   --tw-bg-opacity: 1;
   background-color: rgb(109 109 109 / var(--tw-bg-opacity)) /* #6d6d6d */;
 }
+
+#submit:disabled, #draft:disabled  {
+  background-color: #39383f !important;
+  cursor: not-allowed; /* optional UX improvement */
+  color: white; /* ensures text contrast */
+}
+
+figure img {
+  width: 180px !important;
+}
+figure.image {
+  margin: unset !important;
+}
