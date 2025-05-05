@@ -2518,7 +2518,7 @@ const ReportEditor = (props) => {
                 // className="ml-3 px-[5px] text-sm max-[1440px]:ml-2 min-[425px]:px-[10px] min-[425px]:text-[14px]"
                 className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] ml-3 px-[5px] sm:text-sm max-[1440px]:ml-2 sm:px-[10px] text-[10px]"
               >
-                <BsCameraFill />
+                <BsCameraFill className="20px"/>
               </button>
             </Tooltip>
           )}
@@ -2537,7 +2537,7 @@ const ReportEditor = (props) => {
               <span className="buttonloader"></span>
             ) : (
               <span className="flex">
-                <FaFileDownload />
+                <FaFileDownload className="20px"/>
               </span>
             )}
           </button>

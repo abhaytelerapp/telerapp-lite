@@ -565,41 +565,148 @@ function html_onload() {
     ArrowRule_previous_choose = null;*/
   }
 
+  // getByid("removeAllRuler").onclick = function () {
+  //   var removeRulerWindow = document.createElement("DIV");
+  //   removeRulerWindow.style.width = "40vw";
+  //   removeRulerWindow.style.height = "40vh";
+  //   removeRulerWindow.style.position = "absolute";
+  //   //removeRulerWindow.style.margin = "25vh 0 0 25vw";
+  //   removeRulerWindow.style.zIndex = "105";
+  //   removeRulerWindow.style.left = "0";
+  //   removeRulerWindow.style.right = "0";
+  //   removeRulerWindow.style.top = "0";
+  //   removeRulerWindow.style.bottom = "0";
+  //   removeRulerWindow.style.margin = "auto";
+  //   removeRulerWindow.style.backgroundColor = "rgba(30,60,90,0.8)";
+  //   removeRulerWindow.style["display"] = "flex";
+  //   removeRulerWindow.style["justify-content"] = "center";
+  //   var label = document.createElement("LABEL");
+  //   label.innerText = "Remove all measurements?";
+  //   label.style['color'] = "white";
+  //   label.style['position'] = "absolute";
+  //   label.style['font-size'] = "24px";
+  //   label.style['user-select'] = "none";
+  //   var btn_remove = document.createElement("BUTTON");
+  //   btn_remove.style.cssText = "top: 50%;left: 25%;transform: scale(1.5);position: absolute;"
+  //   btn_remove.innerText = "Remove";
+  //   var btn_cancel = document.createElement("BUTTON");
+  //   btn_cancel.style.cssText = "top: 50%;left: 75%;transform: scale(1.5);position: absolute;"
+  //   btn_cancel.innerText = "Cancel";
+  //   btn_cancel.window = removeRulerWindow;
+  //   btn_remove.window = removeRulerWindow;
+  //   removeRulerWindow.appendChild(label);
+  //   removeRulerWindow.appendChild(btn_remove);
+  //   removeRulerWindow.appendChild(btn_cancel);
+  //   getByid("container").appendChild(removeRulerWindow);
+
+  //   btn_cancel.onclick = function () { getByid("container").removeChild(this.window); };
+  //   btn_remove.onclick = function () {
+  //     var sopList = [];
+  //     for (var n in PatientMark) {
+  //       var M = PatientMark[n];
+  //       if (M.hideName == "ruler") {
+  //         for (var M2 = 0; M2 < M.mark.length; M2++) {
+  //           M.mark[M2].type = "delete";
+  //         }
+  //         M.type = "delete";
+  //         sopList.push(M.sop);
+  //         refreshMark(M);
+  //       }
+  //     }
+  //     PatientMark = PatientMark.filter(m => m.type != "delete");
+  //     for (var n in PatientMark) { refreshMark(PatientMark[n]); }
+  //     //for (var s = 0; s < sopList.length; s++)
+  //     //   refreshMarkFromSop(sopList[s]);
+  //     for (var i = 0; i < Viewport_Total; i++)
+  //       if (GetViewport(i).series) leftLayout.refleshMarkWithSeries(GetViewport(i).series);
+
+  //     //getByid("openMeasureImg").click();
+
+  //     Angle_now_choose = null;
+  //     Angle_previous_choose = null;
+  //     angle.angle_ = "stop";
+  //     getByid("container").removeChild(this.window);
+  //   };
+  // }
+
+
   getByid("removeAllRuler").onclick = function () {
-    var removeRulerWindow = document.createElement("DIV");
-    removeRulerWindow.style.width = "40vw";
-    removeRulerWindow.style.height = "40vh";
-    removeRulerWindow.style.position = "absolute";
-    //removeRulerWindow.style.margin = "25vh 0 0 25vw";
-    removeRulerWindow.style.zIndex = "105";
-    removeRulerWindow.style.left = "0";
-    removeRulerWindow.style.right = "0";
-    removeRulerWindow.style.top = "0";
-    removeRulerWindow.style.bottom = "0";
-    removeRulerWindow.style.margin = "auto";
-    removeRulerWindow.style.backgroundColor = "rgba(30,60,90,0.8)";
-    removeRulerWindow.style["display"] = "flex";
-    removeRulerWindow.style["justify-content"] = "center";
-    var label = document.createElement("LABEL");
-    label.innerText = "Remove all measurements?";
-    label.style['color'] = "white";
-    label.style['position'] = "absolute";
-    label.style['font-size'] = "24px";
-    label.style['user-select'] = "none";
-    var btn_remove = document.createElement("BUTTON");
-    btn_remove.style.cssText = "top: 50%;left: 25%;transform: scale(1.5);position: absolute;"
-    btn_remove.innerText = "Remove";
-    var btn_cancel = document.createElement("BUTTON");
-    btn_cancel.style.cssText = "top: 50%;left: 75%;transform: scale(1.5);position: absolute;"
+    const removeRulerWindow = document.createElement("DIV");
+    removeRulerWindow.style.cssText = `
+      width: 400px;
+      padding: 30px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      border-radius: 8px;
+      z-index: 105;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      text-align: center;
+      font-family: sans-serif;
+    `;
+  
+    const icon = document.createElement("DIV");
+    icon.innerHTML = "i";
+    icon.style.cssText = `
+      width: 60px;
+      height: 60px;
+      line-height: 60px;
+      font-size: 32px;
+      font-weight: bold;
+      color: #29b6f6;
+      border: 3px solid #29b6f6;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+    `;
+  
+    const message = document.createElement("DIV");
+    message.innerText = "Remove all measurements?";
+    message.style.cssText = `
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: #333;
+    `;
+  
+    const btnContainer = document.createElement("DIV");
+    btnContainer.style.cssText = `
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    `;
+  
+    const btn_remove = document.createElement("BUTTON");
+    btn_remove.innerText = "Yes, remove!";
+    btn_remove.style.cssText = `
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    `;
+  
+    const btn_cancel = document.createElement("BUTTON");
     btn_cancel.innerText = "Cancel";
+    btn_cancel.style.cssText = `
+      background-color: #e53935;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    `;
+  
     btn_cancel.window = removeRulerWindow;
     btn_remove.window = removeRulerWindow;
-    removeRulerWindow.appendChild(label);
-    removeRulerWindow.appendChild(btn_remove);
-    removeRulerWindow.appendChild(btn_cancel);
-    getByid("container").appendChild(removeRulerWindow);
-
-    btn_cancel.onclick = function () { getByid("container").removeChild(this.window); };
+  
+    btn_cancel.onclick = function () {
+      getByid("container").removeChild(this.window);
+    };
+  
     btn_remove.onclick = function () {
       var sopList = [];
       for (var n in PatientMark) {
@@ -614,20 +721,28 @@ function html_onload() {
         }
       }
       PatientMark = PatientMark.filter(m => m.type != "delete");
-      for (var n in PatientMark) { refreshMark(PatientMark[n]); }
-      //for (var s = 0; s < sopList.length; s++)
-      //   refreshMarkFromSop(sopList[s]);
-      for (var i = 0; i < Viewport_Total; i++)
-        if (GetViewport(i).series) leftLayout.refleshMarkWithSeries(GetViewport(i).series);
-
-      //getByid("openMeasureImg").click();
-
+      for (var n in PatientMark) {
+        refreshMark(PatientMark[n]);
+      }
+      for (var i = 0; i < Viewport_Total; i++) {
+        if (GetViewport(i).series)
+          leftLayout.refleshMarkWithSeries(GetViewport(i).series);
+      }
       Angle_now_choose = null;
       Angle_previous_choose = null;
       angle.angle_ = "stop";
       getByid("container").removeChild(this.window);
     };
-  }
+  
+    btnContainer.appendChild(btn_remove);
+    btnContainer.appendChild(btn_cancel);
+    removeRulerWindow.appendChild(icon);
+    removeRulerWindow.appendChild(message);
+    removeRulerWindow.appendChild(btnContainer);
+  
+    getByid("container").appendChild(removeRulerWindow);
+  };
+  
 
   for (var element of getClass("img")) {
     if (element && element.alt) {
