@@ -604,30 +604,59 @@ async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instanc
     }
 }
 
-async function startSequentialSeriesLoading() {
+// async function startSequentialSeriesLoading() {
+//   sequentialLoadingActive = true;
+
+//   while (seriesQueue.length > 0) {
+//     const seriesUID = seriesQueue.shift();
+//     currentSeriesUID = seriesUID;
+
+//     // Skip if series was already loaded by user click
+//     if (!deferredLoadTasks.has(seriesUID)) continue;
+
+//     let tasks = deferredLoadTasks.get(seriesUID);
+//     while (tasks.length > 0) {
+//       // Respect current active user interaction
+//       if (activeSeriesUID && activeSeriesUID !== seriesUID) break;
+
+//       const batch = tasks.splice(0, 5);
+//       await Promise.all(batch.map(task => task()));
+//     }
+
+//     deferredLoadTasks.delete(seriesUID);
+//   }
+
+//   currentSeriesUID = null;
+//   sequentialLoadingActive = false;
+// }
+
+async function startSequentialSeriesLoading(minConcurrent = 2) {
   sequentialLoadingActive = true;
+  const seriesInProgress = new Set();
 
-  while (seriesQueue.length > 0) {
+  async function loadNextSeries() {
+    if (seriesQueue.length === 0) return;
+
     const seriesUID = seriesQueue.shift();
-    currentSeriesUID = seriesUID;
+    const promise = handleSeriesDoubleClick(seriesUID, true).then(() => {
+      seriesInProgress.delete(promise);
+      // Start next series when this one finishes
+      return loadNextSeries();
+    });
 
-    // Skip if series was already loaded by user click
-    if (!deferredLoadTasks.has(seriesUID)) continue;
-
-    let tasks = deferredLoadTasks.get(seriesUID);
-    while (tasks.length > 0) {
-      // Respect current active user interaction
-      if (activeSeriesUID && activeSeriesUID !== seriesUID) break;
-
-      const batch = tasks.splice(0, 5);
-      await Promise.all(batch.map(task => task()));
-    }
-
-    deferredLoadTasks.delete(seriesUID);
+    seriesInProgress.add(promise);
   }
 
-  currentSeriesUID = null;
+  // Start up to `minConcurrent` series initially
+  const initialCount = Math.min(minConcurrent, seriesQueue.length);
+  for (let i = 0; i < initialCount; i++) {
+    await loadNextSeries();
+  }
+
+  // Wait for all remaining series to finish
+  await Promise.all(seriesInProgress);
   sequentialLoadingActive = false;
+  currentSeriesUID = null;
 }
 
 async function handleSeriesDoubleClick(seriesInstanceUID, isConcurrent = false) {
@@ -641,7 +670,7 @@ async function handleSeriesDoubleClick(seriesInstanceUID, isConcurrent = false) 
 
   while (tasks.length > 0) {
     if (!isConcurrent && activeSeriesUID !== seriesInstanceUID) return; // Allow interruption
-    const batch = tasks.splice(0, 5);
+    const batch = tasks.splice(0, 3);
     await Promise.all(batch.map(task => task()));
   }
 
