@@ -705,7 +705,7 @@ const ReportEditor = props => {
             _reactToastify.toast.success("Your report has been successfully submitted");
             setTimeout(() => {
               // navigate({ pathname: "/" });
-              window.location.href = '/';
+              window.location.href = "/";
               if (isFullEditor) {
                 window.close(); // Closes the tab if it's a full editor
               }
@@ -718,7 +718,7 @@ const ReportEditor = props => {
             _reactToastify.toast.success("Your report has been successfully updated");
             setTimeout(() => {
               // navigate({ pathname: "/" });
-              window.location.href = '/';
+              window.location.href = "/";
               if (isFullEditor) {
                 window.close(); // Closes the tab if it's a full editor
               }
@@ -848,6 +848,16 @@ const ReportEditor = props => {
     ${reportSubmit_time?.getFullYear()}
     ${reportSubmit_time?.getHours()}:${("0" + reportSubmit_time?.getMinutes())?.slice(-2)}:${("0" + reportSubmit_time?.getSeconds())?.slice(-2)} GMT${reportSubmit_time?.getTimezoneOffset() > 0 ? "-" : "+"}${("0" + Math.abs(reportSubmit_time?.getTimezoneOffset() / 60))?.slice(-2)}:${("0" + Math.abs(reportSubmit_time?.getTimezoneOffset() % 60)).slice(-2)}`;
   }
+  const firstName = assignUserDataFind ? `${assignUserDataFind?.firstName} ${assignUserDataFind?.lastName}` : "";
+  const qualification = assignUserDataFind?.attributes.qualification !== undefined ? assignUserDataFind?.attributes.qualification : "";
+  const registrationNo = assignUserDataFind && assignUserDataFind?.attributes && assignUserDataFind?.attributes.registrationNo ? assignUserDataFind.attributes.registrationNo : "";
+  const formattedTimes = formattedTime === undefined ? "" : formattedTime;
+  const disclaimerDetails = reportSetting && reportSetting.disclaimer_details ? reportSetting.disclaimer_details : "";
+  const displayName = firstName ? `<strong>${firstName}</strong><br/>` : "";
+  const qualificationName = qualification ? `<strong>${qualification}</strong><br/>` : "";
+  const registrationNoName = registrationNo ? `<strong>Reg.No. :- ${registrationNo}</strong><br/>` : "";
+  const formattedTimesName = formattedTimes ? `<strong>${formattedTimes}</strong><br/>` : "";
+  const disclaimerDetailsName = disclaimerDetails ? `<strong>Disclaimer :-</strong> ${disclaimerDetails}` : "";
   const handleDownloadPdf = async () => {
     try {
       setIsLoading(true);
@@ -918,16 +928,38 @@ const ReportEditor = props => {
         `;
 
       // Doctore details footer
-      const firstName = assignUserDataFind ? `${assignUserDataFind?.firstName} ${assignUserDataFind?.lastName}` : "";
-      const qualification = assignUserDataFind?.attributes.qualification !== undefined ? assignUserDataFind?.attributes.qualification : "";
-      const registrationNo = assignUserDataFind && assignUserDataFind?.attributes && assignUserDataFind?.attributes.registrationNo ? assignUserDataFind.attributes.registrationNo : "";
-      const formattedTimes = formattedTime === undefined ? "" : formattedTime;
-      const disclaimerDetails = reportSetting && reportSetting.disclaimer_details ? reportSetting.disclaimer_details : "";
-      const displayName = firstName ? `<strong>${firstName}</strong><br/>` : "";
-      const qualificationName = qualification ? `<strong>${qualification}</strong><br/>` : "";
-      const registrationNoName = registrationNo ? `<strong>Reg.No. :- ${registrationNo}</strong><br/>` : "";
-      const formattedTimesName = formattedTimes ? `<strong>${formattedTimes}</strong><br/>` : "";
-      const disclaimerDetailsName = disclaimerDetails ? `<strong>Disclaimer :-</strong> ${disclaimerDetails}` : "";
+      // const firstName = assignUserDataFind
+      //   ? `${assignUserDataFind?.firstName} ${assignUserDataFind?.lastName}`
+      //   : "";
+      // const qualification =
+      //   assignUserDataFind?.attributes.qualification !== undefined
+      //     ? assignUserDataFind?.attributes.qualification
+      //     : "";
+      // const registrationNo =
+      //   assignUserDataFind &&
+      //   assignUserDataFind?.attributes &&
+      //   assignUserDataFind?.attributes.registrationNo
+      //     ? assignUserDataFind.attributes.registrationNo
+      //     : "";
+      // const formattedTimes = formattedTime === undefined ? "" : formattedTime;
+      // const disclaimerDetails =
+      //   reportSetting && reportSetting.disclaimer_details
+      //     ? reportSetting.disclaimer_details
+      //     : "";
+      // const displayName = firstName ? `<strong>${firstName}</strong><br/>` : "";
+      // const qualificationName = qualification
+      //   ? `<strong>${qualification}</strong><br/>`
+      //   : "";
+      // const registrationNoName = registrationNo
+      //   ? `<strong>Reg.No. :- ${registrationNo}</strong><br/>`
+      //   : "";
+      // const formattedTimesName = formattedTimes
+      //   ? `<strong>${formattedTimes}</strong><br/>`
+      //   : "";
+      // const disclaimerDetailsName = disclaimerDetails
+      //   ? `<strong>Disclaimer :-</strong> ${disclaimerDetails}`
+      //   : "";
+
       const output = `
       <div style="line-height: 1.2;">
           ${displayName}
@@ -1446,23 +1478,37 @@ const ReportEditor = props => {
         if (patientReportDetail?.document_status === "Approved") {
           const imageUrl = assignUserDataFind?.attributes?.uploadSignature[0]; // Replace with your actual image URL
           instance.model.change(writer => {
-            const imageElement = writer.createElement('imageBlock', {
+            const imageElement = writer.createElement("imageBlock", {
               src: imageUrl,
-              alt: 'Doctor Signature',
-              style: 'height:80px;',
-              alignment: 'left' // key part
+              alt: "Doctor Signature",
+              style: "height:80px;",
+              alignment: "left" // key part
             });
 
             // Insert image at the END of the document
             const root = instance.model.document.getRoot();
-            const endPosition = writer.createPositionAt(root, 'end');
+            const endPosition = writer.createPositionAt(root, "end");
             instance.model.insertContent(imageElement, endPosition);
+
+            // Build HTML string
+            const extraDetailsHTML = `
+              ${displayName}
+              ${qualificationName}
+              ${registrationNoName}
+              ${formattedTimesName}
+              ${disclaimerDetailsName}
+            `;
+            // Insert formatted text below the image
+            const viewFragment = instance.data.processor.toView(extraDetailsHTML);
+            const modelFragment = instance.data.toModel(viewFragment);
+            const newPosition = writer.createPositionAt(root, "end");
+            writer.insert(modelFragment, newPosition);
           });
           // Make editor read-only after inserting the image
           instance.enableReadOnlyMode("approved-mode");
-          const editorTable = document?.querySelector('.editor_table');
+          const editorTable = document?.querySelector(".editor_table");
           if (editorTable) {
-            editorTable.classList.remove('editor_table');
+            editorTable.classList.remove("editor_table");
           }
         }
 
@@ -1706,7 +1752,9 @@ const ReportEditor = props => {
     // className="ml-3 px-[5px] text-sm max-[1440px]:ml-2 min-[425px]:px-[10px] min-[425px]:text-[14px]"
     ,
     className: "box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] ml-3 px-[5px] sm:text-sm max-[1440px]:ml-2 sm:px-[10px] text-[10px]"
-  }, /*#__PURE__*/_react.default.createElement(_bs.BsCameraFill, null))), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
+  }, /*#__PURE__*/_react.default.createElement(_bs.BsCameraFill, {
+    className: "20px"
+  }))), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
     text: "Download PDF",
     position: "top",
     style: {
@@ -1723,6 +1771,8 @@ const ReportEditor = props => {
     className: "buttonloader"
   }) : /*#__PURE__*/_react.default.createElement("span", {
     className: "flex"
-  }, /*#__PURE__*/_react.default.createElement(_fa.FaFileDownload, null))))));
+  }, /*#__PURE__*/_react.default.createElement(_fa.FaFileDownload, {
+    className: "20px"
+  }))))));
 };
 var _default = exports.default = ReportEditor;
