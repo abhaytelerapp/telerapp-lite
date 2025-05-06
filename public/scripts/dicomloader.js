@@ -38,6 +38,120 @@ function setPDF(imageObj) {
     imageObj.pdf = pdf;
 }
 
+// function getDefaultImageObj(dataSet, type, url, imageDataLoaded, seriesInstanceNumber) {
+//     var imageObj = {};
+//     imageObj.windowCenter = dataSet.intString('x00281050');
+//     imageObj.windowWidth = dataSet.intString('x00281051');
+//     imageObj.accessionNumber = dataSet.string('x00080050');
+//     imageObj.acquisitionTime = dataSet.string('x00080032');
+//     imageObj.bitsAllocation = dataSet.string('x00280100');
+//     imageObj.highBit = dataSet.intString('x00280102');
+//     imageObj.InstanceNumber = dataSet.string('x00200013');
+//     imageObj.institutionName = dataSet.string('x00080080');
+//     imageObj.PatientAge = dataSet.string('x00101010');
+//     imageObj.PatientID = dataSet.string('x00100020');
+
+//     //imageObj.PatientName = dataSet.string('x00100010');
+//     if (dataSet.elements[Tag.PatientName])
+//         imageObj.PatientName = (new TextDecoder('utf-8')).decode(new Uint8Array(dataSet.byteArray.buffer, dataSet.elements[Tag.PatientName].dataOffset, dataSet.elements[Tag.PatientName].length));
+
+//     imageObj.patentSex = dataSet.string('x00100040');
+//     imageObj.pixelRepresentation = dataSet.int16('x00280103');
+//     imageObj.bitsStored = dataSet.int16('x00280101');
+//     imageObj.seriesDescription = dataSet.string('x0008103e');
+//     imageObj.seriesNumber = dataSet.string('x00200011');
+//     imageObj.sliceLocation = dataSet.string('x00201041');
+//     imageObj.sliceThickness = dataSet.string('x00180050');
+//     imageObj.stationName = dataSet.string('x00081010');
+//     imageObj.invert = dataSet.string('x00280004') == "MONOCHROME1" ? true : false;
+//     imageObj.color = dataSet.int16(Tag.SamplesPerPixel) === 3;
+//     imageObj.NumberOfFrames = dataSet.intString(Tag.NumberOfFrames);
+//     imageObj.photometricInterpretation = dataSet.string(Tag.PhotometricInterpretation);
+//     imageObj.width = imageObj.columns = dataSet.int16('x00280011');
+//     imageObj.height = imageObj.rows = dataSet.int16('x00280010');
+//     imageObj.StudyInstanceUID = dataSet.string(Tag.StudyInstanceUID);
+//     imageObj.SeriesInstanceUID = dataSet.string(Tag.SeriesInstanceUID);
+//     imageObj.SOPInstanceUID = dataSet.string(Tag.SOPInstanceUID);
+//     imageObj.PhotometricInterpretation = dataSet.string(Tag.PhotometricInterpretation);
+
+//     imageObj.totalInstancesInSeries = seriesInstanceNumber;
+
+//     if (dataSet.elements[Tag.GridFrameOffsetVector]) {
+//         imageObj.GridFrameOffsetVector = dataSet.string(Tag.GridFrameOffsetVector).split("\\");
+//         for (var i in imageObj.GridFrameOffsetVector) imageObj.GridFrameOffsetVector[i] = parseInt(imageObj.GridFrameOffsetVector[i]);
+//     }
+
+//     ////////////////////////////
+//     if (dataSet.elements[Tag.ImageOrientationPatient]) {
+//         imageObj.Orientation = dataSet.string(Tag.ImageOrientationPatient).split("\\");
+//         for (var o in imageObj.Orientation) imageObj.Orientation[o] = parseFloat(imageObj.Orientation[o]);
+
+//         var orien = dataSet.string(Tag.ImageOrientationPatient).split("\\");
+//         for (var o in orien) orien[o] = Math.round(orien[o]);
+//         if (orien[0] == 1 && orien[1] == 0 && orien[2] == 0 && orien[3] == 0 && orien[4] == 0 && orien[5] == -1)
+//             imageObj.AnatomicalPlane = "Coronal"; //['1', '0', '0', '0', '0', '-1']
+//         else if (orien[0] == 0 && orien[1] == 1 && orien[2] == 0 && orien[3] == 0 && orien[4] == 0 && orien[5] == -1)
+//             imageObj.AnatomicalPlane = "Sagittal"; //['0', '1', '0', '0', '0', '-1']
+//         else if (orien[0] == 1 && orien[1] == 0 && orien[2] == 0 && orien[3] == 0 && orien[4] == 1 && orien[5] == 0)
+//             imageObj.AnatomicalPlane = "Axial"; //['1', '0', '0', '0', '1', '0']
+//         else imageObj.AnatomicalPlane = null;
+//     } else imageObj.AnatomicalPlane = null;
+
+//     if (dataSet.elements[Tag.ImagePositionPatient]) {
+//         imageObj.imagePosition = dataSet.string(Tag.ImagePositionPatient).split("\\");
+//         for (var i in imageObj.imagePosition) imageObj.imagePosition[i] = parseFloat(imageObj.imagePosition[i]) / (imageObj.rowPixelSpacing ? imageObj.rowPixelSpacing : 1);
+//     }
+
+//     ////////////////////////////
+
+//     imageObj.intercept = dataSet.intString('x00281052');
+//     imageObj.slope = dataSet.floatString('x00281053');
+//     imageObj.bitsAllocated = dataSet.int16(Tag.BitsAllocated);
+//     if (dataSet.string('x00280030')) imageObj.rowPixelSpacing = parseFloat(dataSet.string('x00280030').split("\\")[0]);
+//     if (dataSet.string('x00280030')) imageObj.columnPixelSpacing = parseFloat(dataSet.string('x00280030').split("\\")[1]);
+//     imageObj.samplesPerPixel = dataSet.string('x00280004') === 'YBR_FULL_422' ? 2 : dataSet.uint16('x00280002');
+//     imageObj.data = dataSet;
+//     imageObj.url = url;
+
+//     //////////
+//     if (imageObj.Orientation) {
+//         imageObj.RCS = new Matrix4x4();
+//         imageObj.RCS.matrix = [
+//             [imageObj.Orientation[0] / parseFloat(imageObj.rowPixelSpacing), imageObj.Orientation[3] / parseFloat(imageObj.rowPixelSpacing), 0, imageObj.imagePosition[0] / parseFloat(imageObj.rowPixelSpacing)],
+//             [imageObj.Orientation[1] / parseFloat(imageObj.rowPixelSpacing), imageObj.Orientation[4] / parseFloat(imageObj.rowPixelSpacing), 0, imageObj.imagePosition[1] / parseFloat(imageObj.rowPixelSpacing)],
+//             [imageObj.Orientation[2] / parseFloat(imageObj.rowPixelSpacing), imageObj.Orientation[5] / parseFloat(imageObj.rowPixelSpacing), 0, imageObj.imagePosition[2] / parseFloat(imageObj.rowPixelSpacing)],
+//             [0, 0, 0, 1]
+//         ]
+//         imageObj.RCS.invertmatrix = [
+//             [-imageObj.Orientation[0] / parseFloat(imageObj.rowPixelSpacing), -imageObj.Orientation[3] / parseFloat(imageObj.rowPixelSpacing), 0, -imageObj.imagePosition[0] / parseFloat(imageObj.rowPixelSpacing)],
+//             [-imageObj.Orientation[1] / parseFloat(imageObj.rowPixelSpacing), -imageObj.Orientation[4] / parseFloat(imageObj.rowPixelSpacing), 0, -imageObj.imagePosition[1] / parseFloat(imageObj.rowPixelSpacing)],
+//             [-imageObj.Orientation[2] / parseFloat(imageObj.rowPixelSpacing), -imageObj.Orientation[5] / parseFloat(imageObj.rowPixelSpacing), 0, -imageObj.imagePosition[2] / parseFloat(imageObj.rowPixelSpacing)],
+//             [0, 0, 0, 1]
+//         ]
+//     }
+
+//     ////////////////
+//     imageObj.imageDataLoaded = imageDataLoaded;
+//     if (type == "sop" && imageDataLoaded == false) {
+//         imageObj.pixelData = null;
+//         imageObj.loadImageData = function () {
+//             this.imageDataLoaded = true;
+//             this.pixelData = getPixelDataFromDataSet(this, this.data);
+//         }
+//     }
+//     else if (type == "sop")
+//         imageObj.pixelData = getPixelDataFromDataSet(imageObj, dataSet);
+
+//     if (type == "sop") imageObj.getPixelData = function () { return this.pixelData; }
+//     else if (type == "frame") imageObj.getPixelData = function (framesNumber = 0) {
+//         return getPixelDataFromDataSet(this, this.data, isNaN(framesNumber) ? 0 : framesNumber);
+//     }
+//     else imageObj.getPixelData = function () { return; }
+
+
+//     return imageObj;
+// }
+
 function getDefaultImageObj(dataSet, type, url, imageDataLoaded, seriesInstanceNumber) {
     var imageObj = {};
     imageObj.windowCenter = dataSet.intString('x00281050');
@@ -83,23 +197,56 @@ function getDefaultImageObj(dataSet, type, url, imageDataLoaded, seriesInstanceN
 
     ////////////////////////////
     if (dataSet.elements[Tag.ImageOrientationPatient]) {
-        imageObj.Orientation = dataSet.string(Tag.ImageOrientationPatient).split("\\");
-        for (var o in imageObj.Orientation) imageObj.Orientation[o] = parseFloat(imageObj.Orientation[o]);
+        var orientationStr = dataSet.string(Tag.ImageOrientationPatient);
+        if (orientationStr) {
+            var orientationParts = orientationStr.split("\\");
+            if (orientationParts && orientationParts.length >= 6) {
+                imageObj.Orientation = orientationParts;
+                for (var o in imageObj.Orientation) {
+                    imageObj.Orientation[o] = parseFloat(imageObj.Orientation[o]) || 0;
+                }
 
-        var orien = dataSet.string(Tag.ImageOrientationPatient).split("\\");
-        for (var o in orien) orien[o] = Math.round(orien[o]);
-        if (orien[0] == 1 && orien[1] == 0 && orien[2] == 0 && orien[3] == 0 && orien[4] == 0 && orien[5] == -1)
-            imageObj.AnatomicalPlane = "Coronal"; //['1', '0', '0', '0', '0', '-1']
-        else if (orien[0] == 0 && orien[1] == 1 && orien[2] == 0 && orien[3] == 0 && orien[4] == 0 && orien[5] == -1)
-            imageObj.AnatomicalPlane = "Sagittal"; //['0', '1', '0', '0', '0', '-1']
-        else if (orien[0] == 1 && orien[1] == 0 && orien[2] == 0 && orien[3] == 0 && orien[4] == 1 && orien[5] == 0)
-            imageObj.AnatomicalPlane = "Axial"; //['1', '0', '0', '0', '1', '0']
-        else imageObj.AnatomicalPlane = null;
-    } else imageObj.AnatomicalPlane = null;
+                var orien = orientationParts.map(val => Math.round(parseFloat(val) || 0));
+                if (orien[0] == 1 && orien[1] == 0 && orien[2] == 0 && orien[3] == 0 && orien[4] == 0 && orien[5] == -1)
+                    imageObj.AnatomicalPlane = "Coronal"; //['1', '0', '0', '0', '0', '-1']
+                else if (orien[0] == 0 && orien[1] == 1 && orien[2] == 0 && orien[3] == 0 && orien[4] == 0 && orien[5] == -1)
+                    imageObj.AnatomicalPlane = "Sagittal"; //['0', '1', '0', '0', '0', '-1']
+                else if (orien[0] == 1 && orien[1] == 0 && orien[2] == 0 && orien[3] == 0 && orien[4] == 1 && orien[5] == 0)
+                    imageObj.AnatomicalPlane = "Axial"; //['1', '0', '0', '0', '1', '0']
+                else imageObj.AnatomicalPlane = null;
+            } else {
+                imageObj.Orientation = [0, 0, 0, 0, 0, 0];
+                imageObj.AnatomicalPlane = null;
+            }
+        } else {
+            imageObj.Orientation = [0, 0, 0, 0, 0, 0];
+            imageObj.AnatomicalPlane = null;
+        }
+    } else {
+        imageObj.Orientation = [0, 0, 0, 0, 0, 0];
+        imageObj.AnatomicalPlane = null;
+    }
 
     if (dataSet.elements[Tag.ImagePositionPatient]) {
-        imageObj.imagePosition = dataSet.string(Tag.ImagePositionPatient).split("\\");
-        for (var i in imageObj.imagePosition) imageObj.imagePosition[i] = parseFloat(imageObj.imagePosition[i]) / (imageObj.rowPixelSpacing ? imageObj.rowPixelSpacing : 1);
+        var positionStr = dataSet.string(Tag.ImagePositionPatient);
+        if (positionStr) {
+            var positionParts = positionStr.split("\\");
+            if (positionParts && positionParts.length >= 3) {
+                imageObj.imagePosition = positionParts;
+                for (var i in imageObj.imagePosition) {
+                    imageObj.imagePosition[i] = parseFloat(imageObj.imagePosition[i]) || 0;
+                    if (imageObj.rowPixelSpacing) {
+                        imageObj.imagePosition[i] = imageObj.imagePosition[i] / parseFloat(imageObj.rowPixelSpacing);
+                    }
+                }
+            } else {
+                imageObj.imagePosition = [0, 0, 0];
+            }
+        } else {
+            imageObj.imagePosition = [0, 0, 0];
+        }
+    } else {
+        imageObj.imagePosition = [0, 0, 0];
     }
 
     ////////////////////////////

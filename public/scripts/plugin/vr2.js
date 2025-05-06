@@ -1109,6 +1109,9 @@ endsolid name`
         var span = document.createElement("span");
         span.style['zIndex'] = "490";
         span.style['float'] = "right";
+        // span.style['align-item'] = "center";
+        // span.style['display'] = "flex";
+        // span.style['gap'] = "4px";
         var PerspectiveLable = document.createElement("LABEL");
         PerspectiveLable.innerText = "Perspective(disabled)";
         PerspectiveLable.className = "VR2_Label";
@@ -1133,7 +1136,7 @@ endsolid name`
                 if (e.target == this.PerspectiveCheck) {
                     var userConfirmed = false;
                     //警告訊息
-                    userConfirmed = prompt('Caution! "Perspective" is a test feature and may cause the computer to crash in some situations.\nDo you still want to use it? (Enter yes or no)\n\n注意！「Perspective」為測試功能，部份情況可能導致電腦當機。\n請問您仍然要使用嗎？ (輸入yes或no)', 'no');
+                    userConfirmed = prompt('Caution! "Perspective" is a test feature and may cause the computer to crash in some situations.\nDo you still want to use it? (Enter yes or no)', 'no');
 
                     if (!userConfirmed || userConfirmed.toLowerCase() != "yes") {
                         this.PerspectiveCheck.checked = false;
