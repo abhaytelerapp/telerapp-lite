@@ -821,7 +821,7 @@ function html_onload() {
       SetTable();
     }
     if (getByid('MarkStyleDiv').style.display == 'none') {
-      getByid('MarkStyleDiv').style.display = '';
+      getByid('MarkStyleDiv').style.display = 'flex';
     } else {
       getByid('MarkStyleDiv').style.display = 'none';
     }

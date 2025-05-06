@@ -923,9 +923,17 @@ const Viewer = props => {
   }))), /*#__PURE__*/_react.default.createElement("div", {
     id: "MarkStyleDiv",
     style: {
-      backgroundColor: "#00306044"
+      backgroundColor: "#282828",
+      alignItems: "center",
+      justifyContent: "space-around"
     },
     className: "drawer"
+  }, /*#__PURE__*/_react.default.createElement("span", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: "6px"
+    }
   }, /*#__PURE__*/_react.default.createElement("label", {
     style: {
       color: "#ffffff"
@@ -961,9 +969,12 @@ const Viewer = props => {
   }, "Orange"), /*#__PURE__*/_react.default.createElement("option", {
     id: "PurpleSelect",
     defaultValue: "Purple"
-  }, "Purple")), /*#__PURE__*/_react.default.createElement("label", {
+  }, "Purple"))), /*#__PURE__*/_react.default.createElement("label", {
     style: {
-      color: "#ffffff"
+      color: "#ffffff",
+      display: "flex",
+      alignItems: "center",
+      gap: "6px"
     },
     id: "markAlphaLabel"
   }, "Alpha", /*#__PURE__*/_react.default.createElement("input", {
@@ -972,7 +983,10 @@ const Viewer = props => {
     defaultValue: "35"
   })), /*#__PURE__*/_react.default.createElement("label", {
     style: {
-      color: "#ffffff"
+      color: "#ffffff",
+      display: "flex",
+      alignItems: "center",
+      gap: "6px"
     },
     id: "markSizeLabel"
   }, "Size", /*#__PURE__*/_react.default.createElement("input", {
@@ -981,7 +995,10 @@ const Viewer = props => {
     defaultValue: "0.45"
   })), /*#__PURE__*/_react.default.createElement("label", {
     style: {
-      color: "#ffffff"
+      color: "#ffffff",
+      display: "flex",
+      alignItems: "center",
+      gap: "6px"
     },
     id: "markFillLabel"
   }, "Fill", /*#__PURE__*/_react.default.createElement("input", {
@@ -989,7 +1006,13 @@ const Viewer = props => {
     defaultChecked: true,
     name: "markFillLabel",
     id: "markFillCheck"
-  })), /*#__PURE__*/_react.default.createElement("label", {
+  })), /*#__PURE__*/_react.default.createElement("span", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: "6px"
+    }
+  }, /*#__PURE__*/_react.default.createElement("label", {
     style: {
       color: "#ffffff"
     },
@@ -1006,7 +1029,7 @@ const Viewer = props => {
   }, "DICOMTags"), /*#__PURE__*/_react.default.createElement("option", {
     id: "AIMSelect",
     defaultValue: "AIM"
-  }, "AIM"))), /*#__PURE__*/_react.default.createElement("span", {
+  }, "AIM")))), /*#__PURE__*/_react.default.createElement("span", {
     id: "WindowLevelDiv_span"
   }, /*#__PURE__*/_react.default.createElement("div", {
     id: "WindowLevelDiv",

@@ -892,53 +892,55 @@ const Viewer = (props) => {
         </div>
         <div
           id="MarkStyleDiv"
-          style={{ backgroundColor: "#00306044" }}
+          style={{ backgroundColor: "#282828", alignItems: "center", justifyContent: "space-around" }}
           className="drawer"
         >
-          <label style={{ color: "#ffffff" }} id="markColorLabel">
-            Color：
-          </label>
-          <select id="MarkcolorSelect" defaultValue="Auto">
-            <option id="AutoColorSelect" defaultValue="Auto">
-              Auto
-            </option>
-            <option id="WhiteSelect" defaultValue="White">
-              White
-            </option>
-            <option id="RedSelect" defaultValue="Red">
-              Red
-            </option>
-            <option id="BlueSelect" defaultValue="Blue">
-              Blue
-            </option>
-            <option id="GreenSelect" defaultValue="Green">
-              Green
-            </option>
-            <option id="YellowSelect" defaultValue="Yellow">
-              Yellow
-            </option>
-            <option id="BrownSelect" defaultValue="Brown">
-              Brown
-            </option>
-            <option id="OrangeSelect" defaultValue="Orange">
-              Orange
-            </option>
-            <option id="PurpleSelect" defaultValue="Purple">
-              Purple
-            </option>
-          </select>
+          <span style={{display: "flex", alignItems: "center", gap: "6px"}}>
+            <label style={{ color: "#ffffff" }} id="markColorLabel">
+              Color：
+            </label>
+            <select id="MarkcolorSelect" defaultValue="Auto">
+              <option id="AutoColorSelect" defaultValue="Auto">
+                Auto
+              </option>
+              <option id="WhiteSelect" defaultValue="White">
+                White
+              </option>
+              <option id="RedSelect" defaultValue="Red">
+                Red
+              </option>
+              <option id="BlueSelect" defaultValue="Blue">
+                Blue
+              </option>
+              <option id="GreenSelect" defaultValue="Green">
+                Green
+              </option>
+              <option id="YellowSelect" defaultValue="Yellow">
+                Yellow
+              </option>
+              <option id="BrownSelect" defaultValue="Brown">
+                Brown
+              </option>
+              <option id="OrangeSelect" defaultValue="Orange">
+                Orange
+              </option>
+              <option id="PurpleSelect" defaultValue="Purple">
+                Purple
+              </option>
+            </select>
+          </span>
 
-          <label style={{ color: "#ffffff" }} id="markAlphaLabel">
+          <label style={{ color: "#ffffff", display: "flex", alignItems: "center", gap: "6px" }} id="markAlphaLabel">
             Alpha
             <input type="text" id="markAlphaText" defaultValue="35" />
           </label>
 
-          <label style={{ color: "#ffffff" }} id="markSizeLabel">
+          <label style={{ color: "#ffffff", display: "flex", alignItems: "center", gap: "6px" }} id="markSizeLabel">
             Size
             <input type="text" id="markSizeText" defaultValue="0.45" />
           </label>
 
-          <label style={{ color: "#ffffff" }} id="markFillLabel">
+          <label style={{ color: "#ffffff", display: "flex", alignItems: "center", gap: "6px" }} id="markFillLabel">
             Fill
             <input
               type="checkbox"
@@ -948,20 +950,22 @@ const Viewer = (props) => {
             />
           </label>
 
-          <label style={{ color: "#ffffff" }} id="TableLabel">
-            Table：
-          </label>
-          <select id="TableSelect" defaultValue="None">
-            <option id="TableSelectNone" defaultValue="None">
-              None
-            </option>
-            <option id="DICOMTagsSelect" defaultValue="DICOMTags">
-              DICOMTags
-            </option>
-            <option id="AIMSelect" defaultValue="AIM">
-              AIM
-            </option>
-          </select>
+          <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <label style={{ color: "#ffffff"}} id="TableLabel">
+              Table：
+            </label>
+            <select id="TableSelect" defaultValue="None">
+              <option id="TableSelectNone" defaultValue="None">
+                None
+              </option>
+              <option id="DICOMTagsSelect" defaultValue="DICOMTags">
+                DICOMTags
+              </option>
+              <option id="AIMSelect" defaultValue="AIM">
+                AIM
+              </option>
+            </select>
+          </span>
         </div>
         <span id="WindowLevelDiv_span">
           <div

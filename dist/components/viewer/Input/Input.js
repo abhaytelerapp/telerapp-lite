@@ -10,8 +10,8 @@ var _Label = _interopRequireDefault(require("../Label"));
 var _classnames = _interopRequireDefault(require("classnames"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
-const baseInputClasses = 'shadow transition duration-300 appearance-none border dark:border-primary-main border-secondary-dark focus:border-inputfield-focus focus:outline-none disabled:border-inputfield-disabled rounded w-full py-2 px-3 text-sm text-white text-black dark:placeholder-inputfield-dark placeholder-inputfield-light leading-tight';
-const baseInputClasses1 = 'shadow transition duration-300 appearance-none border dark:border-primary-main border-secondary-dark focus:border-inputfield-focus focus:outline-none disabled:border-inputfield-disabled rounded w-full py-2 pl-7 text-sm  text-white text-black dark:placeholder-inputfield-dark placeholder-inputfield-light leading-tight';
+const baseInputClasses = 'shadow transition duration-300 appearance-none border dark:border-primary-main border-secondary-dark focus:border-inputfield-focus focus:outline-none disabled:border-inputfield-disabled rounded w-full py-2 px-3 text-sm dark:text-white text-black dark:placeholder-inputfield-dark placeholder-inputfield-light leading-tight';
+const baseInputClasses1 = 'shadow transition duration-300 appearance-none border dark:border-primary-main border-secondary-dark focus:border-inputfield-focus focus:outline-none disabled:border-inputfield-disabled rounded w-full py-2 pl-7 text-sm  dark:text-white text-black dark:placeholder-inputfield-dark placeholder-inputfield-light leading-tight';
 const transparentClasses = {
   true: 'bg-transparent',
   false: 'dark:bg-secondary-dark bg-primary-light'
