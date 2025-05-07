@@ -5,6 +5,7 @@
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
   image-rendering: pixelated;
+  width: 100% !important;
 }
 
 .canvas_3d {
@@ -26,6 +27,7 @@
 
   display: flex;
   justify-content: center;
+  align-items: center;
   image-rendering: pixelated;
   will-change: transform;
 }
@@ -42,7 +44,7 @@
   border-collapse: collapse;
   position: absolute;
   background-color: black;
-  border: var(--bordersize) #FFC3FF groove;
+  border: 2px #d4d4d4  groove;
   z-index: 200;
   width: calc(100% - 10px);
   height: calc(100% - 10px);
