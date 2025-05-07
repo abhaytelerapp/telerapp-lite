@@ -21,17 +21,37 @@ function loadWriteSEG() {
 
     var span = document.createElement("SPAN")
     span.innerHTML =
-        `<div id="SegStyleDiv" style="background-color:#30306044;">
-            <font color="white">ManufacturerModelName：</font><input type="text" id="SegManufacturerModelName"
+        `<div id="SegStyleDiv" style="background-color:#282828; align-items:center; gap: 6px; justify-content:space-around; flex-wrap: wrap;">
+            <span style="display: flex; align-items:center; margin-top: 6px;">
+                <font color="white">ManufacturerModelName： </font>
+                <input type="text" id="SegManufacturerModelName"
                 value="ModelName" size="8" />
-            <font color="white">SeriesDescription：</font><input type="text" id="SegSeriesDescription" value="Research"
+            </span>
+            <span style="display: flex; align-items:center; margin-top: 6px;">
+                <font color="white">SeriesDescription： </font>
+                <input type="text" id="SegSeriesDescription" value="Research"
                 size="8" />
-            <font color="white">SegmentLabel</font><input type="text" id="SegSegmentLabel" value="SegmentLabel" size="8" />
-            <font color="white">Brush Size</font><input type="text" id="SegBrushSizeText" value="10" size="2" />
-            <input type="range" min="1" max="30" value="10" class="slider" id="SegBrushSizeRange">  
-            &nbsp;&nbsp;<button id="overlay2seg" sytle="">OverLay to Seg</button>&nbsp;&nbsp;
-            &nbsp;&nbsp;<button id="seg2stl" sytle="">Download as STL format (beta version)</button>&nbsp;&nbsp;
-            <button id="RemoveSEG" onclick="DeleteSelectedSEG();" style="font-size: 14px;display:none;">Delete Selected SEG</button>  
+            </span>
+            <span style="display: flex; align-items:center; margin-top: 6px;">
+                <font color="white">SegmentLabel</font>
+                <input type="text" id="SegSegmentLabel" value="SegmentLabel" size="8" />
+            </span>
+            <span style="display: flex; align-items:center; margin-top: 6px;">
+                <font color="white">Brush Size</font>
+                <input type="text" id="SegBrushSizeText" value="10" size="2" />
+            </span>
+            <span style="display: flex; align-items:center; margin-top: 6px;">
+                <input type="range" min="1" max="30" value="10" class="slider" id="SegBrushSizeRange"> 
+            </span>
+            <span style="display: flex; align-items:center; margin-top: 6px;">
+                <button id="overlay2seg" sytle="">OverLay to Seg</button>
+            </span>
+            <span style="display: flex; align-items:center; margin-top: 6px;">
+                <button id="seg2stl" sytle="">Download as STL format (beta version)</button>
+            </span>
+            <span style="display: flex; align-items:center; margin-top: 6px;">
+                <button id="RemoveSEG" onclick="DeleteSelectedSEG();" style="font-size: 14px;display:none;">Delete Selected SEG</button> 
+            </span> 
         </div>`
     getByid("page-header").appendChild(span);
     getByid("SegStyleDiv").style.display = "none";

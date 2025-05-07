@@ -16,7 +16,7 @@ function loadxml_format() {
 
   var span = document.createElement("SPAN")
   span.innerHTML =
-    `<label style="color: #ffffff;" id="xmlMarkName">name<input type="text" id="xmlMarkNameText" value="noName" /></label>`
+    `<label style="color: #ffffff; align-items:center; "  id="xmlMarkName">name<input type="text" id="xmlMarkNameText" style="margin-left: 6px;" value="noName" /></label>`
   getByid("page-header").appendChild(span);
   HideElemByID("xmlMarkName");
 }

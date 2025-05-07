@@ -855,6 +855,7 @@ endsolid name`
         userDIV.style['flex-direction'] = "column";
         userDIV.style['float'] = "right";
         userDIV.style['display'] = "flex";
+        userDIV.style['padding-right'] = "12px";
         this.userDIV = userDIV;
         getByid("VR2_DIV").appendChild(userDIV);
 
@@ -1027,6 +1028,9 @@ endsolid name`
         var span = document.createElement("span");
         span.style['zIndex'] = "490";
         span.style['float'] = "right";
+        span.style['display'] = "flex";
+        span.style['align-items'] = "center";
+        span.style['gap'] = "6px";
         var ShadowLable = document.createElement("LABEL");
         ShadowLable.innerText = "Shadow";
         ShadowLable.className = "VR2_Label";
@@ -1059,6 +1063,9 @@ endsolid name`
         var span = document.createElement("span");
         span.style['zIndex'] = "490";
         span.style['float'] = "right";
+        span.style['display'] = "flex";
+        span.style['align-items'] = "center";
+        span.style['gap'] = "6px";
         var ReduceSliceLable = document.createElement("LABEL");
         ReduceSliceLable.innerText = "Reduce Slices";
         ReduceSliceLable.className = "VR2_Label";
@@ -1091,6 +1098,9 @@ endsolid name`
         var span = document.createElement("span");
         span.style['zIndex'] = "490";
         span.style['float'] = "right";
+        span.style['display'] = "flex";
+        span.style['align-items'] = "center";
+        span.style['gap'] = "6px";
         var STLLable = document.createElement("LABEL");
         STLLable.innerText = "Download as hollow STL model";
         STLLable.className = "VR2_Label";
@@ -1112,6 +1122,11 @@ endsolid name`
         // span.style['align-item'] = "center";
         // span.style['display'] = "flex";
         // span.style['gap'] = "4px";
+        var container = document.createElement("div");
+        container.style.display = "flex";
+        container.style.alignItems = "center";
+        container.style.gap = "4px";
+
         var PerspectiveLable = document.createElement("LABEL");
         PerspectiveLable.innerText = "Perspective(disabled)";
         PerspectiveLable.className = "VR2_Label";
@@ -1161,9 +1176,10 @@ endsolid name`
         PerspectiveCheck.addEventListener("change", ChangePerspective, false);
         PerspectiveRange.addEventListener("change", ChangePerspective, false);
         span.appendChild(document.createElement("BR"));
-        span.appendChild(PerspectiveCheck);
-        span.appendChild(PerspectiveLable);
-        span.appendChild(document.createElement("BR"));
+        container.appendChild(PerspectiveCheck);
+        container.appendChild(PerspectiveLable);
+        span.appendChild(container);
+        // span.appendChild(document.createElement("BR"));
         span.appendChild(PerspectiveRange);
         userDIV.appendChild(span);
     }

@@ -44,55 +44,78 @@ function loadVR() {
 
     var span = document.createElement("SPAN");
     span.innerHTML =
-        `<div id="VR_setup" style="background-color:#84420044;">
-      <label style="color: #ffffff;" id="o3dPresetLabel">Preset：</label>
-      <select id="o3DStyle">
-        <option selected="selected">Auto</option>
-        <option id="o3DAngio">Angio</option>
-        <option id="o3DAirways">Airways</option>
-        <option id="o3DcomCombine">Combine</option>
-        <option id="o3DcomCombine2">Combine2</option>
-        <option id="o3DMip">MIP</option>
-        <option id="o3DMinIP">MinIP</option>
-      </select>
-      <font color="white" id="o3dAlphaValueLabel">Alpha：</font><input type="text" id="o3dAlphaValueText" size="3"
-        value="100" />
-      <label style="color: #ffffff;" id="smoothLabel">Smooth<input type="checkbox" name="3dSmooth"
-          id="3dSmooth"></label>
-      <label style="color: #ffffff;" id="yellowColorLabel">Color<input type="checkbox" name="3dYellow"
-          id="3dYellow"></label>
-      <label style="color: #ffffff;" id="3dShadowLabel">shadow
-        <!--<input type="checkbox" name="3dShadow" id="3dShadow">-->
-        <select name="3dShadow" id="3dShadow">
-          <option id="3dShadow_0">None</option>
-          <option id="3dShadow_05">0.005</option>
-          <option id="3dShadow_1">0.01</option>
-          <option id="3dShadow_2">0.02</option>
-          <option id="3dShadow_3" selected="selected">0.03</option>
-          <option id="3dShadow_4">0.04</option>
-          <option id="3dShadow_5">0.05</option>
-          <option id="3dShadow_6">0.06</option>
-          <option id="3dShadow_7">0.07</option>
-          <option id="3dShadow_8">0.08</option>
-          <option id="3dShadow_12">0.12</option>
-        </select>
-      </label>
-      <label style="color: #ffffff;display:none" id="3dInsertLabel">Insert(hide)：<input type="text" id="3dInsertText"
-          size="1" value="0" /></label>
-      <label style="color: #ffffff;" id="3Dskin">Skin：<input type="text" id="3DskinText" size="3" value="25" /></label>
-      <label style="color: #ffffff;" id="3dStrengthenLabel">3D Strengthen：
-        <select id="3dStrengthen">
-          <option selected="selected" id="3dStrengthenAuto">Auto</option>
-          <option id="3dStrengthenAlways">Always</option>
-          <option id="3dStrengthenNone">None</option>
-        </select>
-      </label>
-      <label style="color: #ffffff;" id="3dZipLabel">3D Zip：<input type="checkbox" checked="true"
-          id="3dZipCheckbox"><input type="text" id="3dZipText" size="3" value="50" /></label>
-      <label style="color: #ffffff;display:none" id="3dPerspectiveLabel">perspective：<input type="text"
-          id="3dPerspective" value="10000" /></label>
-      <img width="25" height="25" src="../image/icon/lite/download.png" onclick="VRscreenshot();">
-    </div>`
+        `<div id="VR_setup" style="background-color:#282828; align-items:center; justify-content:space-around;" >
+            <span style="display: flex; align-items:center; gap: 6px;">
+                <label style="color: #ffffff;" id="o3dPresetLabel">Preset：</label>
+                <select id="o3DStyle">
+                    <option selected="selected">Auto</option>
+                    <option id="o3DAngio">Angio</option>
+                    <option id="o3DAirways">Airways</option>
+                    <option id="o3DcomCombine">Combine</option>
+                    <option id="o3DcomCombine2">Combine2</option>
+                    <option id="o3DMip">MIP</option>
+                    <option id="o3DMinIP">MinIP</option>
+                </select>
+            </span>
+            <span style="display: flex; align-items:center; gap: 6px;">
+                <font color="white" id="o3dAlphaValueLabel">Alpha：</font>
+                <input type="text" id="o3dAlphaValueText" size="3"
+                value="100" />
+            </span>
+            <span>
+                <label style="color: #ffffff; display: flex; align-items:center; gap: 6px;" id="smoothLabel">Smooth <input type="checkbox" name="3dSmooth"
+                id="3dSmooth"></label>
+            </span>
+            <span>
+                <label style="color: #ffffff; display: flex; align-items:center; gap: 6px;" id="yellowColorLabel">Color <input type="checkbox" name="3dYellow"
+                id="3dYellow"></label>
+            </span>
+            <span>
+                <label style="color: #ffffff; display: flex; align-items:center; gap: 6px;" id="3dShadowLabel">shadow
+                    <!--<input type="checkbox" name="3dShadow" id="3dShadow">-->
+                    <select name="3dShadow" id="3dShadow">
+                    <option id="3dShadow_0">None</option>
+                    <option id="3dShadow_05">0.005</option>
+                    <option id="3dShadow_1">0.01</option>
+                    <option id="3dShadow_2">0.02</option>
+                    <option id="3dShadow_3" selected="selected">0.03</option>
+                    <option id="3dShadow_4">0.04</option>
+                    <option id="3dShadow_5">0.05</option>
+                    <option id="3dShadow_6">0.06</option>
+                    <option id="3dShadow_7">0.07</option>
+                    <option id="3dShadow_8">0.08</option>
+                    <option id="3dShadow_12">0.12</option>
+                    </select>
+                </label>
+            </span>
+            <span>
+                <label style="color: #ffffff; display:none;" id="3dInsertLabel">Insert(hide)： <input type="text" id="3dInsertText"
+                size="1" value="0" /></label>
+            </span>
+            <span>
+                <label style="color: #ffffff; display: flex; align-items:center; gap: 6px;" id="3Dskin">Skin： <input type="text" id="3DskinText" size="3" value="25" /></label>
+            </span>
+            <span>
+                <label style="color: #ffffff; display: flex; align-items:center; gap: 6px;" id="3dStrengthenLabel">3D Strengthen：
+                    <select id="3dStrengthen">
+                    <option selected="selected" id="3dStrengthenAuto">Auto</option>
+                    <option id="3dStrengthenAlways">Always</option>
+                    <option id="3dStrengthenNone">None</option>
+                    </select>
+                </label>
+            </span>
+            <span>
+                <label style="color: #ffffff; display: flex; align-items:center; gap: 6px;" id="3dZipLabel">3D Zip： <input type="checkbox" checked="true"
+                id="3dZipCheckbox"><input type="text" id="3dZipText" size="3" value="50" /></label>
+            </span>
+            <span>
+                <label style="color: #ffffff;display:none;" id="3dPerspectiveLabel">perspective： <input type="text"
+                id="3dPerspective" value="10000" /></label>
+            </span>
+            <span style="display: flex; align-items:center; gap: 6px;">
+                <img width="25" height="25" src="../image/icon/lite/download.png" onclick="VRscreenshot();">
+            </sapn>
+        </div>`
     getByid("page-header").appendChild(span);
 
     var span = document.createElement("SPAN");
@@ -437,7 +460,7 @@ function initVR() {
         openAnnotation = false;
 
         getByid("3dDisplay").style.display = "";
-        getByid("VR_setup").style.display = "";
+        getByid("VR_setup").style.display = "flex";
         getByid("3dCave").style.display = "";
         cancelTools();
         getByid("ImgVR").src = "../image/icon/lite/b_3D_on.png";

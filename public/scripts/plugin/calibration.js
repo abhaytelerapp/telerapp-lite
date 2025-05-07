@@ -14,9 +14,11 @@ function loadCalibration() {
 
     var span = document.createElement("SPAN")
     span.innerHTML =
-        `<div id="CalibrationDiv" style="background-color:#30306044;">
-                <font color="white">Calibration (mm):</font>
-                <input type="text" id="CalibrationValue" value="null" size="8" />
+        `<div id="CalibrationDiv" style="background-color:#30306044; align-items:center; gap: 8px;">
+                <span style="display: flex; align-items:center; gap: 8px;">
+                    <font color="white">Calibration (mm):</font>
+                    <input type="text" id="CalibrationValue" value="null" size="8" />
+                </span>
                 <button id="CalibrationButton">assign</button>
         </div>`
     getByid("page-header").appendChild(span);
@@ -60,7 +62,7 @@ getByid("Calibration").onclick = function () {
         exit_calibration();
     } else {
         openLeftImgClick = false;
-        getByid("CalibrationDiv").style.display = "";
+        getByid("CalibrationDiv").style.display = "flex";
         set_BL_model('Calibration');
         write_calibration();
     }

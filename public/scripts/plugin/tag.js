@@ -8,10 +8,12 @@ function loadWriteTAG() {
 
     var span = document.createElement("SPAN")
     span.innerHTML =
-        `<div id="TagStyleDiv" style="background-color:#30306044;">
-        <span style="color: white;" id="medicalSpecialtyTagSpan">Medical specialty：</span>
-        <select id="medicalSpecialtyTag">
-        </select>
+        `<div id="TagStyleDiv" style="background-color:#282828; display: flex; align-items:center; flex-wrap: wrap;">
+        <span style="color: white; display: flex; align-items:center; margin-top: 6px;" id="medicalSpecialtyTagSpan">
+            Medical specialty：
+            <select id="medicalSpecialtyTag">
+            </select>
+        </span>
       </div>`
     getByid("page-header").appendChild(span);
     getByid("TagStyleDiv").style.display = "none";
@@ -39,9 +41,12 @@ function readImageTags(url) {
             selectField.appendChild(opt);
 
             let tagDiv = document.getElementById("TagStyleDiv");
+            tagDiv.style.alignItems = "center";
+            tagDiv.style.justifyContent = "space-around";
             let diseasesDiv = document.createElement('div');
             diseasesDiv.id = medicalSpecialtyName;
             diseasesDiv.style.color = "white";
+            diseasesDiv.style.marginTop = "6px";
             tagDiv.appendChild(diseasesDiv);
 
             let diseases = Object.entries(value['diseases']);
@@ -93,7 +98,7 @@ getByid("writeTAG").onclick = function () {
     img2darkByClass("TAG", !openWriteTAG);
     this.src = openWriteTAG == true ? '../image/icon/lite/tag_on.png' : '../image/icon/lite/tag_off.png';
     if (openWriteTAG == true) {
-        getByid('TagStyleDiv').style.display = '';
+        getByid('TagStyleDiv').style.display = ' flex';
         set_BL_model('writeTAG');
     } else getByid('TagStyleDiv').style.display = 'none';
     SetTable();

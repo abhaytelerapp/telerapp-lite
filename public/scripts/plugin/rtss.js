@@ -18,43 +18,44 @@ function loadWriteRTSS() {
         `<div id="RtssDiv"
     style="background-color:#30306044;display:none;float:right;display: none;flex-direction: column;position: absolute;right:25px;top:10px;z-index: 20;"
     width="100">
-    <div style="background-color:#889292;">
-      <font color="white">Color：</font>
-      <select id="RTSScolorSelect" style="font-weight:bold;font-size:16px;">
-        <option class="RTSSColorSelectOption" id="RTSSBlackSelect" style="background-color:#929292;color: #000000;font-weight:bold;">Black
-        </option>
-        <option class="RTSSColorSelectOption" id="RTSSBlueSelect" style="background-color:#929292;color: #0000FF;font-weight:bold;"
-          selected="selected">Blue</option>
-        <option class="RTSSColorSelectOption" id="RTSSCyanSelect" style="background-color:#929292;color: #00FFFF;font-weight:bold;">Cyan
-        </option>
-        <option class="RTSSColorSelectOption" id="RTSSGreenSelect" style="background-color:#929292;color: #00FF00;font-weight:bold;">Green
-        </option>
-        <option class="RTSSColorSelectOption" id="RTSSMagentaSelect" style="background-color:#929292;color: #FF00FF;font-weight:bold;">
-          Magenta</option>
-        <option class="RTSSColorSelectOption" id="RTSSRedSelect" style="background-color:#929292;color: #FF0000;font-weight:bold;">Red
-        </option>
-        <option class="RTSSColorSelectOption" id="RTSSYellowSelect" style="background-color:#929292;color: #FFFF00;font-weight:bold;"> Yellow
-        </option>
-        <option class="RTSSColorSelectOption" id="RTSSWhiteSelect" style="background-color:#929292;color: #FFFFFF;font-weight:bold;">White
-        </option>
-      </select>
-      <br />
-      <font color="white">ROIName：</font><input type="text" id="textROIName" value="ROIName" size="8" />
+    <div style="background-color:#889292; display:flex; align-items:center; justify-content:space-around; gap: 6px; ">
+      <span>
+        <font color="white">Color： </font>
+        <select id="RTSScolorSelect" style="font-weight:bold;font-size:16px;">
+            <option class="RTSSColorSelectOption" id="RTSSBlackSelect" style="background-color:#929292;color: #000000;font-weight:bold;">Black
+            </option>
+            <option class="RTSSColorSelectOption" id="RTSSBlueSelect" style="background-color:#929292;color: #0000FF;font-weight:bold;"
+            selected="selected">Blue</option>
+            <option class="RTSSColorSelectOption" id="RTSSCyanSelect" style="background-color:#929292;color: #00FFFF;font-weight:bold;">Cyan
+            </option>
+            <option class="RTSSColorSelectOption" id="RTSSGreenSelect" style="background-color:#929292;color: #00FF00;font-weight:bold;">Green
+            </option>
+            <option class="RTSSColorSelectOption" id="RTSSMagentaSelect" style="background-color:#929292;color: #FF00FF;font-weight:bold;">
+            Magenta</option>
+            <option class="RTSSColorSelectOption" id="RTSSRedSelect" style="background-color:#929292;color: #FF0000;font-weight:bold;">Red
+            </option>
+            <option class="RTSSColorSelectOption" id="RTSSYellowSelect" style="background-color:#929292;color: #FFFF00;font-weight:bold;"> Yellow
+            </option>
+            <option class="RTSSColorSelectOption" id="RTSSWhiteSelect" style="background-color:#929292;color: #FFFFFF;font-weight:bold;">White
+            </option>
+        </select>
+      </span>
+      <span>
+        <font color="white">ROIName： </font><input type="text" id="textROIName" value="ROIName" size="8" />
+      </span>
     </div>
-    <br />
-    <font color="white">StructureSetLabel：</font><input type="text" id="textStructureSetLabel" value="STRUCTURE SET"
+    <font style="margin-top: 6px;" color="white">StructureSetLabel：</font><input type="text" id="textStructureSetLabel" value="STRUCTURE SET"
       size="15" />
-    <font color="white">StructureSetName：</font><input type="text" id="textStructureSetName"
+    <font style="margin-top: 6px;" color="white">StructureSetName：</font><input type="text" id="textStructureSetName"
       value="StructureSetName" size="14" />
-    <font color="white">StructureSetDescription：</font><input type="text" id="textStructureSetDescription"
+    <font style="margin-top: 6px;" color="white">StructureSetDescription：</font><input type="text" id="textStructureSetDescription"
       value="RT:" size="8" />
-    <font color="white">ObservationNumber：</font><input type="text" id="textObservationNumber" value="1" size="2" />
-    <font color="white">ReferencedROINumber：</font><input type="text" id="textReferencedROINumber" value="1"
+    <font style="margin-top: 6px;" color="white">ObservationNumber：</font><input type="text" id="textObservationNumber" value="1" size="2" />
+    <font style="margin-top: 6px;" color="white">ReferencedROINumber：</font><input type="text" id="textReferencedROINumber" value="1"
       size="2" />
-    <font color="white">RTROIInterpretedType：</font><input type="text" id="textRTROIInterpretedType" value="ORGAN"
+    <font style="margin-top: 6px;" color="white">RTROIInterpretedType：</font><input type="text" id="textRTROIInterpretedType" value="ORGAN"
       size="8" />
-      <br />
-      <button id="RemoveRtss" onclick="DeleteSelectedRTSS();" style="font-size: 14px;">Delete Selected RTSS</button>
+    <button id="RemoveRtss" onclick="DeleteSelectedRTSS();" style="font-size: 14px; margin-top: 6px;">Delete Selected RTSS</button>
   </div>`
     getByid("DicomPage").appendChild(span);
     getByid("RtssDiv").style.display = "none";

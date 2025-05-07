@@ -18,7 +18,7 @@ function loadWriteGraphic() {
 
     var span = document.createElement("SPAN")
     span.innerHTML =
-        `<div id="GspsStyleDiv"">
+        `<div id="GspsStyleDiv" style=" align-items:center; justify-content:space-around; flex-wrap: wrap; gap: 6px;">
         <select id="GSPScolorSelect" style="font-weight:bold;font-size:16px;">
           <option id="GSPSBlackSelect" style="background-color:#929292;color: #000000;font-weight:bold;">Black</option>
           <option id="GSPSBlueSelect" style="background-color:#929292;color: #0000FF;font-weight:bold;" selected="selected">Blue</option>
@@ -32,7 +32,9 @@ function loadWriteGraphic() {
           <option id="GSPSYellowSelect" style="background-color:#929292;color: #FFFF00;font-weight:bold;"> Yellow</option>
           <option id="GSPSWhiteSelect" style="background-color:#929292;color: #FFFFFF;font-weight:bold;">White</option>
         </select>
-        <font color="white">Name：</font><input type="text" id="GspsName" value="T1" size="8" />
+        <span>
+            <font color="white">Name： </font><input type="text" id="GspsName" value="T1" size="8" />
+        </span>
         <select id="GspsTypeSelect" style="font-weight:bold;font-size:16px;">
           <option id="GspsPOLYLINE" selected="selected">Rectangle</option>
           <option id="GspsCIRCLE">Circle</option>
@@ -122,7 +124,7 @@ getByid("writeGSPS").onclick = function () {
     img2darkByClass("GSPS", !openWriteGSPS);
     openLeftImgClick = !openWriteGSPS;
     if (openWriteGSPS == true) {
-        getByid('GspsStyleDiv').style.display = '';
+        getByid('GspsStyleDiv').style.display = 'flex';
         set_BL_model('writegsps');
         writegsps();
     }
