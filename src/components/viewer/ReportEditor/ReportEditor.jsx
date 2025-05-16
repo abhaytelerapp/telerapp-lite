@@ -2168,18 +2168,33 @@ const ReportEditor = (props) => {
         instance.setData(initialData);
 
         if (patientReportDetail?.document_status === "Approved") {
-          const imageUrl = assignUserDataFind?.attributes?.uploadSignature[0]; // Replace with your actual image URL
-          instance.model.change((writer) => {
-            const imageElement = writer.createElement("imageBlock", {
+          let imageUrl0 = assignUserDataFind?.attributes?.uploadSignature?.[0] || "";
+
+          if (imageUrl0.includes("telerappdevattachments.s3.ap-south-1.amazonaws.com")) {
+            imageUrl0 = imageUrl0.replace(
+              "https://telerappdevattachments.s3.ap-south-1.amazonaws.com/uploads/",
+              "https://d3tx83aj1g4m0j.cloudfront.net/uploads/"
+            );
+          } else if (imageUrl0.includes("prod-telerapp-attachments.s3.us-east-2.amazonaws.com")) {
+            imageUrl0 = imageUrl0.replace(
+              "https://prod-telerapp-attachments.s3.us-east-2.amazonaws.com/uploads/",
+              "https://d256o3ycvhwumu.cloudfront.net/uploads/"
+            );
+          }
+          const imageUrl = imageUrl0// Replace with your actual image URL
+          // console.log(imageUrl)
+          //const imageUrl = assignUserDataFind?.attributes?.uploadSignature[0]; // Replace with your actual image URL
+          instance.model.change(writer => {
+            const imageElement = writer.createElement('imageBlock', {
               src: imageUrl,
-              alt: "Doctor Signature",
-              style: "height:80px;",
-              alignment: "left", // key part
+              alt: 'Doctor Signature',
+              style: 'height:80px;',
+              alignment: 'left'  // key part
             });
 
             // Insert image at the END of the document
             const root = instance.model.document.getRoot();
-            const endPosition = writer.createPositionAt(root, "end");
+            const endPosition = writer.createPositionAt(root, 'end');
             instance.model.insertContent(imageElement, endPosition);
 
             // Build HTML string

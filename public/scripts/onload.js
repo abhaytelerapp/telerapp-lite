@@ -534,13 +534,13 @@ async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instanc
       }
   }
 
-  if ( deferredLoadTasks.get(seriesInstanceUid)) {
+  if ( isFirstSeries) {
       await new Promise(resolve => setTimeout(resolve, 100)); // Let the first instance show
 
       // Load only 1 more instance from the first series
       const nextInstances = DicomResponse
           .filter(d => getValue(d["00200013"]) !== minInstance && DicomResponse.length !== 1)
-          .slice(0, 5); // ✅ Only one additional
+          .slice(0, 1); // ✅ Only one additional
 
       for (let dicomData of nextInstances) {
           const url = fitUrl(buildWADOUrl(dicomData));
@@ -585,32 +585,6 @@ async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instanc
       }
   }
 }
-
-// async function startSequentialSeriesLoading() {
-//   sequentialLoadingActive = true;
-
-//   while (seriesQueue.length > 0) {
-//     const seriesUID = seriesQueue.shift();
-//     currentSeriesUID = seriesUID;
-
-//     // Skip if series was already loaded by user click
-//     if (!deferredLoadTasks.has(seriesUID)) continue;
-
-//     let tasks = deferredLoadTasks.get(seriesUID);
-//     while (tasks.length > 0) {
-//       // Respect current active user interaction
-//       if (activeSeriesUID && activeSeriesUID !== seriesUID) break;
-
-//       const batch = tasks.splice(0, 5);
-//       await Promise.all(batch.map(task => task()));
-//     }
-
-//     deferredLoadTasks.delete(seriesUID);
-//   }
-
-//   currentSeriesUID = null;
-//   sequentialLoadingActive = false;
-// }
 
 async function startSequentialSeriesLoading(minConcurrent = 2) {
   sequentialLoadingActive = true;
