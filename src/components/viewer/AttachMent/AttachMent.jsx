@@ -10,7 +10,7 @@ const AddAttachmentModel = ({
   studyInstanceUid,
   handleAttachmentChange,
   handleAttachmentRemove,
-  documentUploadDetails,
+  documentData,
   patientName,
   modelOpen,
   toggleDisplayReportEditor
@@ -33,9 +33,7 @@ const AddAttachmentModel = ({
 
   let findHistory = [];
 
-  findHistory = documentUploadDetails?.find(
-    item => item.study_UIDs === studyInstanceUid
-  )?.document_url || [];
+  findHistory = documentData?.document_url || [];
   const attachment = findHistory?.map(attachemnt => JSON.parse(attachemnt));
 
   const handlerDocumentUpload = e => {

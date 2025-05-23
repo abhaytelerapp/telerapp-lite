@@ -20,7 +20,7 @@ const AddAttachmentModel = _ref => {
     studyInstanceUid,
     handleAttachmentChange,
     handleAttachmentRemove,
-    documentUploadDetails,
+    documentData,
     patientName,
     modelOpen,
     toggleDisplayReportEditor
@@ -40,7 +40,7 @@ const AddAttachmentModel = _ref => {
   const values = toggleDisplayReportEditor ? Object.values(tableHeaders).filter(key => key !== 'Remove') : Object.values(tableHeaders);
   const [document, setDocument] = (0, _react.useState)(null);
   let findHistory = [];
-  findHistory = documentUploadDetails?.find(item => item.study_UIDs === studyInstanceUid)?.document_url || [];
+  findHistory = documentData?.document_url || [];
   const attachment = findHistory?.map(attachemnt => JSON.parse(attachemnt));
   const handlerDocumentUpload = e => {
     setDocument(e.target.files[0]);

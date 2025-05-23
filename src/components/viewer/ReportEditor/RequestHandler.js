@@ -59,11 +59,10 @@ export const fetchPatientReports = (apiData) => {
   return fetch(`${apiData}/reports`).then((response) => response.json());
 };
 
-export const fetchReportSetting = (apiData) => {
-  return fetch(`${apiData}/reports-setting`).then((response) =>
-    response.json()
-  );
-};
+export const fetchReportSetting = (apiData, groupName) => {
+  return fetch(`${apiData}/reports-setting-by-study?groupName=${groupName}`)
+    .then((response) => response.json())
+}
 
 export const fetchDocumentUpload = (apiData) => {
     return fetch(`${apiData}/document-upload`).then(response =>
@@ -82,7 +81,7 @@ export const createDefaultTemplates = async (templatesDetail, apiData) => {
   return response
 }
 
-export const createPatientReports = async (apiData, patientDetail, setPatientReportsDetails, username, actionlog, institutionName, patientReportsDetails) => {
+export const createPatientReports = async (apiData, patientDetail, setReportData, username, actionlog, institutionName) => {
   const updatedPatientDetail = {
     ...patientDetail,
     username: username,
@@ -97,18 +96,18 @@ export const createPatientReports = async (apiData, patientDetail, setPatientRep
     body: JSON.stringify(updatedPatientDetail),
   });
   const data = await response.json()
-  const dataID = data.id;
+  setReportData(data)
   
-  await fetchPatientReportsById(dataID, apiData)
-    .then((data) => setPatientReportsDetails([...patientReportsDetails, data]))
-    .catch((error) =>
-      console.error('Error fetching patient details:', error)
-    );
+  // await fetchPatientReportsById(dataID, apiData)
+  //   .then((data) => setPatientReportsDetails([...patientReportsDetails, data]))
+  //   .catch((error) =>
+  //     console.error('Error fetching patient details:', error)
+  //   );
   return response
 };
 
-export const updatePatientReports = async (apiData, id, patientDetail, setPatientReportsDetails, username, actionlog, institutionName, patientReportsDetails) => {
-const updatedReports = patientReportsDetails && patientReportsDetails.filter(report => report.id !== id);
+export const updatePatientReports = async (apiData, id, patientDetail, setReportData, username, actionlog, institutionName, patientReportsDetails) => {
+// const updatedReports = patientReportsDetails && patientReportsDetails.filter(report => report.id !== id);
 
   const updatedPatientDetail = {
     ...patientDetail,
@@ -124,11 +123,14 @@ const updatedReports = patientReportsDetails && patientReportsDetails.filter(rep
     body: JSON.stringify(updatedPatientDetail),
   });
 
-  await fetchPatientReportsById(id, apiData)
-    .then((data) => setPatientReportsDetails([...updatedReports, data]))
-    .catch((error) =>
-      console.error('Error fetching patient details:', error)
-    );
+  const data = await response.json()
+  setReportData(data)
+
+  // await fetchPatientReportsById(id, apiData)
+  //   .then((data) => setPatientReportsDetails([...updatedReports, data]))
+  //   .catch((error) =>
+  //     console.error('Error fetching patient details:', error)
+  //   );
 
   return response
 };
@@ -167,4 +169,106 @@ export const generateReportPdf = (apiData, reportdetails, setIsLoading, patientN
     .finally(() => {
       setIsLoading(false);
     });
+};
+
+export const fetchDocumentUploadForStudy = async (apiData, studyInstanceUid) => {
+    try {
+        const data = await fetchDocumentUpload(apiData, studyInstanceUid);
+        return data;
+    } catch (error) {
+        console.error('Error fetching document upload details:', error);
+        throw error; // Optional: re-throw if you want the caller to handle it
+    }
+};
+
+export const createDocument = async (
+    apiData,
+    studyInstanceUid,
+    attachmentData,
+    setDocumentUploadDetails,
+    documentUploadDetails) => {
+    const formData = new FormData();
+    formData.append('study_UIDs', studyInstanceUid);
+    formData.append('attachment', attachmentData);
+
+    try {
+        const response = await fetch(`${apiData}/document-upload`, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to create document: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        await fetchDocumentUpload(apiData, studyInstanceUid)
+            .then(data => setDocumentUploadDetails([...documentUploadDetails, data]))
+            .catch(error => console.error('Error fetching document upload details:', error));
+        return data;
+    } catch (error) {
+        console.error('Error creating document:', error);
+        throw error;
+    }
+};
+
+export const updateDocument = async (apiData, id, attachmentData, setDocumentUploadDetails, documentUploadDetails) => {
+
+    const documentData = documentUploadDetails && documentUploadDetails.filter(data => data.id !== id)
+
+    const formData = new FormData();
+    formData.append('attachment', attachmentData);
+
+    try {
+        const response = await fetch(
+            `${apiData}/document-upload/${id}`,
+            {
+                method: 'PUT',
+                body: formData,
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Failed to create document: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log(data, "data")
+
+        await fetchDocumentUpload(apiData, data.study_UIDs)
+            .then(data => setDocumentUploadDetails([...documentData, data]))
+            .catch(error => console.error('Error fetching document upload details:', error));
+        return data;
+    } catch (error) {
+        console.error('Error creating document:', error);
+        throw error;
+    }
+};
+
+export const deleteDocumentUrl = async (apiData, id, updateData, setDocumentUploadDetails, documentUploadDetails) => {
+    const documentData = documentUploadDetails && documentUploadDetails.filter(data => data.id !== id)
+    try {
+        const response = await fetch(
+            `${apiData}/document-upload-url/${id}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updateData),
+            }
+        );
+        if (!response.ok) {
+            throw new Error(`Failed to create document: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        await fetchDocumentUpload(apiData, data.study_UIDs)
+            .then(data => setDocumentUploadDetails([...documentData, data]))
+            .catch(error => console.error('Error fetching document upload details:', error));
+        return data;
+    } catch (error) {
+        console.error('Error creating document:', error);
+        throw error;
+    }
 };

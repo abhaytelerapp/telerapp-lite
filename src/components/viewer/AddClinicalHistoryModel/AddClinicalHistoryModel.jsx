@@ -2,15 +2,12 @@ import { Field, Form, Formik } from 'formik';
 import Button from '../Button';
 import React from 'react';
 
-const AddClinicalHistoryModel = ({ hide, studyInstanceUid, handleClinicalHistoryChange, patientReportsDetails, patientId, accession, patientName, institutionName }) => {
+const AddClinicalHistoryModel = ({ hide, studyInstanceUid, handleClinicalHistoryChange, findHistory, patientId, accession, patientName, institutionName }) => {
     const initialValue = (data) => {
         return {
             clinical_history: data?.clinical_history || ''
         }
     }
-
-    const findHistory = patientReportsDetails.find(item => item.study_UIDs === studyInstanceUid);
-
     const onsubmit = (values) => {
         handleClinicalHistoryChange(studyInstanceUid, values.clinical_history, patientId, accession, institutionName);
         hide();

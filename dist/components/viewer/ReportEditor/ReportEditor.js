@@ -31,6 +31,7 @@ var _SaveReportTemplate = _interopRequireDefault(require("../ReportTemplate/Save
 var _md = require("react-icons/md");
 var _RequestHandler = require("./RequestHandler");
 var _contextProviders = require("../contextProviders");
+var _getUserInformation = require("./getUserInformation");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -46,10 +47,6 @@ function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; 
 // import Icon from '../Icon';
 
 // import studyAndModality from './study_modality_list';
-
-// import { fetchViewerStudy } from '../../requestHandler/userRequest';
-// import { fetchPatientReportByStudy } from '../../requestHandler';
-// import { fetchDefaultReportTemplates } from '../../requestHandler/reportTemplateRequest';
 
 const ReportEditor = props => {
   const [patientData, setPatientData] = _react.default.useState(null);
@@ -73,9 +70,8 @@ const ReportEditor = props => {
   const [acessTemplates, setAcessTemplates] = (0, _react.useState)(0);
   const [usersList, setUsersList] = (0, _react.useState)([]);
   const [availableReportTemplates, setAvailableReportTemplates] = (0, _react.useState)("");
-  const [patientReportsDetails, setPatientReportsDetails] = (0, _react.useState)("");
-  const [reportSettingDetails, setReportSettingDetails] = (0, _react.useState)("");
   const [documentUploadDetails, setDocumentUploadDetails] = (0, _react.useState)("");
+  const [reportData, setReportData] = (0, _react.useState)({});
   const {
     t
   } = (0, _reactI18next.useTranslation)();
@@ -83,15 +79,6 @@ const ReportEditor = props => {
     show: display
   } = (0, _contextProviders.useSnackbar)();
   const {
-    // availableReportTemplates = defaultReportTemplates,
-    // templateValue = reportEditorTemplate,
-    // onChangeHandler = setReportEditorTemplate,
-    // servicesManager,
-    // reportSettingDetails,
-    // radiologistUserList,
-    // ViewportGridComp,
-    // commandsManager,
-    // viewportComponents,
     toggleDisplayReportEditor,
     setToggleDisplayReportEditor,
     isModelOpen,
@@ -253,6 +240,9 @@ const ReportEditor = props => {
   const [concurrentTemplate, setConcurrentTemplate] = (0, _react.useState)(template);
   const [lastTranscriptLength, setLastTranscriptLength] = (0, _react.useState)(0);
   const [viewerStudy, setViewerStudy] = (0, _react.useState)([]);
+  const [reportSetting, setReportSetting] = (0, _react.useState)([]);
+  const [assignUserDataFind, setAssignUserDataFind] = (0, _react.useState)({});
+  const [doctorInformation, setDoctorInformation] = (0, _react.useState)({});
   const {
     transcript,
     listening,
@@ -340,8 +330,6 @@ const ReportEditor = props => {
 
     getToken();
     (0, _RequestHandler.fetchDefaultReportTemplates)(apiData).then(data => setAvailableReportTemplates(data)).catch(error => console.error("Error fetching default templates:", error));
-    (0, _RequestHandler.fetchPatientReports)(apiData).then(data => setPatientReportsDetails(data)).catch(error => console.error("Error fetching patient details:", error));
-    (0, _RequestHandler.fetchReportSetting)(apiData).then(data => setReportSettingDetails(data)).catch(error => console.error("Error fetching report setting details:", error));
     (0, _RequestHandler.fetchDocumentUpload)(apiData).then(data => setDocumentUploadDetails(data)).catch(error => console.error("Error fetching document upload details:", error));
   }, [apiData]);
   (0, _react.useEffect)(() => {
@@ -352,6 +340,17 @@ const ReportEditor = props => {
     }).catch(error => console.error("Error fetching users:", error));
   }, [user.access_token, apiData, keycloak_url]);
   const studyInstanceUid = params.pathname.includes("report-editor") ? params.pathname?.split("report-editor/:")[1] : params?.search?.slice(params?.search?.indexOf("StudyInstanceUIDs=") + "StudyInstanceUIDs=".length)?.split("&")[0]?.replace(/^=/, "");
+  (0, _react.useEffect)(() => {
+    const fetchReportSettings = async () => {
+      if (_RequestHandler.fetchReportSetting && apiData) {
+        const fetchUserInformation = await (0, _getUserInformation.getUserInformation)(_RequestHandler.fetchReportSetting, viewerStudy[0]?.MainDicomTags.InstitutionName, patientFind, radiologistUserList, apiData);
+        setReportSetting(fetchUserInformation?.reportSetting);
+        setAssignUserDataFind(fetchUserInformation?.assignUserDataFind);
+        setDoctorInformation(fetchUserInformation?.doctorInformation);
+      }
+    };
+    fetchReportSettings();
+  }, [viewerStudy]);
   const fetchViewerStudys2 = async () => {
     if (!apiData) return;
     const response = await (0, _RequestHandler.fetchViewerStudy)(studyInstanceUid, apiData);
@@ -373,7 +372,6 @@ const ReportEditor = props => {
     //   items => items.study_UIDs === data[0]?.studyInstanceUid
     // );
     const patient = await (0, _RequestHandler.fetchPatientReportByStudy)(data[0]?.MainDicomTags?.StudyInstanceUID, apiData);
-    const priorityData = patientReportsDetails && patientReportsDetails?.find(data => data.study_UIDs === studyInstanceUid);
     const studyList = viewerStudy[0];
     setPatientReportDetail(patient);
     if (Array.isArray(data) && data?.length) {
@@ -407,11 +405,11 @@ const ReportEditor = props => {
           uid: data[0]?.MainDicomTags?.StudyInstanceUID,
           studyID: studyList?.ID,
           document_status: data[0].document_status,
-          priority: priorityData?.study_priority || "Routine",
+          priority: patient?.study_priority || "Routine",
           institution_name: studyList?.MainDicomTags.InstitutionName,
           study_description: studyList?.MainDicomTags.StudyDescription,
           patient_dob: (0, _moment.default)(studyList?.PatientMainDicomTags.PatientBirthDate).format("MM/DD/YYYY"),
-          clinical_history: priorityData?.clinical_history || "None",
+          clinical_history: patient?.clinical_history || "None",
           image_perview: imageDataUrl
         });
       }
@@ -567,7 +565,22 @@ const ReportEditor = props => {
     // opening the new window with custom features
     window.open(`${window.location.origin}/report-editor/:${studyInstanceUid}`, "_blank", strWindowFeatures);
   };
-  const patientFind = patientReportsDetails && patientReportsDetails?.find(item => item.study_UIDs === studyInstanceUid);
+
+  // const patientFind =
+  //   patientReportsDetails &&
+  //   patientReportsDetails?.find((item) => item.study_UIDs === studyInstanceUid);
+
+  // let patientFind;
+  const [patientFind, setPatientFind] = (0, _react.useState)({});
+  const [patientCritical, setPatientCritical] = (0, _react.useState)({});
+  const getReportDetails = async () => {
+    const patient = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid, apiData);
+    setPatientFind(patient);
+  };
+  (0, _react.useEffect)(() => {
+    if (!studyInstanceUid && patientCritical) return;
+    getReportDetails();
+  }, [studyInstanceUid, patientCritical]);
   const assignUserFind = patientFind?.assign?.map(item => JSON.parse(item));
   const assignUserDetail = assignUserFind && assignUserFind?.find(item => item.assign_name === user?.profile?.preferred_username);
   const permissions = user?.profile?.permission;
@@ -579,28 +592,35 @@ const ReportEditor = props => {
 
   // attachment
   const handleAttachmentChange = async (studyInstanceUid, attachmentData) => {
-    const data = documentUploadDetails?.find(item => item.study_UIDs === studyInstanceUid);
-    if (!data) {
-      await createDocument(studyInstanceUid, attachmentData, setDocumentUploadDetails);
+    // const data = documentUploadDetails?.find(
+    //   (item) => item.study_UIDs === studyInstanceUid
+    // );
+    const documentData = await (0, _RequestHandler.fetchDocumentUploadForStudy)(apiData, studyInstanceUid);
+    if (documentData.length === 0) {
+      await (0, _RequestHandler.createDocument)(apiData, studyInstanceUid, attachmentData, setDocumentUploadDetails, documentUploadDetails);
     } else {
-      await updateDocument(data.id, attachmentData, setDocumentUploadDetails);
+      await (0, _RequestHandler.updateDocument)(apiData, documentData.id, attachmentData, setDocumentUploadDetails, documentUploadDetails);
     }
   };
   const handleAttachmentRemove = async (attachment, instance, studyInstanceUid) => {
     const updateDocumnet = attachment?.filter(item => item.attachment !== instance);
-    const data = documentUploadDetails?.find(item => item.study_UIDs === studyInstanceUid);
+    // const data = documentUploadDetails?.find(
+    //   (item) => item.study_UIDs === studyInstanceUid
+    // );
+    const documentData = await (0, _RequestHandler.fetchDocumentUploadForStudy)(apiData, studyInstanceUid);
     const pattern = /\d+-([^/]+)$/;
     // const pattern = /\/(\d+-([\w-]+\.pdf))$/;
 
     const removeDocumentName = instance.match(pattern);
     const resData = {
-      ...data,
+      ...documentData,
       updateData: updateDocumnet && updateDocumnet?.length > 0 ? updateDocumnet : null,
       removeDocument: removeDocumentName[0].replaceAll("/", "")
     };
-    await deleteDocumentUrl(data.id, resData, setDocumentUploadDetails);
+    await (0, _RequestHandler.deleteDocumentUrl)(apiData, documentData.id, resData, setDocumentUploadDetails, documentUploadDetails);
   };
-  const handleAttachment = (studyInstanceUid, patientName) => {
+  const handleAttachment = async (studyInstanceUid, patientName) => {
+    const documentData = await (0, _RequestHandler.fetchDocumentUploadForStudy)(apiData, studyInstanceUid);
     show({
       content: _AttachMent.default,
       title: t("ReportStatus:Attachment"),
@@ -609,7 +629,7 @@ const ReportEditor = props => {
         studyInstanceUid,
         handleAttachmentChange,
         handleAttachmentRemove,
-        documentUploadDetails,
+        documentData,
         patientName,
         modelOpen: show,
         toggleDisplayReportEditor
@@ -630,17 +650,18 @@ const ReportEditor = props => {
         patient_id: patientId,
         patient_accession: accession
       };
-      await (0, _RequestHandler.createPatientReports)(apiData, newData, setPatientReportsDetails, username, actionlog, institutionName, patientReportsDetails);
+      await (0, _RequestHandler.createPatientReports)(apiData, newData, setReportData, username, actionlog, institutionName);
     } else {
       const resData = {
         ...data,
         clinical_history: clinicalData,
         radiologyGroup: user?.profile?.radiologyGroup
       };
-      await (0, _RequestHandler.updatePatientReports)(apiData, data.id, resData, setPatientReportsDetails, username, actionlog, institutionName, patientReportsDetails);
+      await (0, _RequestHandler.updatePatientReports)(apiData, data.id, resData, setReportData, username, actionlog, institutionName);
     }
   };
-  const handleClinicalHistory = (studyInstanceUid, patientId, accession, patientName, institutionName) => {
+  const handleClinicalHistory = async (studyInstanceUid, patientId, accession, patientName, institutionName) => {
+    const findHistory = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid, apiData);
     show({
       content: _AddClinicalHistoryModel.default,
       title: t("ReportStatus:Clinical History"),
@@ -648,7 +669,7 @@ const ReportEditor = props => {
         hide,
         studyInstanceUid,
         handleClinicalHistoryChange,
-        patientReportsDetails,
+        findHistory,
         patientId,
         accession,
         patientName,
@@ -676,13 +697,13 @@ const ReportEditor = props => {
   const handleSubmit = event => {
     event.preventDefault();
     // Function to handle submit after confirmation
-    const handleConfirmation = () => {
+    const handleConfirmation = async () => {
       // const studyList = allStudy.find(
       //   data => data?.studyInstanceUid === studyInstanceUid
       // );
 
       const studyList = viewerStudy[0];
-      const oldData = patientReportsDetails && patientReportsDetails?.find(item => item.study_UIDs === studyInstanceUid);
+      const oldData = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid, apiData);
       const currentTime = new Date();
       const actionlog = "SubmitLogs";
       const resData = {
@@ -700,7 +721,7 @@ const ReportEditor = props => {
         created_by: user?.profile?.preferred_username
       };
       if (!oldData) {
-        (0, _RequestHandler.createPatientReports)(apiData, resData, setPatientReportsDetails, username, actionlog, patientData?.institution_name, patientReportsDetails).then(res => {
+        (0, _RequestHandler.createPatientReports)(apiData, resData, setReportData, username, actionlog, patientData?.institution_name).then(res => {
           if (res.status === 200) {
             _reactToastify.toast.success("Your report has been successfully submitted");
             setTimeout(() => {
@@ -713,7 +734,7 @@ const ReportEditor = props => {
           }
         });
       } else {
-        (0, _RequestHandler.updatePatientReports)(apiData, oldData.id, resData, setPatientReportsDetails, username, actionlog, patientData?.institution_name, patientReportsDetails).then(res => {
+        (0, _RequestHandler.updatePatientReports)(apiData, oldData.id, resData, setReportData, username, actionlog, patientData?.institution_name).then(res => {
           if (res.status === 200) {
             _reactToastify.toast.success("Your report has been successfully updated");
             setTimeout(() => {
@@ -742,7 +763,7 @@ const ReportEditor = props => {
       }
     });
   };
-  const handleDraft = event => {
+  const handleDraft = async event => {
     event.preventDefault();
 
     // const studyList = allStudy.find(
@@ -750,7 +771,7 @@ const ReportEditor = props => {
     // );
 
     const studyList = viewerStudy[0];
-    const oldData = patientReportsDetails && patientReportsDetails?.find(item => item.study_UIDs === studyInstanceUid);
+    const oldData = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid, apiData);
     const actionlog = "DraftLogs";
     const resData = {
       ...patientData,
@@ -765,13 +786,13 @@ const ReportEditor = props => {
       created_by: user?.profile?.preferred_username
     };
     if (!oldData) {
-      (0, _RequestHandler.createPatientReports)(apiData, resData, setPatientReportsDetails, username, actionlog, patientData?.institution_name, patientReportsDetails).then(res => {
+      (0, _RequestHandler.createPatientReports)(apiData, resData, setReportData, username, actionlog, patientData?.institution_name).then(res => {
         if (res.status === 200) {
           _reactToastify.toast.success("Your report was saved as draft successfully");
         }
       });
     } else {
-      (0, _RequestHandler.updatePatientReports)(apiData, oldData.id, resData, setPatientReportsDetails, username, actionlog, patientData?.institution_name, patientReportsDetails).then(res => {
+      (0, _RequestHandler.updatePatientReports)(apiData, oldData.id, resData, setReportData, username, actionlog, patientData?.institution_name).then(res => {
         if (res.status === 200) {
           _reactToastify.toast.success("Your report has been successfully updated");
         }
@@ -779,7 +800,7 @@ const ReportEditor = props => {
     }
   };
   const handlerCriticalToggle = async (studyInstanceUid, isCriticalSet, patientId, accession, institutionName, studyID) => {
-    const data = patientReportsDetails?.find(item => item.study_UIDs === studyInstanceUid);
+    const data = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid, apiData);
     const actionlog = "CriticalLogs";
     if (!data) {
       const newData = {
@@ -790,17 +811,19 @@ const ReportEditor = props => {
         institution_name: institutionName,
         patient_accession: accession
       };
-      await (0, _RequestHandler.createPatientReports)(apiData, newData, setPatientReportsDetails, username, actionlog, institutionName, patientReportsDetails);
+      await (0, _RequestHandler.createPatientReports)(apiData, newData, setReportData, username, actionlog, institutionName);
+      setPatientCritical(newData);
     } else {
       const updatedData = {
         ...data,
         critical: isCriticalSet
       };
-      await (0, _RequestHandler.updatePatientReports)(apiData, data.id, updatedData, setPatientReportsDetails, username, actionlog, institutionName, patientReportsDetails);
+      await (0, _RequestHandler.updatePatientReports)(apiData, data.id, updatedData, setReportData, username, actionlog, institutionName);
+      setPatientCritical(updatedData);
     }
   };
-  const handleClick = (studyInstanceUid, patientId, accession, institutionName, studyID) => {
-    const data = patientReportsDetails?.find(item => item.study_UIDs === studyInstanceUid);
+  const handleClick = async (studyInstanceUid, patientId, accession, institutionName, studyID) => {
+    const data = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid, apiData);
     const isCritical = data ? !data.critical : true;
     if (isCritical === true) {
       display({
@@ -819,45 +842,6 @@ const ReportEditor = props => {
     }
     handlerCriticalToggle(studyInstanceUid, isCritical, patientId, accession, institutionName, studyID);
   };
-
-  // const patientFind = first?.find(item => item.study_UIDs === studyInstanceUid);
-  // const assignUserFind = patientFind?.assign?.map((item) => JSON.parse(item));
-
-  const findAssignUserName = [patientFind?.firstSubmitUser];
-  const assignUserDataFind = radiologistUserList?.find(item => {
-    return findAssignUserName?.includes(item.username);
-  });
-  const studyList = viewerStudy[0];
-  const data = reportSettingDetails && reportSettingDetails?.find(item => item.group_name === studyList?.MainDicomTags.InstitutionName);
-  const report = data ? data.group_name : "Default";
-  let reportSetting = reportSettingDetails?.length > 0 && reportSettingDetails?.find(item => item.group_name === report);
-
-  // const studyList = allStudy.find(
-  //   data => data?.studyInstanceUid === studyInstanceUid
-  // );
-
-  const patientDatas = patientReportsDetails && patientReportsDetails?.find(item => item.study_UIDs === studyInstanceUid);
-  const reportSubmit_time = patientDatas?.report_submit_time && new Date(patientDatas?.report_submit_time);
-  let formattedTime;
-  if (reportSubmit_time) {
-    formattedTime = `
-    ${reportSubmit_time?.toLocaleDateString("en-US", {
-      month: "long"
-    })}
-    ${reportSubmit_time?.getDate()},
-    ${reportSubmit_time?.getFullYear()}
-    ${reportSubmit_time?.getHours()}:${("0" + reportSubmit_time?.getMinutes())?.slice(-2)}:${("0" + reportSubmit_time?.getSeconds())?.slice(-2)} GMT${reportSubmit_time?.getTimezoneOffset() > 0 ? "-" : "+"}${("0" + Math.abs(reportSubmit_time?.getTimezoneOffset() / 60))?.slice(-2)}:${("0" + Math.abs(reportSubmit_time?.getTimezoneOffset() % 60)).slice(-2)}`;
-  }
-  const firstName = assignUserDataFind ? `${assignUserDataFind?.firstName} ${assignUserDataFind?.lastName}` : "";
-  const qualification = assignUserDataFind?.attributes.qualification !== undefined ? assignUserDataFind?.attributes.qualification : "";
-  const registrationNo = assignUserDataFind && assignUserDataFind?.attributes && assignUserDataFind?.attributes.registrationNo ? assignUserDataFind.attributes.registrationNo : "";
-  const formattedTimes = formattedTime === undefined ? "" : formattedTime;
-  const disclaimerDetails = reportSetting && reportSetting.disclaimer_details ? reportSetting.disclaimer_details : "";
-  const displayName = firstName ? `<strong>${firstName}</strong><br/>` : "";
-  const qualificationName = qualification ? `<strong>${qualification}</strong><br/>` : "";
-  const registrationNoName = registrationNo ? `<strong>Reg.No. :- ${registrationNo}</strong><br/>` : "";
-  const formattedTimesName = formattedTimes ? `<strong>${formattedTimes}</strong><br/>` : "";
-  const disclaimerDetailsName = disclaimerDetails ? `<strong>Disclaimer :-</strong> ${disclaimerDetails}` : "";
   const handleDownloadPdf = async () => {
     try {
       setIsLoading(true);
@@ -926,47 +910,13 @@ const ReportEditor = props => {
             font-size: ${reportSetting?.font_size}px !important;
             line-height: ${reportSetting?.line_spacing};
         `;
-
-      // Doctore details footer
-      // const firstName = assignUserDataFind
-      //   ? `${assignUserDataFind?.firstName} ${assignUserDataFind?.lastName}`
-      //   : "";
-      // const qualification =
-      //   assignUserDataFind?.attributes.qualification !== undefined
-      //     ? assignUserDataFind?.attributes.qualification
-      //     : "";
-      // const registrationNo =
-      //   assignUserDataFind &&
-      //   assignUserDataFind?.attributes &&
-      //   assignUserDataFind?.attributes.registrationNo
-      //     ? assignUserDataFind.attributes.registrationNo
-      //     : "";
-      // const formattedTimes = formattedTime === undefined ? "" : formattedTime;
-      // const disclaimerDetails =
-      //   reportSetting && reportSetting.disclaimer_details
-      //     ? reportSetting.disclaimer_details
-      //     : "";
-      // const displayName = firstName ? `<strong>${firstName}</strong><br/>` : "";
-      // const qualificationName = qualification
-      //   ? `<strong>${qualification}</strong><br/>`
-      //   : "";
-      // const registrationNoName = registrationNo
-      //   ? `<strong>Reg.No. :- ${registrationNo}</strong><br/>`
-      //   : "";
-      // const formattedTimesName = formattedTimes
-      //   ? `<strong>${formattedTimes}</strong><br/>`
-      //   : "";
-      // const disclaimerDetailsName = disclaimerDetails
-      //   ? `<strong>Disclaimer :-</strong> ${disclaimerDetails}`
-      //   : "";
-
       const output = `
       <div style="line-height: 1.2;">
-          ${displayName}
-          ${qualificationName}
-          ${registrationNoName}
-          ${formattedTimesName}
-          ${disclaimerDetailsName}
+          ${doctorInformation?.displayName}
+          ${doctorInformation?.qualificationName}
+          ${doctorInformation?.registrationNoName}
+          ${doctorInformation?.formattedTimesName}
+          ${doctorInformation?.disclaimerDetailsName}
       </div>
   `;
       let pageHeaderSpace;
@@ -1486,25 +1436,25 @@ const ReportEditor = props => {
           // console.log(imageUrl)
           //const imageUrl = assignUserDataFind?.attributes?.uploadSignature[0]; // Replace with your actual image URL
           instance.model.change(writer => {
-            const imageElement = writer.createElement('imageBlock', {
+            const imageElement = writer.createElement("imageBlock", {
               src: imageUrl,
-              alt: 'Doctor Signature',
-              style: 'height:80px;',
-              alignment: 'left' // key part
+              alt: "Doctor Signature",
+              style: "height:80px;",
+              alignment: "left" // key part
             });
 
             // Insert image at the END of the document
             const root = instance.model.document.getRoot();
-            const endPosition = writer.createPositionAt(root, 'end');
+            const endPosition = writer.createPositionAt(root, "end");
             instance.model.insertContent(imageElement, endPosition);
 
             // Build HTML string
             const extraDetailsHTML = `
-              ${displayName}
-              ${qualificationName}
-              ${registrationNoName}
-              ${formattedTimesName}
-              ${disclaimerDetailsName}
+              ${doctorInformation?.displayName}
+              ${doctorInformation?.qualificationName}
+              ${doctorInformation?.registrationNoName}
+              ${doctorInformation?.formattedTimesName}
+              ${doctorInformation?.disclaimerDetailsName}
             `;
             // Insert formatted text below the image
             const viewFragment = instance.data.processor.toView(extraDetailsHTML);

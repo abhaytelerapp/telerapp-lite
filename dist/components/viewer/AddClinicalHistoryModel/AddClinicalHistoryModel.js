@@ -13,7 +13,7 @@ const AddClinicalHistoryModel = _ref => {
     hide,
     studyInstanceUid,
     handleClinicalHistoryChange,
-    patientReportsDetails,
+    findHistory,
     patientId,
     accession,
     patientName,
@@ -24,7 +24,6 @@ const AddClinicalHistoryModel = _ref => {
       clinical_history: data?.clinical_history || ''
     };
   };
-  const findHistory = patientReportsDetails.find(item => item.study_UIDs === studyInstanceUid);
   const onsubmit = values => {
     handleClinicalHistoryChange(studyInstanceUid, values.clinical_history, patientId, accession, institutionName);
     hide();
