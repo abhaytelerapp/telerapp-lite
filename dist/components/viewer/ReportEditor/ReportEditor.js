@@ -367,48 +367,48 @@ const ReportEditor = props => {
     if (!apiData) return;
     // const data = await getCurrentPatient(params, query, studyInstanceUid);
     const data = await (0, _RequestHandler.fetchStudyData)(studyInstanceUid, apiData);
-
+    const patientReportData = await (0, _RequestHandler.fetchEditorPatientReportData)(apiData, studyInstanceUid);
     // const patient = await patientReportsDetails && patientReportsDetails?.find(
     //   items => items.study_UIDs === data[0]?.studyInstanceUid
     // );
-    const patient = await (0, _RequestHandler.fetchPatientReportByStudy)(data[0]?.MainDicomTags?.StudyInstanceUID, apiData);
+    const patient = await (0, _RequestHandler.fetchPatientReportByStudy)(patientReportData?.studyinstanceuid, apiData);
     const studyList = viewerStudy[0];
     setPatientReportDetail(patient);
-    if (Array.isArray(data) && data?.length) {
-      const age = data[0]?.age || data[0]?.PatientMainDicomTags?.PatientName?.match(/\d/g)?.join("");
-      const [name] = data[0].PatientMainDicomTags?.PatientName?.split(age);
+    if (patientReportData) {
+      const age = patientReportData?.patientage || patientReportData?.patientname?.match(/\d/g)?.join("");
+      const [name] = patientReportData?.patientname?.split(age);
       let sex;
-      if (data[0].PatientMainDicomTags?.PatientSex?.toLowerCase() === "m") {
+      if (patientReportData?.patientsex?.toLowerCase() === "m") {
         sex = "Male";
       } else {
         sex = "Female";
       }
-      const studyDate = data[0].MainDicomTags?.StudyDate && (0, _moment.default)(data[0].MainDicomTags?.StudyDate, ["YYYYMMDD", "YYYY.MM.DD"], true).isValid() && (0, _moment.default)(data[0].MainDicomTags?.StudyDate, ["YYYYMMDD", "YYYY.MM.DD"]).format(t("Common:localDateFormat", "MMM-DD-YYYY"));
-      const studyTime = data[0].MainDicomTags?.StudyTime && (0, _moment.default)(data[0].MainDicomTags?.StudyTime, ["HH", "HHmm", "HHmmss", "HHmmss.SSS"]).isValid() && (0, _moment.default)(data[0].MainDicomTags?.StudyTime, ["HH", "HHmm", "HHmmss", "HHmmss.SSS"]).format(t("Common:localTimeFormat", "hh:mm A"));
+      const studyDate = patientReportData.studydate && (0, _moment.default)(patientReportData.studydate, ["YYYYMMDD", "YYYY.MM.DD"], true).isValid() && (0, _moment.default)(patientReportData.studydate, ["YYYYMMDD", "YYYY.MM.DD"]).format(t("Common:localDateFormat", "MMM-DD-YYYY"));
+      const studyTime = patientReportData.studytime && (0, _moment.default)(patientReportData.studytime, ["HH", "HHmm", "HHmmss", "HHmmss.SSS"]).isValid() && (0, _moment.default)(patientReportData.studytime, ["HH", "HHmm", "HHmmss", "HHmmss.SSS"]).format(t("Common:localTimeFormat", "hh:mm A"));
       if (patient?.reportdetails !== null && patient?.reportdetails !== undefined) {
         setPatientData(patient);
       } else {
         setPatientData({
           patient_name: name,
           // patient_age: age || parseInt(studyList?.RequestedTags?.PatientAge.replace(/\D/g, ''), 10) || 'Null',
-          patient_age: age !== undefined ? age : studyList?.RequestedTags?.PatientAge ? parseInt(studyList?.RequestedTags?.PatientAge.replace(/\D/g, ""), 10) : 0,
+          patient_age: age !== undefined ? age : patientReportData.patientage ? parseInt(patientReportData.patientage.replace(/\D/g, ""), 10) : 0,
           patient_gender: sex,
-          patient_accession: data[0].MainDicomTags?.AccessionNumber,
-          patient_id: data[0].PatientMainDicomTags?.PatientID,
-          patient_modality: data[0].RequestedTags?.ModalitiesInStudy,
-          study: data[0].MainDicomTags?.StudyDescription,
+          patient_accession: patientReportData.accessionnumber,
+          patient_id: patientReportData.patientid,
+          patient_modality: patientReportData.modalitiesinstudy,
+          study: patientReportData.studydescription,
           study_date: studyDate,
           study_time: studyTime,
-          ref_physician: data[0].MainDicomTags?.ReferringPhysicianName,
-          ref_doctor: data[0].MainDicomTags?.ReferringPhysicianName,
-          accession_number: studyList?.MainDicomTags.AccessionNumber || data[0].MainDicomTags?.AccessionNumber,
-          uid: data[0]?.MainDicomTags?.StudyInstanceUID,
-          studyID: studyList?.ID,
-          document_status: data[0].document_status,
+          ref_physician: patientReportData.studydescription,
+          ref_doctor: patientReportData.referringphysicianname,
+          accession_number: studyList?.MainDicomTags.AccessionNumber || patientReportData.accessionnumber,
+          uid: patientReportData.studyInstanceUid,
+          studyID: patientReportData?.studyid,
+          document_status: patient?.document_status,
           priority: patient?.study_priority || "Routine",
-          institution_name: studyList?.MainDicomTags.InstitutionName,
-          study_description: studyList?.MainDicomTags.StudyDescription,
-          patient_dob: (0, _moment.default)(studyList?.PatientMainDicomTags.PatientBirthDate).format("MM/DD/YYYY"),
+          institution_name: studyList?.MainDicomTags.InstitutionName || patientReportData.institutionname,
+          study_description: studyList?.MainDicomTags.StudyDescription || patientReportData.studydescription,
+          patient_dob: (0, _moment.default)(patientReportData.patientbirthdate).format("MM/DD/YYYY"),
           clinical_history: patient?.clinical_history || "None",
           image_perview: imageDataUrl
         });

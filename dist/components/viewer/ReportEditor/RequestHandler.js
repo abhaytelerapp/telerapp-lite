@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.userToken = exports.updatePatientReports = exports.updateDocument = exports.generateReportPdf = exports.fetchViewerStudy = exports.fetchUsers = exports.fetchStudyData = exports.fetchReportSetting = exports.fetchPatientReportsById = exports.fetchPatientReports = exports.fetchPatientReportByStudy = exports.fetchDocumentUploadForStudy = exports.fetchDocumentUpload = exports.fetchDefaultReportTemplates = exports.deleteDocumentUrl = exports.createPatientReports = exports.createDocument = exports.createDefaultTemplates = void 0;
+exports.userToken = exports.updatePatientReports = exports.updateDocument = exports.generateReportPdf = exports.fetchViewerStudy = exports.fetchUsers = exports.fetchStudyData = exports.fetchReportSetting = exports.fetchPatientReportsById = exports.fetchPatientReports = exports.fetchPatientReportByStudy = exports.fetchEditorPatientReportData = exports.fetchDocumentUploadForStudy = exports.fetchDocumentUpload = exports.fetchDefaultReportTemplates = exports.deleteDocumentUrl = exports.createPatientReports = exports.createDocument = exports.createDefaultTemplates = void 0;
 const userToken = async (accessToken, apiData) => {
   const response = await fetch(`${apiData}/user-token`, {
     method: "POST",
@@ -233,3 +233,15 @@ const deleteDocumentUrl = async (apiData, id, updateData, setDocumentUploadDetai
   }
 };
 exports.deleteDocumentUrl = deleteDocumentUrl;
+const fetchEditorPatientReportData = (apiData, studyInstanceUid) => {
+  return fetch(`${apiData}/editor_patientData?StudyInstanceUID=${studyInstanceUid}`).then(response => {
+    if (!response.ok) {
+      throw new Error('Failed to fetch patient report');
+    }
+    return response.json();
+  }).catch(error => {
+    console.error('Error fetching report:', error);
+    return null; // Return null to handle cases where no report is found
+  });
+};
+exports.fetchEditorPatientReportData = fetchEditorPatientReportData;

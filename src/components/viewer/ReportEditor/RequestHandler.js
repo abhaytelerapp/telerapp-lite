@@ -272,3 +272,17 @@ export const deleteDocumentUrl = async (apiData, id, updateData, setDocumentUplo
         throw error;
     }
 };
+
+export const fetchEditorPatientReportData = (apiData, studyInstanceUid) => {
+  return fetch(`${apiData}/editor_patientData?StudyInstanceUID=${studyInstanceUid}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch patient report');
+      }
+      return response.json();
+    })
+    .catch(error => {
+      console.error('Error fetching report:', error);
+      return null; // Return null to handle cases where no report is found
+    });
+};
