@@ -622,8 +622,9 @@ const ReportEditor = (props) => {
       return {
         id,
         label: name,
-        value: templates,
+        value: name,
         isCapture: isCapture,
+        template: templates
       };
     });
   });
@@ -640,8 +641,9 @@ const ReportEditor = (props) => {
     templateOptions?.map(({ id, name, templates, isCapture }) => ({
       id,
       label: name,
-      value: templates,
+      value: name,
       isCapture,
+      template: templates
     }));
 
   const [selectedItems, setSelectedItems] = useState(
@@ -1878,7 +1880,7 @@ const ReportEditor = (props) => {
           patientReportDetail?.reportdetails && hasDefaultTemplate
             ? []
             : Array.isArray(selectedTemplateOptions)
-            ? selectedTemplateOptions.map((data) => data.value)
+            ? selectedTemplateOptions.map((data) => data.template)
             : [];
 
         // Ensure templates is an array before calling Object.values

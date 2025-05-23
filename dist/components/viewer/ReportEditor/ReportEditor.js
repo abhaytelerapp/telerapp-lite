@@ -467,8 +467,9 @@ const ReportEditor = props => {
       return {
         id,
         label: name,
-        value: templates,
-        isCapture: isCapture
+        value: name,
+        isCapture: isCapture,
+        template: templates
       };
     });
   });
@@ -489,8 +490,9 @@ const ReportEditor = props => {
     return {
       id,
       label: name,
-      value: templates,
-      isCapture
+      value: name,
+      isCapture,
+      template: templates
     };
   });
   const [selectedItems, setSelectedItems] = (0, _react.useState)(displayTemplateOptions && displayTemplateOptions?.filter(data => data.label === "Default Template"));
@@ -1299,7 +1301,7 @@ const ReportEditor = props => {
         clearInterval(interval); // Stop checking once data is available
         // Ensure selectedTemplateOptions is an array before mapping
         const hasDefaultTemplate = Array.isArray(selectedTemplateOptions) && selectedTemplateOptions.some(option => option.label === "Default Template");
-        const templates = patientReportDetail?.reportdetails && hasDefaultTemplate ? [] : Array.isArray(selectedTemplateOptions) ? selectedTemplateOptions.map(data => data.value) : [];
+        const templates = patientReportDetail?.reportdetails && hasDefaultTemplate ? [] : Array.isArray(selectedTemplateOptions) ? selectedTemplateOptions.map(data => data.template) : [];
 
         // Ensure templates is an array before calling Object.values
         const data = templates.length ? Object.values(templates).join("<p></p>") : "";
