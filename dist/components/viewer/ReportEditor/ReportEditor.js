@@ -243,6 +243,8 @@ const ReportEditor = props => {
   const [reportSetting, setReportSetting] = (0, _react.useState)([]);
   const [assignUserDataFind, setAssignUserDataFind] = (0, _react.useState)({});
   const [doctorInformation, setDoctorInformation] = (0, _react.useState)({});
+  const [patientFind, setPatientFind] = (0, _react.useState)({});
+  const [patientCritical, setPatientCritical] = (0, _react.useState)({});
   const {
     transcript,
     listening,
@@ -340,6 +342,14 @@ const ReportEditor = props => {
     }).catch(error => console.error("Error fetching users:", error));
   }, [user.access_token, apiData, keycloak_url]);
   const studyInstanceUid = params.pathname.includes("report-editor") ? params.pathname?.split("report-editor/:")[1] : params?.search?.slice(params?.search?.indexOf("StudyInstanceUIDs=") + "StudyInstanceUIDs=".length)?.split("&")[0]?.replace(/^=/, "");
+  const getReportDetails = async () => {
+    const patient = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid, apiData);
+    setPatientFind(patient);
+  };
+  (0, _react.useEffect)(() => {
+    if (!studyInstanceUid && patientCritical) return;
+    getReportDetails();
+  }, [studyInstanceUid, patientCritical]);
   (0, _react.useEffect)(() => {
     const fetchReportSettings = async () => {
       if (_RequestHandler.fetchReportSetting && apiData) {
@@ -350,7 +360,7 @@ const ReportEditor = props => {
       }
     };
     fetchReportSettings();
-  }, [viewerStudy]);
+  }, [viewerStudy, patientFind]);
   const fetchViewerStudys2 = async () => {
     if (!apiData) return;
     const response = await (0, _RequestHandler.fetchViewerStudy)(studyInstanceUid, apiData);
@@ -573,16 +583,7 @@ const ReportEditor = props => {
   //   patientReportsDetails?.find((item) => item.study_UIDs === studyInstanceUid);
 
   // let patientFind;
-  const [patientFind, setPatientFind] = (0, _react.useState)({});
-  const [patientCritical, setPatientCritical] = (0, _react.useState)({});
-  const getReportDetails = async () => {
-    const patient = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid, apiData);
-    setPatientFind(patient);
-  };
-  (0, _react.useEffect)(() => {
-    if (!studyInstanceUid && patientCritical) return;
-    getReportDetails();
-  }, [studyInstanceUid, patientCritical]);
+
   const assignUserFind = patientFind?.assign?.map(item => JSON.parse(item));
   const assignUserDetail = assignUserFind && assignUserFind?.find(item => item.assign_name === user?.profile?.preferred_username);
   const permissions = user?.profile?.permission;
@@ -1468,7 +1469,7 @@ const ReportEditor = props => {
           instance.enableReadOnlyMode("approved-mode");
           const editorTable = document?.querySelector(".editor_table");
           if (editorTable) {
-            editorTable.classList.remove("editor_table");
+            editorTable?.classList?.remove("editor_table");
           }
         }
 
@@ -1500,7 +1501,7 @@ const ReportEditor = props => {
     };
   }, [selectedTemplateOptions, template,
   // imageDataUrl,
-  patientReportDetail, saveReports
+  patientReportDetail, saveReports, assignUserDataFind
   // editorData1,
   ]);
   (0, _react.useEffect)(() => {

@@ -280,6 +280,8 @@ const ReportEditor = (props) => {
   const [reportSetting, setReportSetting] = useState([]);
   const [assignUserDataFind, setAssignUserDataFind] = useState({});
   const [doctorInformation, setDoctorInformation] = useState({});
+  const [patientFind, setPatientFind] = useState({});
+  const [patientCritical, setPatientCritical] = useState({});
 
   const {
     transcript,
@@ -416,6 +418,16 @@ const ReportEditor = (props) => {
         ?.split("&")[0]
         ?.replace(/^=/, "");
 
+  const getReportDetails = async () => {
+    const patient = await fetchPatientReportByStudy(studyInstanceUid, apiData);
+    setPatientFind(patient);
+  };
+
+  useEffect(() => {
+    if (!studyInstanceUid && patientCritical) return;
+    getReportDetails();
+  }, [studyInstanceUid, patientCritical]);
+
   useEffect(() => {
     const fetchReportSettings = async () => {
       if (fetchReportSetting && apiData) {
@@ -427,7 +439,7 @@ const ReportEditor = (props) => {
     }
 
     fetchReportSettings();
-  }, [viewerStudy]);
+  }, [viewerStudy, patientFind]);
 
   const fetchViewerStudys2 = async () => {
     if (!apiData) return;
@@ -755,18 +767,6 @@ const ReportEditor = (props) => {
   //   patientReportsDetails?.find((item) => item.study_UIDs === studyInstanceUid);
 
   // let patientFind;
-  const [patientFind, setPatientFind] = useState({});
-  const [patientCritical, setPatientCritical] = useState({});
-
-  const getReportDetails = async () => {
-    const patient = await fetchPatientReportByStudy(studyInstanceUid, apiData);
-    setPatientFind(patient);
-  };
-
-  useEffect(() => {
-    if (!studyInstanceUid && patientCritical) return;
-    getReportDetails();
-  }, [studyInstanceUid, patientCritical]);
 
   const assignUserFind = patientFind?.assign?.map((item) => JSON.parse(item));
 
@@ -2128,7 +2128,7 @@ const ReportEditor = (props) => {
           instance.enableReadOnlyMode("approved-mode");
           const editorTable = document?.querySelector(".editor_table");
           if (editorTable) {
-            editorTable.classList.remove("editor_table");
+            editorTable?.classList?.remove("editor_table");
           }
         }
 
@@ -2185,6 +2185,7 @@ const ReportEditor = (props) => {
     // imageDataUrl,
     patientReportDetail,
     saveReports,
+    assignUserDataFind,
     // editorData1,
   ]);
 
