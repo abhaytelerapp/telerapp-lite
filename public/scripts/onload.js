@@ -576,7 +576,7 @@ async function handleSeriesDoubleClick(seriesInstanceUID, isConcurrent = false) 
   }
 
   let tasks = deferredLoadTasks.get(seriesInstanceUID);
-  const batchSize = 3; // Load 2 instances at a time
+  const batchSize = 15; // Load 2 instances at a time
 
   while (tasks.length > 0) {
       if (!isConcurrent && activeSeriesUID !== seriesInstanceUID) return;

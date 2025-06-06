@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.userToken = exports.updatePatientReports = exports.updateDocument = exports.generateReportPdf = exports.fetchViewerStudy = exports.fetchUsers = exports.fetchStudyData = exports.fetchReportSetting = exports.fetchPatientReportsById = exports.fetchPatientReports = exports.fetchPatientReportByStudy = exports.fetchEditorPatientReportData = exports.fetchDocumentUploadForStudy = exports.fetchDocumentUpload = exports.fetchDefaultReportTemplates = exports.deleteDocumentUrl = exports.createPatientReports = exports.createDocument = exports.createDefaultTemplates = void 0;
+exports.userToken = exports.updatePatientReports = exports.updateOrthancStudy = exports.updateDocument = exports.generateReportPdf = exports.genAiRadiologyReporter = exports.fetchViewerStudy = exports.fetchUsers = exports.fetchStudyData = exports.fetchReportSetting = exports.fetchPatientReportsById = exports.fetchPatientReports = exports.fetchPatientReportByStudy = exports.fetchInstitutionPromptAccess = exports.fetchEditorPatientReportData = exports.fetchDocumentUploadForStudy = exports.fetchDocumentUpload = exports.fetchDefaultReportTemplates = exports.deleteDocumentUrl = exports.createPatientReports = exports.createDocument = exports.createDefaultTemplates = void 0;
 const userToken = async (accessToken, apiData) => {
   const response = await fetch(`${apiData}/user-token`, {
     method: "POST",
@@ -65,9 +65,9 @@ const fetchDocumentUpload = apiData => {
 exports.fetchDocumentUpload = fetchDocumentUpload;
 const createDefaultTemplates = async (templatesDetail, apiData) => {
   const response = await fetch(`${apiData}/templates`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json"
     },
     body: JSON.stringify(templatesDetail)
   });
@@ -82,9 +82,9 @@ const createPatientReports = async (apiData, patientDetail, setReportData, usern
     institutionName: institutionName
   };
   const response = await fetch(`${apiData}/reports`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json"
     },
     body: JSON.stringify(updatedPatientDetail)
   });
@@ -109,9 +109,9 @@ const updatePatientReports = async (apiData, id, patientDetail, setReportData, u
     institutionName: institutionName
   };
   const response = await fetch(`${apiData}/reports/${id}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json"
     },
     body: JSON.stringify(updatedPatientDetail)
   });
@@ -133,27 +133,27 @@ const fetchPatientReportsById = async (id, apiData) => {
 exports.fetchPatientReportsById = fetchPatientReportsById;
 const generateReportPdf = (apiData, reportdetails, setIsLoading, patientName, notDownload) => {
   const currentDate = new Date();
-  const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, '0')}_${String(currentDate.getDate()).padStart(2, '0')}_${currentDate.getFullYear()}`;
+  const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}_${String(currentDate.getDate()).padStart(2, "0")}_${currentDate.getFullYear()}`;
   const fileName = `${patientName}_${formattedDate}.pdf`;
   return fetch(`${apiData}/download-pdf`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json"
     },
     body: JSON.stringify({
       html: reportdetails
     })
   }).then(response => response.blob()).then(blob => {
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     // a.download = `${patientName}.pdf`;
     a.download = fileName;
     !notDownload ? document.body.appendChild(a) : null;
     !notDownload ? a.click() : null;
-    notDownload ? window.open(url, '_blank') : null;
+    notDownload ? window.open(url, "_blank") : null;
     window.URL.revokeObjectURL(url);
-  }).catch(error => console.error('Error:', error)).finally(() => {
+  }).catch(error => console.error("Error:", error)).finally(() => {
     setIsLoading(false);
   });
 };
@@ -163,28 +163,28 @@ const fetchDocumentUploadForStudy = async (apiData, studyInstanceUid) => {
     const data = await fetchDocumentUpload(apiData, studyInstanceUid);
     return data;
   } catch (error) {
-    console.error('Error fetching document upload details:', error);
+    console.error("Error fetching document upload details:", error);
     throw error; // Optional: re-throw if you want the caller to handle it
   }
 };
 exports.fetchDocumentUploadForStudy = fetchDocumentUploadForStudy;
 const createDocument = async (apiData, studyInstanceUid, attachmentData, setDocumentUploadDetails, documentUploadDetails) => {
   const formData = new FormData();
-  formData.append('study_UIDs', studyInstanceUid);
-  formData.append('attachment', attachmentData);
+  formData.append("study_UIDs", studyInstanceUid);
+  formData.append("attachment", attachmentData);
   try {
     const response = await fetch(`${apiData}/document-upload`, {
-      method: 'POST',
+      method: "POST",
       body: formData
     });
     if (!response.ok) {
       throw new Error(`Failed to create document: ${response.statusText}`);
     }
     const data = await response.json();
-    await fetchDocumentUpload(apiData, studyInstanceUid).then(data => setDocumentUploadDetails([...documentUploadDetails, data])).catch(error => console.error('Error fetching document upload details:', error));
+    await fetchDocumentUpload(apiData, studyInstanceUid).then(data => setDocumentUploadDetails([...documentUploadDetails, data])).catch(error => console.error("Error fetching document upload details:", error));
     return data;
   } catch (error) {
-    console.error('Error creating document:', error);
+    console.error("Error creating document:", error);
     throw error;
   }
 };
@@ -192,10 +192,10 @@ exports.createDocument = createDocument;
 const updateDocument = async (apiData, id, attachmentData, setDocumentUploadDetails, documentUploadDetails) => {
   const documentData = documentUploadDetails && documentUploadDetails.filter(data => data.id !== id);
   const formData = new FormData();
-  formData.append('attachment', attachmentData);
+  formData.append("attachment", attachmentData);
   try {
     const response = await fetch(`${apiData}/document-upload/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: formData
     });
     if (!response.ok) {
@@ -203,10 +203,10 @@ const updateDocument = async (apiData, id, attachmentData, setDocumentUploadDeta
     }
     const data = await response.json();
     console.log(data, "data");
-    await fetchDocumentUpload(apiData, data.study_UIDs).then(data => setDocumentUploadDetails([...documentData, data])).catch(error => console.error('Error fetching document upload details:', error));
+    await fetchDocumentUpload(apiData, data.study_UIDs).then(data => setDocumentUploadDetails([...documentData, data])).catch(error => console.error("Error fetching document upload details:", error));
     return data;
   } catch (error) {
-    console.error('Error creating document:', error);
+    console.error("Error creating document:", error);
     throw error;
   }
 };
@@ -215,9 +215,9 @@ const deleteDocumentUrl = async (apiData, id, updateData, setDocumentUploadDetai
   const documentData = documentUploadDetails && documentUploadDetails.filter(data => data.id !== id);
   try {
     const response = await fetch(`${apiData}/document-upload-url/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(updateData)
     });
@@ -225,10 +225,10 @@ const deleteDocumentUrl = async (apiData, id, updateData, setDocumentUploadDetai
       throw new Error(`Failed to create document: ${response.statusText}`);
     }
     const data = await response.json();
-    await fetchDocumentUpload(apiData, data.study_UIDs).then(data => setDocumentUploadDetails([...documentData, data])).catch(error => console.error('Error fetching document upload details:', error));
+    await fetchDocumentUpload(apiData, data.study_UIDs).then(data => setDocumentUploadDetails([...documentData, data])).catch(error => console.error("Error fetching document upload details:", error));
     return data;
   } catch (error) {
-    console.error('Error creating document:', error);
+    console.error("Error creating document:", error);
     throw error;
   }
 };
@@ -236,12 +236,49 @@ exports.deleteDocumentUrl = deleteDocumentUrl;
 const fetchEditorPatientReportData = (apiData, studyInstanceUid) => {
   return fetch(`${apiData}/editor_patientData?StudyInstanceUID=${studyInstanceUid}`).then(response => {
     if (!response.ok) {
-      throw new Error('Failed to fetch patient report');
+      throw new Error("Failed to fetch patient report");
     }
     return response.json();
   }).catch(error => {
-    console.error('Error fetching report:', error);
+    console.error("Error fetching report:", error);
     return null; // Return null to handle cases where no report is found
   });
 };
 exports.fetchEditorPatientReportData = fetchEditorPatientReportData;
+const fetchInstitutionPromptAccess = async (institution, apiData) => {
+  const response = await fetch(`${apiData}/institution-access/${institution}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+  return await response.json();
+};
+exports.fetchInstitutionPromptAccess = fetchInstitutionPromptAccess;
+const genAiRadiologyReporter = async (apiData, data) => {
+  const response = await fetch(`${apiData}/generate-ai-report`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
+  return await response.json();
+};
+exports.genAiRadiologyReporter = genAiRadiologyReporter;
+const updateOrthancStudy = async (apiData, aianalysis, studyInstanceUid) => {
+  const response = await fetch(`${apiData}/orthancStudy/${studyInstanceUid}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      aianalysis
+    })
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to update data source: ${response.statusText}`);
+  }
+  return await response.json();
+};
+exports.updateOrthancStudy = updateOrthancStudy;

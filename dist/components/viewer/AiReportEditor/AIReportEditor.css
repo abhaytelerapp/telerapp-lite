@@ -1,0 +1,132 @@
+.memberScroll {
+  scrollbar-width: none;
+}
+
+.mic-icon-chat {
+  width: 30px;
+  /* Adjust size as needed */
+  height: 30px;
+  /* Adjust size as needed */
+  background-color: #6d6d6d;
+  /* Circle background color */
+  border-radius: 50%;
+  /* Makes the container a circle */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* box-shadow: 0 0 10px rgba(0, 192, 199, 0.5); */
+  transition: box-shadow 0.3s ease-in-out;
+  position: relative;
+}
+
+.mic-icon-chat i {
+  color: white;
+  /* Microphone icon color */
+  font-size: 24px;
+  /* Icon size */
+}
+
+.pulse-ring {
+  content: '';
+  width: 40px;
+  height: 40px;
+  /* background: #189BFF; */
+  border: 5px solid #333333;
+  border-radius: 50%;
+  position: absolute;
+  animation: pulsate infinite 1.5s;
+}
+
+body.dark .pulse-ring {
+  border: 5px solid #d4d4d4;
+}
+
+.ai_editor_table {
+  height: 88% !important;
+}
+
+
+.dot-stretching {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #000;
+  color: #000;
+  transform: scale(1.25, 1.25);
+  animation: dot-stretching 2s infinite ease-in;
+}
+.dot-stretching::before, .dot-stretching::after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+.dot-stretching::before {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #000;
+  color: #000;
+  animation: dot-stretching-before 2s infinite ease-in;
+}
+.dot-stretching::after {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #000;
+  color: #000;
+  animation: dot-stretching-after 2s infinite ease-in;
+}
+
+@keyframes dot-stretching {
+  0% {
+    transform: scale(1.25, 1.25);
+  }
+  50%, 60% {
+    transform: scale(0.8, 0.8);
+  }
+  100% {
+    transform: scale(1.25, 1.25);
+  }
+}
+@keyframes dot-stretching-before {
+  0% {
+    transform: translate(0) scale(0.7, 0.7);
+  }
+  50%, 60% {
+    transform: translate(-20px) scale(1, 1);
+  }
+  100% {
+    transform: translate(0) scale(0.7, 0.7);
+  }
+}
+@keyframes dot-stretching-after {
+  0% {
+    transform: translate(0) scale(0.7, 0.7);
+  }
+  50%, 60% {
+    transform: translate(20px) scale(1, 1);
+  }
+  100% {
+    transform: translate(0) scale(0.7, 0.7);
+  }
+}
+
+#submit-button:disabled,
+#approve-button:disabled,
+#reject-button:disabled {
+  cursor: not-allowed;
+  color: rgba(255, 255, 255, 0.5);
+  background-color: '#39383f';
+  opacity: 50; /* Applies 50% opacity to background */
+}
+
+#ai-textarea::placeholder {
+  opacity: 20;
+  font-size: 14px;
+}
+
+body.dark #ai-textarea::placeholder {
+  color: #ffffff9c !important;
+}

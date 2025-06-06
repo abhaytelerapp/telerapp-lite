@@ -187,7 +187,7 @@ body.dark .custom-size {
 }
 
 select,
-button:not(#mic-container, .ck, #previewBtn, #critical, #draft, #submit, #discard, #captureImage, #fileDownload, .swal2-styled, .Toastify__close-button),
+button:not(#mic-container, .ck, #previewBtn, #critical, #draft, #submit, #discard, #captureImage, #fileDownload, .swal2-styled, .Toastify__close-button, #send-button, #submit-button, #approve-button, #reject-button),
 #overlay2seg,
 #seg2stl,
 #RemoveSEG,
@@ -204,7 +204,7 @@ input {
   background-color: #dedede !important;
 }
 
-button:not(.btn-report, .ck, #mic-container, #previewBtn, #critical, #draft, #submit, #discard, #captureImage, #fileDownload, .swal2-styled, .Toastify__close-button):hover {
+button:not(.btn-report, .ck, #mic-container, #previewBtn, #critical, #draft, #submit, #discard, #captureImage, #fileDownload, .swal2-styled, .Toastify__close-button, #send-button, #submit-button, #approve-button, #reject-button):hover {
   filter: invert(80%);
 }
 

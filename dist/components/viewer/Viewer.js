@@ -45,13 +45,14 @@ var _download_dcm = _interopRequireDefault(require("../image/icon/lite/download_
 var _edit_patient = _interopRequireDefault(require("../image/icon/lite/edit_patient.png"));
 var _quantumLogo = _interopRequireDefault(require("../image/icon/lite/quantum-logo.png"));
 var _telerapp_logo = _interopRequireDefault(require("../image/icon/lite/telerapp_logo.png"));
+var _aiTechnology = _interopRequireDefault(require("../image/icon/lite/ai-technology.png"));
 var _attachment = _interopRequireDefault(require("../image/icon/lite/attachment.png"));
 var _clinical = _interopRequireDefault(require("../image/icon/lite/clinical.png"));
 var _Tooltip = _interopRequireDefault(require("./Tooltip"));
 var _index = _interopRequireDefault(require("./ReportEditor/index"));
-var _reactRouterDom = require("react-router-dom");
 var _reactResizable = require("react-resizable");
 require("react-resizable/css/styles.css");
+var _AiReportEditor = _interopRequireDefault(require("./AiReportEditor/AiReportEditor"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -67,6 +68,7 @@ const Viewer = props => {
   }, [props]);
   const [isModelOpen, setIsModelOpen] = (0, _react.useState)(false);
   const [toggleDisplayReportEditor, setToggleDisplayReportEditor] = (0, _react.useState)(false);
+  const [toggleDisplayAiReportEditor, setToggleDisplayAiReportEditor] = (0, _react.useState)(false);
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       // Request fullscreen on the document (or any element)
@@ -104,6 +106,14 @@ const Viewer = props => {
   const toggleDisplayReportEditorView = () => {
     setToggleDisplayReportEditor(show => !show);
     setIsModelOpen(false);
+    setToggleDisplayAiReportEditor(false);
+    const pages = document.getElementById("pages");
+    pages.style.width = toggleDisplayReportEditor ? "75%" : "100%";
+  };
+  const toggleDisplayAiReportEditorView = () => {
+    setToggleDisplayReportEditor(false);
+    setToggleDisplayAiReportEditor(show => !show);
+    setIsModelOpen(false);
     const pages = document.getElementById("pages");
     pages.style.width = toggleDisplayReportEditor ? "75%" : "100%";
   };
@@ -127,7 +137,7 @@ const Viewer = props => {
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      width: '5%'
+      width: "5%"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "left_span"
@@ -144,7 +154,7 @@ const Viewer = props => {
   }))), /*#__PURE__*/_react.default.createElement("div", {
     style: {
       textAlign: "center",
-      width: '100%'
+      width: "100%"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "icon-list",
@@ -243,8 +253,8 @@ const Viewer = props => {
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      display: 'flex',
-      gap: '5px'
+      display: "flex",
+      gap: "5px"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "horizontal_flip_span",
@@ -287,8 +297,8 @@ const Viewer = props => {
     height: "30"
   }))), /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      display: 'flex',
-      gap: '5px'
+      display: "flex",
+      gap: "5px"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "rotate0_span",
@@ -339,7 +349,7 @@ const Viewer = props => {
     id: "WindowRevision_span",
     style: {
       display: "flex",
-      alignItems: 'center'
+      alignItems: "center"
     }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "cropimg VR MPR SEG",
@@ -369,7 +379,7 @@ const Viewer = props => {
     style: {
       position: "absolute",
       left: 0,
-      top: '45px',
+      top: "45px",
       whiteSpace: "nowrap",
       zIndex: 100,
       width: 500,
@@ -515,8 +525,8 @@ const Viewer = props => {
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      display: 'flex',
-      gap: '5px'
+      display: "flex",
+      gap: "5px"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "removeAllRuler_span",
@@ -595,7 +605,7 @@ const Viewer = props => {
     style: {
       textAlign: "start",
       display: "flex",
-      gap: '5px'
+      gap: "5px"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "AngleRuler_span2",
@@ -656,8 +666,8 @@ const Viewer = props => {
   }))), /*#__PURE__*/_react.default.createElement("div", {
     style: {
       textAlign: "start",
-      display: 'flex',
-      gap: '5px'
+      display: "flex",
+      gap: "5px"
     }
   }, /*#__PURE__*/_react.default.createElement("span", {
     id: "arrowRuler_span",
@@ -895,6 +905,24 @@ const Viewer = props => {
       filter: "invert(80%)"
     }
   }))), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
+    text: "AI Report Editor",
+    position: "bottom"
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    className: "",
+    alt: "AI Report Editor",
+    loading: "lazy",
+    id: "reportEditor",
+    src: _aiTechnology.default,
+    style: {
+      filter: "invert(80%)",
+      cursor: "pointer",
+      verticalAlign: "middle",
+      marginRight: "8px"
+    },
+    width: "24",
+    height: "24",
+    onClick: toggleDisplayAiReportEditorView
+  })), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
     text: "Report Editor",
     position: "bottom"
   }, /*#__PURE__*/_react.default.createElement("img", {
@@ -906,7 +934,8 @@ const Viewer = props => {
     style: {
       filter: "invert(80%)",
       cursor: "pointer",
-      verticalAlign: "middle"
+      verticalAlign: "middle",
+      marginTop: "3px"
     },
     width: "24",
     height: "24",
@@ -1098,7 +1127,7 @@ const Viewer = props => {
       height: "100%",
       backgroundColor: "#000",
       border: "2px #d4d4d4 groove",
-      borderRadius: '4px'
+      borderRadius: "4px"
     }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "custom-size",
@@ -1128,8 +1157,8 @@ const Viewer = props => {
       flexDirection: "column",
       position: "relative",
       zIndex: 9,
-      maxWidth: '147px',
-      width: '147px'
+      maxWidth: "147px",
+      width: "147px"
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "leftPannelCloseOpen"
@@ -1155,7 +1184,7 @@ const Viewer = props => {
       height: "100%",
       backgroundColor: "#000",
       border: "2px #d4d4d4 groove",
-      borderRadius: '4px'
+      borderRadius: "4px"
     }
   }, /*#__PURE__*/_react.default.createElement("img", {
     className: "custom-size",
@@ -1197,7 +1226,7 @@ const Viewer = props => {
       return setEditorWidth(size.width);
     },
     axis: "x",
-    resizeHandles: ['w'] // Resize from the left side only
+    resizeHandles: ["w"] // Resize from the left side only
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
       width: editorWidth
@@ -1211,6 +1240,31 @@ const Viewer = props => {
     isModelOpen: isModelOpen,
     setToggleDisplayReportEditor: setToggleDisplayReportEditor,
     toggleDisplayReportEditor: toggleDisplayReportEditor
+  }))), toggleDisplayAiReportEditor && /*#__PURE__*/_react.default.createElement(_reactResizable.Resizable, {
+    width: editorWidth,
+    height: 0,
+    minConstraints: [window.innerWidth * 0.25] // Minimum width
+    ,
+    maxConstraints: [window.innerWidth * 0.75] // Maximum width
+    ,
+    onResize: (e, _ref2) => {
+      let {
+        size
+      } = _ref2;
+      return setEditorWidth(size.width);
+    },
+    axis: "x",
+    resizeHandles: ["w"] // Resize from the left side only
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      width: editorWidth,
+      zIndex: "1"
+    },
+    className: "z-10 h-full w-1/3 flex-initial bg-gray-100"
+    // dangerouslySetInnerHTML={{ __html: reportEditorTemplate }}
+  }, /*#__PURE__*/_react.default.createElement(_AiReportEditor.default, {
+    apiData: data?.data,
+    user: data?.user
   }))))), /*#__PURE__*/_react.default.createElement("div", {
     id: "magnifierDiv",
     style: {

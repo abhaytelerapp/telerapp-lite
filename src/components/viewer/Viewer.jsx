@@ -39,28 +39,32 @@ import download_dcm from "../image/icon/lite/download_dcm.png";
 import edit_patient from "../image/icon/lite/edit_patient.png";
 import quantum_logo from "../image/icon/lite/quantum-logo.png";
 import loaderLogo from "../image/icon/lite/telerapp_logo.png";
+import ai_technology from "../image/icon/lite/ai-technology.png";
 import attachemnt from "../image/icon/lite/attachment.png";
 import clinical from "../image/icon/lite/clinical.png";
 import Tooltip from "./Tooltip";
 import ReportEditor from "./ReportEditor/index";
-import { BrowserRouter } from "react-router-dom";
-import { Resizable } from 'react-resizable';
-import 'react-resizable/css/styles.css';
+import { Resizable } from "react-resizable";
+import "react-resizable/css/styles.css";
+import AiReportEditor from "./AiReportEditor/AiReportEditor";
 
 const Viewer = (props) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLeftClose, setIsLeftClose] = useState(false);
   const [editorWidth, setEditorWidth] = useState(450);
-  const [data, setData] = useState()
+  const [data, setData] = useState();
 
-  useEffect(()=>{
-    if(props){
-      setData(props?.props)
+  useEffect(() => {
+    if (props) {
+      setData(props?.props);
     }
-  },[props])
-  
+  }, [props]);
+
   const [isModelOpen, setIsModelOpen] = useState(false);
-  const [toggleDisplayReportEditor, setToggleDisplayReportEditor] = useState(false);
+  const [toggleDisplayReportEditor, setToggleDisplayReportEditor] =
+    useState(false);
+  const [toggleDisplayAiReportEditor, setToggleDisplayAiReportEditor] =
+    useState(false);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -96,14 +100,23 @@ const Viewer = (props) => {
         leftPicture.style.marginLeft = "-120px";
       }
     }
-  }
+  };
 
   const toggleDisplayReportEditorView = () => {
     setToggleDisplayReportEditor((show) => !show);
-    setIsModelOpen(false)
+    setIsModelOpen(false);
+    setToggleDisplayAiReportEditor(false);
     const pages = document.getElementById("pages");
     pages.style.width = toggleDisplayReportEditor ? "75%" : "100%";
-  }
+  };
+
+  const toggleDisplayAiReportEditorView = () => {
+    setToggleDisplayReportEditor(false);
+    setToggleDisplayAiReportEditor((show) => !show);
+    setIsModelOpen(false);
+    const pages = document.getElementById("pages");
+    pages.style.width = toggleDisplayReportEditor ? "75%" : "100%";
+  };
 
   return (
     <div style={{ backgroundColor: "#000000" }} onWheel={() => {}}>
@@ -120,7 +133,7 @@ const Viewer = (props) => {
             padding: "5px",
           }}
         >
-          <div style={{width: '5%'}}>
+          <div style={{ width: "5%" }}>
             <span id="left_span">
               <img
                 className="img pdf ecg"
@@ -135,7 +148,7 @@ const Viewer = (props) => {
               />
             </span>
           </div>
-          <div style={{ textAlign: "center", width: '100%' }}>
+          <div style={{ textAlign: "center", width: "100%" }}>
             <span
               id="icon-list"
               style={{
@@ -143,7 +156,7 @@ const Viewer = (props) => {
                 justifyContent: "center",
                 alignItems: "center",
                 gap: "8px",
-                flexWrap: "wrap"
+                flexWrap: "wrap",
               }}
             >
               {/* <span id="openFile_span" style={{ verticalAlign: "super" }}>
@@ -236,8 +249,8 @@ const Viewer = (props) => {
                     backgroundColor: "black",
                   }}
                 >
-                  <div style={{display: "flex", flexDirection: "column"}}>
-                    <div style={{display: 'flex', gap: '5px'}}>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", gap: "5px" }}>
                       <span
                         id="horizontal_flip_span"
                         style={{ verticalAlign: "super" }}
@@ -281,8 +294,11 @@ const Viewer = (props) => {
                         />
                       </span>
                     </div>
-                    <div style={{display: 'flex', gap: '5px'}}>
-                      <span id="rotate0_span" style={{ verticalAlign: "super" }}>
+                    <div style={{ display: "flex", gap: "5px" }}>
+                      <span
+                        id="rotate0_span"
+                        style={{ verticalAlign: "super" }}
+                      >
                         <img
                           className="innerimg"
                           loading="lazy"
@@ -293,7 +309,10 @@ const Viewer = (props) => {
                           height="30"
                         />
                       </span>
-                      <span id="rotatei90_span" style={{ verticalAlign: "super" }}>
+                      <span
+                        id="rotatei90_span"
+                        style={{ verticalAlign: "super" }}
+                      >
                         <img
                           className="innerimg"
                           loading="lazy"
@@ -304,7 +323,10 @@ const Viewer = (props) => {
                           height="30"
                         />
                       </span>
-                      <span id="rotate90_span" style={{ verticalAlign: "super" }}>
+                      <span
+                        id="rotate90_span"
+                        style={{ verticalAlign: "super" }}
+                      >
                         <img
                           className="innerimg filpx"
                           loading="lazy"
@@ -325,7 +347,7 @@ const Viewer = (props) => {
               >
                 <span
                   id="WindowRevision_span"
-                  style={{ display: "flex", alignItems: 'center' }}
+                  style={{ display: "flex", alignItems: "center" }}
                 >
                   <img
                     className="cropimg VR MPR SEG"
@@ -358,7 +380,7 @@ const Viewer = (props) => {
                   style={{
                     position: "absolute",
                     left: 0,
-                    top: '45px',
+                    top: "45px",
                     whiteSpace: "nowrap",
                     zIndex: 100,
                     width: 500,
@@ -470,7 +492,7 @@ const Viewer = (props) => {
                 />
               </span>
               <span id="MeasureImgParent" style={{ verticalAlign: "super" }}>
-                <span style={{display: "flex", alignItems: "center"}}>
+                <span style={{ display: "flex", alignItems: "center" }}>
                   <span>
                     <img
                       className="img"
@@ -506,11 +528,11 @@ const Viewer = (props) => {
                     zIndex: 100,
                     display: "none",
                     backgroundColor: "black",
-                    width: 170
+                    width: 170,
                   }}
                 >
-                  <div style={{display: "flex", flexDirection: "column"}}>
-                    <div style={{display: 'flex', gap: '5px'}}>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", gap: "5px" }}>
                       <span
                         id="removeAllRuler_span"
                         style={{ verticalAlign: "super" }}
@@ -544,7 +566,10 @@ const Viewer = (props) => {
                           height="30"
                         />
                       </span>
-                      <span id="eraseRuler_span" style={{ verticalAlign: "super" }}>
+                      <span
+                        id="eraseRuler_span"
+                        style={{ verticalAlign: "super" }}
+                      >
                         <img
                           alt="eraser"
                           altzhtw="橡皮擦"
@@ -571,7 +596,10 @@ const Viewer = (props) => {
                           height="30"
                         />
                       </span>
-                      <span id="AngleRuler_span" style={{ verticalAlign: "super" }}>
+                      <span
+                        id="AngleRuler_span"
+                        style={{ verticalAlign: "super" }}
+                      >
                         <img
                           alt="angle"
                           altzhtw="角度"
@@ -584,7 +612,13 @@ const Viewer = (props) => {
                         />
                       </span>
                     </div>
-                    <div style={{textAlign: "start", display: "flex", gap: '5px'}}>
+                    <div
+                      style={{
+                        textAlign: "start",
+                        display: "flex",
+                        gap: "5px",
+                      }}
+                    >
                       <span
                         id="AngleRuler_span2"
                         style={{ verticalAlign: "super" }}
@@ -600,7 +634,10 @@ const Viewer = (props) => {
                           height="30"
                         />
                       </span>
-                      <span id="RectRuler_span" style={{ verticalAlign: "super" }}>
+                      <span
+                        id="RectRuler_span"
+                        style={{ verticalAlign: "super" }}
+                      >
                         <img
                           alt="Rect shape"
                           altzhtw="矩形"
@@ -643,8 +680,17 @@ const Viewer = (props) => {
                         />
                       </span>
                     </div>
-                    <div style={{textAlign: "start", display: 'flex', gap: '5px'}}>
-                      <span id="arrowRuler_span" style={{ verticalAlign: "super" }}>
+                    <div
+                      style={{
+                        textAlign: "start",
+                        display: "flex",
+                        gap: "5px",
+                      }}
+                    >
+                      <span
+                        id="arrowRuler_span"
+                        style={{ verticalAlign: "super" }}
+                      >
                         <img
                           alt="arrow"
                           altzhtw="箭頭"
@@ -724,7 +770,7 @@ const Viewer = (props) => {
                 />
               </span>
               <span id="OtherImgParent" style={{ verticalAlign: "super" }}>
-                <span style={{display: "flex", alignItems: "center"}}>
+                <span style={{ display: "flex", alignItems: "center" }}>
                   <span>
                     <img
                       className="img"
@@ -844,12 +890,18 @@ const Viewer = (props) => {
             >
               {isFullscreen ? (
                 <Tooltip text="Exit Full Screen" position="bottom">
-                  <i className="fa-solid fa-compress" style={{filter: "invert(80%)",}}></i>
+                  <i
+                    className="fa-solid fa-compress"
+                    style={{ filter: "invert(80%)" }}
+                  ></i>
                 </Tooltip>
               ) : (
                 <Tooltip text="Full Screen" position="bottom">
-                  <i className="fa-solid fa-expand" style={{filter: "invert(80%)",}}></i>
-                </Tooltip>  
+                  <i
+                    className="fa-solid fa-expand"
+                    style={{ filter: "invert(80%)" }}
+                  ></i>
+                </Tooltip>
               )}
             </div>
             <div
@@ -864,9 +916,30 @@ const Viewer = (props) => {
               // onClick={toggleFullscreen}
             >
               <Tooltip text="Light Mode" position="bottom">
-                <i className="fa-solid fa-moon" style={{filter: "invert(80%)",}}></i>
+                <i
+                  className="fa-solid fa-moon"
+                  style={{ filter: "invert(80%)" }}
+                ></i>
               </Tooltip>
             </div>
+            <Tooltip text="AI Report Editor" position="bottom">
+              <img
+                className=""
+                alt="AI Report Editor"
+                loading="lazy"
+                id="reportEditor"
+                src={ai_technology}
+                style={{
+                  filter: "invert(80%)",
+                  cursor: "pointer",
+                  verticalAlign: "middle",
+                  marginRight: "8px",
+                }}
+                width="24"
+                height="24"
+                onClick={toggleDisplayAiReportEditorView}
+              />
+            </Tooltip>
             <Tooltip text="Report Editor" position="bottom">
               <img
                 className=""
@@ -874,7 +947,12 @@ const Viewer = (props) => {
                 loading="lazy"
                 id="reportEditor"
                 src={edit_patient}
-                style={{ filter: "invert(80%)", cursor: "pointer", verticalAlign: "middle" }}
+                style={{
+                  filter: "invert(80%)",
+                  cursor: "pointer",
+                  verticalAlign: "middle",
+                  marginTop: "3px",
+                }}
                 width="24"
                 height="24"
                 onClick={toggleDisplayReportEditorView}
@@ -892,10 +970,14 @@ const Viewer = (props) => {
         </div>
         <div
           id="MarkStyleDiv"
-          style={{ backgroundColor: "#282828", alignItems: "center", justifyContent: "space-around" }}
+          style={{
+            backgroundColor: "#282828",
+            alignItems: "center",
+            justifyContent: "space-around",
+          }}
           className="drawer"
         >
-          <span style={{display: "flex", alignItems: "center", gap: "6px"}}>
+          <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <label style={{ color: "#ffffff" }} id="markColorLabel">
               Color：
             </label>
@@ -930,17 +1012,41 @@ const Viewer = (props) => {
             </select>
           </span>
 
-          <label style={{ color: "#ffffff", display: "flex", alignItems: "center", gap: "6px" }} id="markAlphaLabel">
+          <label
+            style={{
+              color: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+            }}
+            id="markAlphaLabel"
+          >
             Alpha
             <input type="text" id="markAlphaText" defaultValue="35" />
           </label>
 
-          <label style={{ color: "#ffffff", display: "flex", alignItems: "center", gap: "6px" }} id="markSizeLabel">
+          <label
+            style={{
+              color: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+            }}
+            id="markSizeLabel"
+          >
             Size
             <input type="text" id="markSizeText" defaultValue="0.45" />
           </label>
 
-          <label style={{ color: "#ffffff", display: "flex", alignItems: "center", gap: "6px" }} id="markFillLabel">
+          <label
+            style={{
+              color: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+            }}
+            id="markFillLabel"
+          >
             Fill
             <input
               type="checkbox"
@@ -951,7 +1057,7 @@ const Viewer = (props) => {
           </label>
 
           <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <label style={{ color: "#ffffff"}} id="TableLabel">
+            <label style={{ color: "#ffffff" }} id="TableLabel">
               Table：
             </label>
             <select id="TableSelect" defaultValue="None">
@@ -987,7 +1093,12 @@ const Viewer = (props) => {
         <font color="white" className="drawer" id="labelZoom">
           Zoom：
         </font>
-        <input type="text" className="drawer" id="textZoom" defaultValue="200" />
+        <input
+          type="text"
+          className="drawer"
+          id="textZoom"
+          defaultValue="200"
+        />
         <font color="white" className="drawer" id="labelPlay">
           fps：
         </font>
@@ -1015,7 +1126,7 @@ const Viewer = (props) => {
           height: "100%",
           backgroundColor: "#000",
           border: "2px #d4d4d4 groove",
-          borderRadius: '4px',
+          borderRadius: "4px",
         }}
       >
         <img
@@ -1039,21 +1150,31 @@ const Viewer = (props) => {
               flexDirection: "column",
               position: "relative",
               zIndex: 9,
-              maxWidth: '147px',
-              width: '147px',
+              maxWidth: "147px",
+              width: "147px",
             }}
           >
             <div className="leftPannelCloseOpen">
               <span>Studies</span>
               {isLeftClose ? (
-                <i className="fa-solid fa-arrow-right left-icon" onClick={leftPannel}></i>
+                <i
+                  className="fa-solid fa-arrow-right left-icon"
+                  onClick={leftPannel}
+                ></i>
               ) : (
-                <i className="fa-solid fa-arrow-left left-icon" onClick={leftPannel}></i>
+                <i
+                  className="fa-solid fa-arrow-left left-icon"
+                  onClick={leftPannel}
+                ></i>
               )}
             </div>
           </div>
           <div id="pages">
-            <div className="page" id="DicomPage" style={{position: "relative"}}>
+            <div
+              className="page"
+              id="DicomPage"
+              style={{ position: "relative" }}
+            >
               <div
                 id="loader"
                 style={{
@@ -1062,7 +1183,7 @@ const Viewer = (props) => {
                   height: "100%",
                   backgroundColor: "#000",
                   border: "2px #d4d4d4 groove",
-                  borderRadius: '4px',
+                  borderRadius: "4px",
                 }}
               >
                 <img
@@ -1096,29 +1217,43 @@ const Viewer = (props) => {
               maxConstraints={[window.innerWidth * 0.75]} // Maximum width
               onResize={(e, { size }) => setEditorWidth(size.width)}
               axis="x"
-              resizeHandles={['w']} // Resize from the left side only
+              resizeHandles={["w"]} // Resize from the left side only
             >
               <div
                 style={{ width: editorWidth }}
                 className="z-10 h-full w-1/3 flex-initial bg-gray-100 ml-[5px]"
-              // dangerouslySetInnerHTML={{ __html: reportEditorTemplate }}
+                // dangerouslySetInnerHTML={{ __html: reportEditorTemplate }}
               >
-                {/* <BrowserRouter> */}
-                  <ReportEditor 
-                    apiData={data?.data} 
-                    keycloak_url={data?.keycloak_url} 
-                    user={data?.user} 
-                    isModelOpen={isModelOpen}
-                    setToggleDisplayReportEditor={setToggleDisplayReportEditor}
-                    toggleDisplayReportEditor={toggleDisplayReportEditor}
-                  />
-                {/* </BrowserRouter> */}
+                <ReportEditor
+                  apiData={data?.data}
+                  keycloak_url={data?.keycloak_url}
+                  user={data?.user}
+                  isModelOpen={isModelOpen}
+                  setToggleDisplayReportEditor={setToggleDisplayReportEditor}
+                  toggleDisplayReportEditor={toggleDisplayReportEditor}
+                />
               </div>
             </Resizable>
           )}
-          {/* <BrowserRouter>
-            <ReportEditor apiData={data} isModelOpen={isModelOpen}/>
-          </BrowserRouter> */}
+          {toggleDisplayAiReportEditor && (
+            <Resizable
+              width={editorWidth}
+              height={0}
+              minConstraints={[window.innerWidth * 0.25]} // Minimum width
+              maxConstraints={[window.innerWidth * 0.75]} // Maximum width
+              onResize={(e, { size }) => setEditorWidth(size.width)}
+              axis="x"
+              resizeHandles={["w"]} // Resize from the left side only
+            >
+              <div
+                style={{ width: editorWidth, zIndex: "1" }}
+                className="z-10 h-full w-1/3 flex-initial bg-gray-100"
+                // dangerouslySetInnerHTML={{ __html: reportEditorTemplate }}
+              >
+                <AiReportEditor apiData={data?.data} user={data?.user} />
+              </div>
+            </Resizable>
+          )}
         </div>
       </div>
       <div
