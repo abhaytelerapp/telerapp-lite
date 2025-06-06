@@ -53,6 +53,7 @@ var _index = _interopRequireDefault(require("./ReportEditor/index"));
 var _reactResizable = require("react-resizable");
 require("react-resizable/css/styles.css");
 var _AiReportEditor = _interopRequireDefault(require("./AiReportEditor/AiReportEditor"));
+var _RequestHandler = require("./ReportEditor/RequestHandler");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -61,6 +62,7 @@ const Viewer = props => {
   const [isLeftClose, setIsLeftClose] = (0, _react.useState)(false);
   const [editorWidth, setEditorWidth] = (0, _react.useState)(450);
   const [data, setData] = (0, _react.useState)();
+  const [token, setToken] = (0, _react.useState)("");
   (0, _react.useEffect)(() => {
     if (props) {
       setData(props?.props);
@@ -117,6 +119,23 @@ const Viewer = props => {
     const pages = document.getElementById("pages");
     pages.style.width = toggleDisplayReportEditor ? "75%" : "100%";
   };
+  const getToken = async () => {
+    try {
+      const aToken = {
+        token: data?.user.access_token
+      };
+      const response = await (0, _RequestHandler.userToken)(aToken, data?.data);
+      setToken(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  (0, _react.useEffect)(() => {
+    if (!data?.data) return; // <-- inside the useEffect now
+
+    getToken();
+  }, [data?.data]);
+  const hasAIEditorPermission = data?.user?.profile?.permission?.includes("AI Editor") || token?.realm_access?.roles?.includes("super-admin");
   return /*#__PURE__*/_react.default.createElement("div", {
     style: {
       backgroundColor: "#000000"
@@ -1240,7 +1259,7 @@ const Viewer = props => {
     isModelOpen: isModelOpen,
     setToggleDisplayReportEditor: setToggleDisplayReportEditor,
     toggleDisplayReportEditor: toggleDisplayReportEditor
-  }))), toggleDisplayAiReportEditor && /*#__PURE__*/_react.default.createElement(_reactResizable.Resizable, {
+  }))), toggleDisplayAiReportEditor && hasAIEditorPermission && /*#__PURE__*/_react.default.createElement(_reactResizable.Resizable, {
     width: editorWidth,
     height: 0,
     minConstraints: [window.innerWidth * 0.25] // Minimum width
