@@ -575,10 +575,10 @@ const AiReportEditor = ({ apiData, user }) => {
           apiData,
           oldData.id,
           resData,
+          setReportData.
           username,
           actionlog,
           patientData?.institution_name,
-          setReportData
         ).then((res) => {
           if (res.status === 200) {
             toast.success("Your report has been successfully updated");

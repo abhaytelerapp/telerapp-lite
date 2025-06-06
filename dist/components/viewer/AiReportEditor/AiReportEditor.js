@@ -418,7 +418,7 @@ const AiReportEditor = _ref => {
           }
         });
       } else {
-        (0, _RequestHandler.updatePatientReports)(apiData, oldData.id, resData, username, actionlog, patientData?.institution_name, setReportData).then(res => {
+        (0, _RequestHandler.updatePatientReports)(apiData, oldData.id, resData, setReportData.username, actionlog, patientData?.institution_name).then(res => {
           if (res.status === 200) {
             _reactToastify.toast.success("Your report has been successfully updated");
             setTimeout(() => {

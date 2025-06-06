@@ -140,8 +140,8 @@ export const updatePatientReports = async (
     body: JSON.stringify(updatedPatientDetail),
   });
 
-  const data = await response.json();
-  setReportData(data);
+  // const data = await response.json();
+  // setReportData(data);
 
   // await fetchPatientReportsById(id, apiData)
   //   .then((data) => setPatientReportsDetails([...updatedReports, data]))
