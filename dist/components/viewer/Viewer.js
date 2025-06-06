@@ -923,7 +923,7 @@ const Viewer = props => {
     style: {
       filter: "invert(80%)"
     }
-  }))), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
+  }))), hasAIEditorPermission && /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
     text: "AI Report Editor",
     position: "bottom"
   }, /*#__PURE__*/_react.default.createElement("img", {

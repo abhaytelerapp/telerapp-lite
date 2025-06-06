@@ -946,24 +946,26 @@ const Viewer = (props) => {
                 ></i>
               </Tooltip>
             </div>
-            <Tooltip text="AI Report Editor" position="bottom">
-              <img
-                className=""
-                alt="AI Report Editor"
-                loading="lazy"
-                id="reportEditor"
-                src={ai_technology}
-                style={{
-                  filter: "invert(80%)",
-                  cursor: "pointer",
-                  verticalAlign: "middle",
-                  marginRight: "8px",
-                }}
-                width="24"
-                height="24"
-                onClick={toggleDisplayAiReportEditorView}
-              />
-            </Tooltip>
+            {hasAIEditorPermission && (
+              <Tooltip text="AI Report Editor" position="bottom">
+                <img
+                  className=""
+                  alt="AI Report Editor"
+                  loading="lazy"
+                  id="reportEditor"
+                  src={ai_technology}
+                  style={{
+                    filter: "invert(80%)",
+                    cursor: "pointer",
+                    verticalAlign: "middle",
+                    marginRight: "8px",
+                  }}
+                  width="24"
+                  height="24"
+                  onClick={toggleDisplayAiReportEditorView}
+                />
+              </Tooltip>
+            )}
             <Tooltip text="Report Editor" position="bottom">
               <img
                 className=""
