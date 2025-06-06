@@ -14,12 +14,14 @@ import { useNavigate } from "react-router-dom";
 import Tooltip from "../Tooltip";
 import ReactSelect, { components, MultiValueGenericProps } from "react-select";
 import {
+  createPatientReports,
   fetchEditorPatientReportData,
   fetchInstitutionPromptAccess,
   fetchPatientReportByStudy,
   fetchViewerStudy,
   genAiRadiologyReporter,
   updateOrthancStudy,
+  updatePatientReports,
 } from "../ReportEditor/RequestHandler";
 import "./AIReportEditor.css";
 
@@ -510,7 +512,7 @@ const AiReportEditor = ({ apiData, user }) => {
     event.preventDefault();
     const handleConfirmation = async () => {
       const studyList = viewerStudy[0];
-      const oldData = await fetchPatientReportByStudy(studyInstanceUid);
+      const oldData = await fetchPatientReportByStudy(studyInstanceUid, apiData);
       const currentTime = new Date();
       const actionlog = "AiSubmitLogs";
       const currentReport = {

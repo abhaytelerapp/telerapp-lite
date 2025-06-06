@@ -372,7 +372,7 @@ const AiReportEditor = _ref => {
     event.preventDefault();
     const handleConfirmation = async () => {
       const studyList = viewerStudy[0];
-      const oldData = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid);
+      const oldData = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid, apiData);
       const currentTime = new Date();
       const actionlog = "AiSubmitLogs";
       const currentReport = {
@@ -407,7 +407,7 @@ const AiReportEditor = _ref => {
         await (0, _RequestHandler.updateOrthancStudy)(apiData, studyData, studyInstanceUid);
       }
       if (!oldData) {
-        createPatientReports(apiData, resData, setReportData, username, actionlog, patientData?.institution_name).then(res => {
+        (0, _RequestHandler.createPatientReports)(apiData, resData, setReportData, username, actionlog, patientData?.institution_name).then(res => {
           if (res.status === 200) {
             _reactToastify.toast.success("Your report has been successfully submitted");
             setTimeout(() => {
@@ -418,7 +418,7 @@ const AiReportEditor = _ref => {
           }
         });
       } else {
-        updatePatientReports(apiData, oldData.id, resData, username, actionlog, patientData?.institution_name, setReportData).then(res => {
+        (0, _RequestHandler.updatePatientReports)(apiData, oldData.id, resData, username, actionlog, patientData?.institution_name, setReportData).then(res => {
           if (res.status === 200) {
             _reactToastify.toast.success("Your report has been successfully updated");
             setTimeout(() => {
