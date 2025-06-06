@@ -451,7 +451,8 @@ const AiReportEditor = _ref => {
     className: "p-2 z-[9] relative "
   }, /*#__PURE__*/_react.default.createElement(_reactSelect.default, {
     id: "promptStyle",
-    className: "customSelect__wrapper",
+    classNamePrefix: "customSelect",
+    className: "text-white telerapp-select customSelect__wrapper select-css flex flex-1 flex-col css-b62m3t-container",
     isClearable: false,
     onChange: selected => {
       setSelectedPrompt(selected);

@@ -608,7 +608,8 @@ const AiReportEditor = ({ apiData, user }) => {
       <div className="p-2 z-[9] relative ">
         <ReactSelect
           id={"promptStyle"}
-          className="customSelect__wrapper"
+          classNamePrefix="customSelect"
+          className="text-white telerapp-select customSelect__wrapper select-css flex flex-1 flex-col css-b62m3t-container"
           isClearable={false}
           onChange={(selected) => {
             setSelectedPrompt(selected);
