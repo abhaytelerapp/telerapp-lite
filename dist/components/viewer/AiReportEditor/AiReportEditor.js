@@ -943,7 +943,7 @@ const AiReportEditor = _ref => {
     }
   };
   return /*#__PURE__*/_react.default.createElement("div", {
-    className: "h-full w-full py-2 bg-[#fff]"
+    className: "h-full w-full py-2 bg-[#fff] flex flex-col justify-between"
   }, /*#__PURE__*/_react.default.createElement(_reactToastify.ToastContainer, {
     position: "top-right",
     autoClose: 5000,
@@ -969,7 +969,7 @@ const AiReportEditor = _ref => {
     value: selectedPrompt,
     placeholder: "Select prompt style"
   })), /*#__PURE__*/_react.default.createElement("div", {
-    className: "h-[68%] overflow-y-auto"
+    className: " overflow-y-auto"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: `editor_table ${patientData?.document_status === "Approved" ? "pointer-events-none" : "pointer-events-auto"}`
   }, /*#__PURE__*/_react.default.createElement("div", {
@@ -981,10 +981,7 @@ const AiReportEditor = _ref => {
       transition: "max-height 0.3s ease"
     }
   }))), /*#__PURE__*/_react.default.createElement("div", {
-    className: "absolute bottom-0 right-0 left-0 px-2",
-    style: {
-      height: "26%"
-    }
+    className: " px-2"
   }, loader && /*#__PURE__*/_react.default.createElement("div", {
     className: "flex items-center justify-center pb-4"
   }, /*#__PURE__*/_react.default.createElement("div", {
