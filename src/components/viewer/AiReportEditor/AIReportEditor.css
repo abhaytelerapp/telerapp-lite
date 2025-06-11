@@ -132,3 +132,11 @@ body.dark .pulse-ring {
 body.dark #ai-textarea::placeholder {
   color: #ffffff9c !important;
 }
+
+.listening_popup{
+  background-color: #333333;
+}
+
+body.dark .listening_popup{
+  background-color: #d4d4d4;
+}

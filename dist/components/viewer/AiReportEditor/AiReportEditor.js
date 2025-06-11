@@ -1045,7 +1045,7 @@ const AiReportEditor = _ref => {
     disabled: loader || !inputValue.trim() || patientData?.document_status === "Approved"
   }, /*#__PURE__*/_react.default.createElement(_io.IoSend, null))), showPopup && /*#__PURE__*/_react.default.createElement("div", {
     ref: popupRef,
-    className: "bg-[#333333] dark:bg-[#d4d4d4] absolute top-[-70px] right-[50px] z-10 w-72 rounded-lg p-3 text-center opacity-90 shadow-lg",
+    className: "listening_popup absolute top-[-70px] right-[50px] z-10 w-72 rounded-lg p-3 text-center opacity-90 shadow-lg",
     style: {
       top: `-${popupHeight}px`
     } // Adjust top dynamically
@@ -1103,7 +1103,7 @@ const AiReportEditor = _ref => {
     id: "fileDownload"
     // className="downloadbutton mx-3 max-[320px]:mr-4 px-[5px] text-sm max-[1440px]:mx-2 min-[425px]:px-[10px] min-[425px]:text-[14px]"
     ,
-    className: "downloadbutton mx-3 box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer",
+    className: "downloadbutton box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer",
     onClick: handleDownloadPdf
   }, isLoading ? /*#__PURE__*/_react.default.createElement("span", {
     className: "buttonloader"
