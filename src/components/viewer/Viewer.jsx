@@ -1276,7 +1276,11 @@ const Viewer = (props) => {
                 className="z-10 h-full w-1/3 flex-initial bg-gray-100"
                 // dangerouslySetInnerHTML={{ __html: reportEditorTemplate }}
               >
-                <AiReportEditor apiData={data?.data} user={data?.user} />
+                <AiReportEditor
+                  apiData={data?.data}
+                  user={data?.user}
+                  keycloak_url={data?.keycloak_url}
+                />
               </div>
             </Resizable>
           )}

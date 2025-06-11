@@ -187,7 +187,7 @@ body.dark .custom-size {
 }
 
 select,
-button:not(#mic-container, .ck, #previewBtn, #critical, #draft, #submit, #discard, #captureImage, #fileDownload, .swal2-styled, .Toastify__close-button, #send-button, #submit-button, #approve-button, #reject-button),
+button:not(#mic-container, .ck, #previewBtn, #critical, #draft, #submit, #discard, #captureImage, #fileDownload, .swal2-styled, .Toastify__close-button, #send-button, #submit-button, #approve-button, #reject-button, #draft-button),
 #overlay2seg,
 #seg2stl,
 #RemoveSEG,
@@ -204,7 +204,7 @@ input {
   background-color: #dedede !important;
 }
 
-button:not(.btn-report, .ck, #mic-container, #previewBtn, #critical, #draft, #submit, #discard, #captureImage, #fileDownload, .swal2-styled, .Toastify__close-button, #send-button, #submit-button, #approve-button, #reject-button):hover {
+button:not(.btn-report, .ck, #mic-container, #previewBtn, #critical, #draft, #submit, #discard, #captureImage, #fileDownload, .swal2-styled, .Toastify__close-button, #send-button, #submit-button, #approve-button, #reject-button, #draft-button):hover {
   filter: invert(80%);
 }
 
@@ -616,10 +616,10 @@ body.dark .left-icon{
   justify-content: end;
   width: 30%;
   @media (min-width:1444px) {
-    width: 40%;
+    width: 45%;
   }
   @media (min-width:1008px) {
-    width: 20%;
+    width: 25%;
   }
 }
 

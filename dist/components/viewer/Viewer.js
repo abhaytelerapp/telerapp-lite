@@ -1283,7 +1283,8 @@ const Viewer = props => {
     // dangerouslySetInnerHTML={{ __html: reportEditorTemplate }}
   }, /*#__PURE__*/_react.default.createElement(_AiReportEditor.default, {
     apiData: data?.data,
-    user: data?.user
+    user: data?.user,
+    keycloak_url: data?.keycloak_url
   }))))), /*#__PURE__*/_react.default.createElement("div", {
     id: "magnifierDiv",
     style: {

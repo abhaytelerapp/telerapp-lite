@@ -3,13 +3,17 @@ import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { IoSend } from "react-icons/io5";
-import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
+import {
+  FaFileDownload,
+  FaMicrophone,
+  FaMicrophoneSlash,
+} from "react-icons/fa";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import Button from "../Button";
 import Swal from "sweetalert2";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Tooltip from "../Tooltip";
 import ReactSelect, { components, MultiValueGenericProps } from "react-select";
@@ -18,14 +22,18 @@ import {
   fetchEditorPatientReportData,
   fetchInstitutionPromptAccess,
   fetchPatientReportByStudy,
+  fetchReportSetting,
+  fetchUsers,
   fetchViewerStudy,
   genAiRadiologyReporter,
   updateOrthancStudy,
   updatePatientReports,
+  userToken,
 } from "../ReportEditor/RequestHandler";
 import "./AIReportEditor.css";
+import { getUserInformation } from "../ReportEditor/getUserInformation";
 
-const AiReportEditor = ({ apiData, user }) => {
+const AiReportEditor = ({ apiData, user, keycloak_url }) => {
   const params = useLocation();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -58,6 +66,30 @@ const AiReportEditor = ({ apiData, user }) => {
   );
   const [selectedPrompt, setSelectedPrompt] = useState({});
   const [reportData, setReportData] = useState({});
+  const [radiologistUserList, setRadiologistUserList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [reportSetting, setReportSetting] = useState([]);
+  const [assignUserDataFind, setAssignUserDataFind] = useState({});
+  const [doctorInformation, setDoctorInformation] = useState({});
+  const [patientFind, setPatientFind] = useState({});
+  const [patientCritical, setPatientCritical] = useState({});
+  const [editorData, setEditorData] = useState(null);
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    const getToken = async () => {
+      try {
+        const data = {
+          token: user.access_token,
+        };
+        const response = await userToken(data, apiData);
+        setToken(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getToken();
+  }, []);
 
   const studyInstanceUid = params.pathname.includes("report-editor")
     ? params.pathname?.split("report-editor/:")[1]
@@ -68,6 +100,25 @@ const AiReportEditor = ({ apiData, user }) => {
         )
         ?.split("&")[0]
         ?.replace(/^=/, "");
+
+  const getReportDetails = async () => {
+    const patient = await fetchPatientReportByStudy(studyInstanceUid, apiData);
+    setPatientFind(patient);
+  };
+
+  useEffect(() => {
+    if (!studyInstanceUid && patientCritical) return;
+    getReportDetails();
+  }, [studyInstanceUid, patientCritical]);
+
+  useEffect(() => {
+    if (!apiData || !keycloak_url) return;
+    fetchUsers(user.access_token, keycloak_url)
+      .then((data) => {
+        setRadiologistUserList(data);
+      })
+      .catch((error) => console.error("Error fetching users:", error));
+  }, [user.access_token, apiData, keycloak_url]);
 
   const fetchViewerStudys2 = async () => {
     const response = await fetchViewerStudy(studyInstanceUid, apiData);
@@ -80,6 +131,68 @@ const AiReportEditor = ({ apiData, user }) => {
       fetchViewerStudys2();
     }
   }, [studyInstanceUid, apiData]);
+
+  useEffect(() => {
+    const fetchReportSettings = async () => {
+      if (fetchReportSetting) {
+        const fetchUserInformation = await getUserInformation(
+          fetchReportSetting,
+          viewerStudy[0]?.MainDicomTags.InstitutionName,
+          patientFind,
+          radiologistUserList,
+          apiData
+        );
+        // console.log(fetchUserInformation,'fetchUserInformation')
+        setReportSetting(fetchUserInformation?.reportSetting);
+        setAssignUserDataFind(fetchUserInformation?.assignUserDataFind);
+        setDoctorInformation(fetchUserInformation?.doctorInformation);
+      }
+    };
+
+    fetchReportSettings();
+  }, [viewerStudy, patientFind]);
+
+  useEffect(() => {
+    const processTranscript = async () => {
+      if (transcript.length > 0) {
+        let updatedText = `${inputValue} ${transcript}`;
+
+        // Add basic punctuation rules (improving dictation accuracy)
+        updatedText = updatedText
+          .replace(/\scomma/gi, ",")
+          .replace(/\speriod/gi, ".");
+
+        setTranscriptText(updatedText);
+
+        if (transcript.toLowerCase().includes("send")) {
+          stopListening(); // Stop listening before sending
+          const cleanedText = transcriptText.replace(/\bsend\b/gi, "").trim();
+          sendClinicalIndication(new Event("submit"), cleanedText);
+        }
+      }
+    };
+
+    processTranscript();
+  }, [transcript, inputValue]);
+
+  const startListening = () => {
+    setTranscriptText("");
+    resetTranscript();
+    SpeechRecognition.startListening({
+      continuous: true,
+      interimResults: true, // Enable interim results for better accuracy and punctuation
+    });
+    setShowPopup(true); // Show popup when listening starts
+  };
+
+  const stopListening = () => {
+    SpeechRecognition.stopListening();
+    setInputValue(transcriptText);
+    setTranscriptText("");
+    resetTranscript();
+    setPopupHeight(68);
+    setShowPopup(false); // Hide popup when listening stops
+  };
 
   const promptOptions = [
     { label: "Default", value: "Default" },
@@ -162,45 +275,74 @@ const AiReportEditor = ({ apiData, user }) => {
           "HHmmss.SSS",
         ]).format(t("Common:localTimeFormat", "hh:mm A"));
 
-      setPatientData({
-        patient_name: name,
-        // patient_age: age || parseInt(studyList?.RequestedTags?.PatientAge.replace(/\D/g, ''), 10) || 'Null',
-        patient_age:
-          age !== undefined
-            ? parseInt(age.replace(/\D/g, ""))
-            : patientReportData.patientage
-            ? parseInt(patientReportData.patientage.replace(/\D/g, ""), 10)
-            : 0,
-        patient_gender: sex,
-        patient_accession: patientReportData.accessionnumber,
-        patient_id: patientReportData.patientid,
-        patient_modality: patientReportData.modalitiesinstudy,
-        study: patientReportData.studydescription,
-        study_date: studyDate,
-        study_time: studyTime,
-        ref_physician: patientReportData.referringphysicianname,
-        ref_doctor: patientReportData.referringphysicianname,
-        accession_number:
-          studyList?.MainDicomTags.AccessionNumber ||
-          patientReportData.accessionnumber,
-        uid: patientReportData?.studyInstanceUid,
-        studyID: patientReportData?.studyid,
-        institution_name:
-          studyList?.MainDicomTags.InstitutionName ||
-          patientReportData.institutionname,
-        study_description:
-          studyList?.MainDicomTags.StudyDescription ||
-          patientReportData.studydescription,
-        patient_dob: moment(patientReportData.patientbirthdate).format(
-          "MM/DD/YYYY"
-        ),
-      });
+      if (
+        patient?.aiReportDetails !== null &&
+        patient?.aiReportDetails !== undefined
+      ) {
+        setAiEditorData(patient?.aiReportDetails);
+        setPatientData(patient);
+      } else {
+        setPatientData({
+          patient_name: name,
+          // patient_age: age || parseInt(studyList?.RequestedTags?.PatientAge.replace(/\D/g, ''), 10) || 'Null',
+          patient_age:
+            age !== undefined
+              ? parseInt(age.replace(/\D/g, ""))
+              : patientReportData.patientage
+              ? parseInt(patientReportData.patientage.replace(/\D/g, ""), 10)
+              : 0,
+          patient_gender: sex,
+          patient_accession: patientReportData.accessionnumber,
+          patient_id: patientReportData.patientid,
+          patient_modality: patientReportData.modalitiesinstudy,
+          study: patientReportData.studydescription,
+          study_date: studyDate,
+          study_time: studyTime,
+          ref_physician: patientReportData.referringphysicianname,
+          ref_doctor: patientReportData.referringphysicianname,
+          accession_number:
+            studyList?.MainDicomTags.AccessionNumber ||
+            patientReportData.accessionnumber,
+          uid: patientReportData?.studyInstanceUid,
+          studyID: patientReportData?.studyid,
+          institution_name:
+            studyList?.MainDicomTags.InstitutionName ||
+            patientReportData.institutionname,
+          study_description:
+            studyList?.MainDicomTags.StudyDescription ||
+            patientReportData.studydescription,
+          patient_dob: moment(patientReportData.patientbirthdate).format(
+            "MM/DD/YYYY"
+          ),
+          document_status: patient?.document_status,
+        });
+      }
     }
   };
 
   useEffect(() => {
     fetchPatientData();
   }, [viewerStudy, apiData]);
+
+  const assignUserFind = patientFind?.assign?.map((item) => JSON.parse(item));
+
+  const assignUserDetail =
+    assignUserFind &&
+    assignUserFind?.find(
+      (item) => item.assign_name === user?.profile?.preferred_username
+    );
+  const permissions = user?.profile?.permission;
+  const isPhysicianOrTechnologist =
+    user?.profile?.roleType === "Physician" ||
+    user?.profile?.roleType === "Technologist";
+
+  const canEditReport = permissions?.includes("Edit Report");
+  const isQaUser = token?.realm_access?.roles.includes("qa-user");
+  const isSuperAndDeputyAdmin =
+    token?.realm_access?.roles.includes("super-admin") ||
+    token?.realm_access?.roles.includes("deputy-admin");
+
+  const isApproved = patientReportDetail?.document_status === "Approved";
 
   const handleMessageType = (e) => {
     const value = e.target.value;
@@ -233,189 +375,715 @@ const AiReportEditor = ({ apiData, user }) => {
     }
   }, [inputValue]);
 
-  const sendClinicalIndication = async (e) => {
+  const sendClinicalIndication = async (e, transcriptText = "") => {
     e.preventDefault();
-    const data = {
-      clinical_indication: inputValue,
-      style: selectedPrompt.value,
-      patient_sex: patientData?.patient_gender,
-      patient_age: parseInt(patientData?.patient_age),
-      modality: patientData?.patient_modality,
-      study_description: patientData?.study,
-      clinicalHistory: patientData?.clinicalHistory || "None",
-    };
-    setInputValue("");
-    setLoader(true);
+    if (transcriptText.trim() !== "" || inputValue.trim() !== "") {
+      const data = {
+        clinical_indication: transcriptText ? transcriptText : inputValue,
+        style: selectedPrompt.value,
+        patient_sex: patientData?.patient_gender,
+        patient_age: parseInt(patientData?.patient_age),
+        modality: patientData?.patient_modality,
+        study_description: patientData?.study,
+        clinicalHistory: patientData?.clinicalHistory || "None",
+      };
+      setInputValue("");
+      setLoader(true);
+      try {
+        const report = await genAiRadiologyReporter(apiData, data);
+
+        const formattedText = report.report
+          .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // bold
+          .replace(/\n\n/g, "<br/>") // double line break
+          .replace(/\n/g, "<br/>"); // single line break
+
+        setAiReport(formattedText);
+      } catch (error) {
+        console.error("Error generating AI report:", error);
+        // Optionally show user-friendly error message
+        setAiReport(
+          '<span style="color:red;">Failed to generate report. Please try again later.</span>'
+        );
+        // Clear the error message after 5 seconds
+        setTimeout(() => {
+          setAiReport("");
+        }, 5000);
+      } finally {
+        setLoader(false);
+      }
+    }
+  };
+
+  const handleDownloadPdf = async () => {
     try {
-      const report = await genAiRadiologyReporter(apiData, data);
+      setIsLoading(true);
 
-      const formattedText = report.report
-        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // bold
-        .replace(/\n\n/g, "<br/>") // double line break
-        .replace(/\n/g, "<br/>"); // single line break
+      const editorDatas = editorData
+        ? editorData
+        : patientReportDetail?.aiEditorData;
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(editorDatas, "text/html");
+      let tableData = doc.querySelector("table");
+      let table = tableData ? tableData.outerHTML : "";
+      let modifiedEditorData = doc.body.innerHTML;
 
-      setAiReport(formattedText);
-    } catch (error) {
-      console.error("Error generating AI report:", error);
-      // Optionally show user-friendly error message
-      setAiReport(
-        '<span style="color:red;">Failed to generate report. Please try again later.</span>'
+      if (reportSetting?.remove_defualt_report) {
+        // Create a temporary DOM element to manipulate the HTML string
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(modifiedEditorData, "text/html");
+
+        // Remove the patient details table
+        const table = doc.querySelector("table");
+        if (table) {
+          table.remove();
+        }
+
+        // Serialize the document back to a string
+        modifiedEditorData = doc.body.innerHTML;
+      }
+
+      const headerStyle = `
+        width: 98%;
+        z-index: 1;
+        padding-right: 10px;
+        height: ${reportSetting?.header_height}px;
+        `;
+
+      const footerStyle = `
+        width: 98%;
+        z-index: 1;
+        padding-right: 10px;
+        height: ${reportSetting?.footer_height}px;
+        `;
+
+      const watermarkStyle = `
+            position: fixed;
+            width: 100%;
+            height: auto;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.6;
+            margin-top: 50px;
+            margin-bottom: 50px;
+            z-index: -1;
+        `;
+
+      const watermarkTextStyle = `
+            font-size: 80px;
+            color: #999;
+        `;
+
+      // signature image style
+      const signatureStyle = `
+            width: 200px;
+            height: 100px;
+        `;
+
+      // report template style
+      const reportDataStyle = `
+             margin-top: ${reportSetting?.top}px;
+             margin-left: ${reportSetting?.left}px;
+             margin-right: ${reportSetting?.right}px;
+             margin-bottom: ${reportSetting?.bottom}px;
+            font-family: ${reportSetting?.font_style};
+            font-size: ${reportSetting?.font_size}px !important;
+            line-height: ${reportSetting?.line_spacing};
+        `;
+
+      const output = `
+      <div style="line-height: 1.2;">
+          ${doctorInformation?.displayName}
+          ${doctorInformation?.qualificationName}
+          ${doctorInformation?.registrationNoName}
+          ${doctorInformation?.formattedTimesName}
+          ${doctorInformation?.disclaimerDetailsName}
+      </div>
+  `;
+
+      let pageHeaderSpace;
+      if (reportSetting?.patient_details_in_header) {
+        pageHeaderSpace = `
+            height: ${
+              Number(reportSetting?.header_height) +
+              (reportSetting?.font_style === "Lucida Sans Unicode" ? 150 : 130)
+            }px;
+          `;
+      } else {
+        pageHeaderSpace = `
+            height: ${reportSetting?.header_height}px;
+          `;
+      }
+
+      const pageFooterSpace = `
+      height: ${reportSetting?.footer_height}px;
+      `;
+
+      const pageFooter = `
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+
+      `;
+
+      const pageHeader = `
+        position: fixed;
+        top: 0;
+        width: 100%;
+      `;
+
+      const page = `
+          page-break-after: auto;
+        `;
+
+      const pageStyle = `
+
+        @media print {
+          thead {display: table-header-group;}
+          tfoot {display: table-footer-group;}
+
+          button {display: none;}
+
+          body {margin: 0;}
+      }`;
+
+      let modifiedEditor = "";
+      let tdCounter = 0;
+      let tableCounter = 0;
+      let colIndex = 0;
+
+      const updateModifiedEditorData = modifiedEditorData
+        .replace(/<figure class="table">/, "")
+        .replace(/<\/figure>/, "")
+        .replace(
+          /<table /,
+          reportSetting?.patient_details_in_header
+            ? "<table " // Leave it unchanged
+            : `<table style="font-size: ${reportSetting?.font_size}px !important; border-collapse: collapse; width: 100%" `
+        )
+        .replace(
+          /<td(\s+style="[^"]*")?>/g, // Matches <td> with or without style
+          (match) => {
+            if (match.includes('style="')) {
+              // If <td> already has a style, update width if it matches
+              return match.replace(
+                /width:\s*(\d+\.\d+)%/,
+                (m, p1) =>
+                  `width: ${
+                    p1 === "17.7931"
+                      ? "17.7931"
+                      : p1 === "33.5161"
+                      ? "33.5161"
+                      : p1
+                  }%`
+              );
+            } else {
+              // If <td> has no style, determine its width based on position
+              return `<td>`;
+            }
+          }
+        )
+        .replace(/<table[^>]*style="([^"]*)"/gi, (match, styles) => {
+          tableCounter++;
+          // Check if we should apply styles to the first table
+          const shouldApplyToFirstTable =
+            reportSetting?.patient_details_in_header;
+
+          if (shouldApplyToFirstTable) {
+            // Modify the first table only if patient_details_in_header is true
+            return match.replace(
+              styles,
+              `width: auto; margin: auto; border-collapse: collapse; font-size: ${reportSetting?.font_size}px !important; font-family: ${reportSetting?.font_style}; page-break-inside: avoid;`
+            );
+          } else if (tableCounter > 1) {
+            // Modify only child tables if patient_details_in_header is false
+            return match.replace(
+              styles,
+              `width: auto; margin: auto; border-collapse: collapse; font-size: ${reportSetting?.font_size}px !important; font-family: ${reportSetting?.font_style}; page-break-inside: avoid;`
+            );
+          }
+
+          return match; // Leave first table unchanged if condition is false
+        })
+        .replace(/<td(\s+style="[^"]*")?>/g, (match) => {
+          colIndex++; // Increment column count
+
+          // Reset column index after every fourth column (assuming 4 columns per row)
+          if (colIndex > 4) colIndex = 1;
+
+          // Remove `white-space: nowrap;` from second and fourth columns
+          if (colIndex === 2 || colIndex === 4) {
+            return match.replace(/white-space:\s*nowrap;?\s*/g, ""); // Remove white-space: nowrap
+          }
+
+          // Ensure first and third columns have `white-space: nowrap;`
+          if (colIndex === 1 || colIndex === 3) {
+            if (match.includes('style="')) {
+              return match.replace(
+                /style="([^"]*)"/,
+                (m, styles) =>
+                  `style="${styles.replace(
+                    /width:\s*\d+\.\d+%/,
+                    ""
+                  )}; white-space: nowrap;"`
+              );
+            } else {
+              return `<td style="white-space: nowrap;">`;
+            }
+          }
+
+          return match; // Leave other columns unchanged
+        });
+      {
+      }
+      // Construct modified editor content
+      if (reportSetting?.multiple_header_and_footer === true) {
+        modifiedEditor = `
+          <div style="${pageStyle}">
+            <div class="page-header" style="${pageHeader}">
+              ${
+                reportSetting?.include_header && reportSetting?.header_image
+                  ? `<img src="${reportSetting?.header_image}" alt="Header" style="${headerStyle}" />`
+                  : ""
+              }
+
+              ${
+                reportSetting?.patient_details_in_header
+                  ? `
+                  <div style=" margin-left: ${reportSetting?.left}px;
+                    margin-right: ${reportSetting?.right}px; font-family: ${
+                      reportSetting?.font_style
+                    };font-size: ${
+                      reportSetting?.font_size
+                    }px !important;margin-top:20px">
+                    ${table
+                      .replace(
+                        /<table /,
+                        `<table style="font-size: ${reportSetting?.font_size}px !important;border-collapse:collapse; width:100%" `
+                      )
+                      .replace(
+                        /<td(\s+style="[^"]*")?>/g, // Matches <td> with or without style
+                        (match) => {
+                          if (match.includes('style="')) {
+                            // If <td> already has a style, update width if it matches
+                            return match.replace(
+                              /width:\s*(\d+\.\d+)%/,
+                              (m, p1) =>
+                                `width: ${
+                                  p1 === "17.7931"
+                                    ? "17.7931"
+                                    : p1 === "33.5161"
+                                    ? "33.5161"
+                                    : p1
+                                }%`
+                            );
+                          } else {
+                            // If <td> has no style, determine its width based on position
+                            return `<td>`;
+                          }
+                        }
+                      )}
+                  </div>
+                `
+                  : ""
+              }
+            </div>
+
+            <div class="page-footer" style="${pageFooter}">
+              ${
+                reportSetting?.include_footer && reportSetting?.footer_image
+                  ? `<img src="${reportSetting?.footer_image}" alt="Footer" style="${footerStyle}" />`
+                  : ""
+              }
+            </div>
+
+            <table style='width:100%'>
+              <thead>
+                <tr>
+                  <td>
+                    <div style="${pageHeaderSpace}" class="page-header-space"></div>
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div style="${page}">
+                      <div style="${reportDataStyle}">
+                        ${updateModifiedEditorData}
+                        <div style="margin-top: 10px; line-height:1 !important;">
+                          ${
+                            reportSetting?.signature &&
+                            assignUserDataFind?.attributes
+                              ?.uploadSignature[0] &&
+                            assignUserDataFind
+                              ? `<img src="${assignUserDataFind?.attributes?.uploadSignature[0]}" alt="signature" style="${signatureStyle}" />`
+                              : ""
+                          }<br/>
+                          ${output}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>
+                    <div class="page-footer-space" style="${pageFooterSpace}"></div>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+
+            ${
+              reportSetting?.include_watermark && reportSetting?.watermark_image
+                ? `
+                <div style="${watermarkStyle}" class="watermark">
+                  <span style="${watermarkTextStyle}" class="watermark-text">
+                    <img src="${reportSetting?.watermark_image}" alt="watermark" width="100%" height="auto" />
+                  </span>
+                </div>
+              `
+                : ""
+            }
+          </div>
+        `;
+      } else {
+        modifiedEditor = `
+          <div>
+            ${
+              reportSetting?.include_header && reportSetting?.header_image
+                ? `
+            <img src="${reportSetting?.header_image}" alt="Header" style="${headerStyle}" />
+          `
+                : ""
+            }
+            <div class="page-header" style="${pageHeader}">
+            <div style="${headerStyle}" ></div>
+            ${
+              reportSetting?.patient_details_in_header
+                ? `
+                <div style=" margin-left: ${reportSetting?.left}px;
+              margin-right: ${reportSetting?.right}px; font-family: ${
+                    reportSetting?.font_style
+                  };font-size: ${
+                    reportSetting?.font_size
+                  }px !important;margin-top:20px">
+
+                  ${table
+                    .replace(
+                      /<table /,
+                      `<table style="font-size: ${reportSetting?.font_size}px !important;border-collapse:collapse;width:100%" `
+                    )
+                    .replace(
+                      /<td(\s+style="[^"]*")?>/g, // Matches <td> with or without style
+                      (match) => {
+                        if (match.includes('style="')) {
+                          // If <td> already has a style, update width if it matches
+                          return match.replace(
+                            /width:\s*(\d+\.\d+)%/,
+                            (m, p1) =>
+                              `width: ${
+                                p1 === "17.7931"
+                                  ? "17.7931"
+                                  : p1 === "33.5161"
+                                  ? "33.5161"
+                                  : p1
+                              }%`
+                          );
+                        } else {
+                          // If <td> has no style, determine its width based on position
+                          return `<td>`;
+                        }
+                      }
+                    )}
+
+              </div>
+                    `
+                : ``
+            }
+
+          </div >
+
+              <table style='width:100%'>
+              ${
+                reportSetting?.patient_details_in_header
+                  ? `
+                <thead>
+                  <tr>
+                    <td>
+                      <!--place holder for the fixed-position header-->
+                      <div style="${pageHeaderSpace}" class="page-header-space"></div>
+                    </td>
+                  </tr>
+                </thead>`
+                  : ``
+              }
+
+                <tbody>
+                  <tr>
+                    <td>
+                      <div style="${page}">
+                        <div style="${reportDataStyle}">
+                          ${updateModifiedEditorData}
+                          <div style="margin-top: 10px">
+                            ${
+                              reportSetting?.signature &&
+                              assignUserDataFind?.attributes?.uploadSignature &&
+                              assignUserDataFind
+                                ? `<img src="${assignUserDataFind?.attributes?.uploadSignature}" alt="signature" style="${signatureStyle}" />`
+                                : ""
+                            } <br/>
+                            ${output}
+                          </div >
+                          </div>
+
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+
+              </table>
+
+                ${
+                  reportSetting?.include_footer && reportSetting?.footer_image
+                    ? `
+                <img src="${reportSetting?.footer_image}" alt="Footer" style="${footerStyle}" />
+                `
+                    : ""
+                }
+              </div >
+              ${
+                reportSetting?.include_watermark &&
+                reportSetting?.watermark_image
+                  ? `
+                <div style="${watermarkStyle}" class="watermark">
+                  <span style="${watermarkTextStyle}" class="watermark-text"><img src="${reportSetting?.watermark_image}" alt="watermark" width="100%" height="auto" /> </span>
+                </div>
+              `
+                  : ""
+              }
+        `;
+      }
+      // Generate the PDF with the modified content
+      generateReportPdf(
+        modifiedEditor,
+        setIsLoading,
+        patientData?.patient_name
       );
-      // Clear the error message after 5 seconds
-      setTimeout(() => {
-        setAiReport("");
-      }, 5000);
-    } finally {
-      setLoader(false);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
     }
   };
 
   useEffect(() => {
-    const editorElement = document.querySelector("#ai-editor");
-    if (!editorElement) return;
+    let instance;
 
-    const clinicalHistory = patientData?.clinicalHistory || "None";
+    const initializeEditor = async () => {
+      const editorElement = document.querySelector("#ai-editor");
+      const toolbarContainer = document.querySelector("#ai-toolbar-container");
 
-    if (editorRef.current) {
-      // Just update the data if the editor already exists
-      const formattedHTML = generateFormattedHTML(
-        patientData,
-        aiReport || aiEditorData,
-        clinicalHistory
-      );
-      editorRef.current.setData(formattedHTML);
-      return;
-    }
+      if (!editorElement || !patientData) return;
 
-    DecoupledEditor.create(editorElement, {
-      fontSize: {
-        options: [9, 11, 12, 13, "default", 15, 17, 19, 21],
-        supportAllValues: true,
-      },
-      toolbar: {
-        items: [
-          "heading",
-          "|",
-          "alignment",
-          "bold",
-          "italic",
-          "underline",
-          "fontFamily",
-          "fontSize",
-          "fontColor",
-          "fontBackgroundColor",
-          "|",
-          "bulletedList",
-          "numberedList",
-          "insertTable",
-          "|",
-          "undo",
-          "redo",
-        ],
-      },
-      heading: {
-        options: [
-          {
-            model: "paragraph",
-            title: "Paragraph",
-            class: "ck-heading_paragraph",
-          },
-          {
-            model: "heading1",
-            view: "h1",
-            title: "Heading 1",
-            class: "ck-heading_heading1",
-          },
-          {
-            model: "heading2",
-            view: "h2",
-            title: "Heading 2",
-            class: "ck-heading_heading2",
-          },
-          {
-            model: "heading3",
-            view: "h3",
-            title: "Heading 3",
-            class: "ck-heading_heading3",
-          },
-          {
-            model: "heading4",
-            view: "h4",
-            title: "Heading 4",
-            class: "ck-heading_heading4",
-          },
-        ],
-      },
-      language: "en",
-      initialData: '<p style="font-size:12px;"></p>',
-    })
-      .then((editor) => {
-        editorRef.current = editor;
+      const clinicalHistory = patientData?.clinicalHistory || "None";
 
-        const toolbarContainer = document.querySelector(
-          "#ai-toolbar-container"
-        );
+      try {
+        instance = await DecoupledEditor.create(editorElement, {
+          fontSize: {
+            options: [9, 11, 12, 13, "default", 15, 17, 19, 21],
+            supportAllValues: true,
+          },
+          toolbar: {
+            items: [
+              "heading",
+              "|",
+              "alignment",
+              "bold",
+              "italic",
+              "underline",
+              "fontFamily",
+              "fontSize",
+              "fontColor",
+              "fontBackgroundColor",
+              "|",
+              "bulletedList",
+              "numberedList",
+              "insertTable",
+              "|",
+              "undo",
+              "redo",
+            ],
+          },
+          heading: {
+            options: [
+              {
+                model: "paragraph",
+                title: "Paragraph",
+                class: "ck-heading_paragraph",
+              },
+              {
+                model: "heading1",
+                view: "h1",
+                title: "Heading 1",
+                class: "ck-heading_heading1",
+              },
+              {
+                model: "heading2",
+                view: "h2",
+                title: "Heading 2",
+                class: "ck-heading_heading2",
+              },
+              {
+                model: "heading3",
+                view: "h3",
+                title: "Heading 3",
+                class: "ck-heading_heading3",
+              },
+              {
+                model: "heading4",
+                view: "h4",
+                title: "Heading 4",
+                class: "ck-heading_heading4",
+              },
+            ],
+          },
+          language: "en",
+          initialData: '<p style="font-size:12px;"></p>',
+        });
+
+        editorRef.current = instance;
+
         if (toolbarContainer) {
-          toolbarContainer.appendChild(editor.ui.view.toolbar.element);
+          toolbarContainer.innerHTML = "";
+          toolbarContainer.appendChild(instance.ui.view.toolbar.element);
         }
 
-        editor.editing.view.change((writer) => {
-          const editableRoot = editor.editing.view.document.getRoot();
+        // Set default styles
+        instance.editing.view.change((writer) => {
+          const editableRoot = instance.editing.view.document.getRoot();
           writer.setStyle("font-size", "12px", editableRoot);
         });
 
+        // Set initial formatted HTML data
         const formattedHTML = generateFormattedHTML(
           patientData,
           aiReport || aiEditorData,
           clinicalHistory
         );
-        editor.setData(formattedHTML);
-      })
-      .catch(console.error);
-  }, [patientData, aiReport, aiEditorData]);
+        instance.setData(formattedHTML);
+
+        // Handle image + doctor info if Approved
+        if (patientReportDetail?.document_status === "Approved") {
+          let imageUrl0 =
+            assignUserDataFind?.attributes?.uploadSignature?.[0] || "";
+          if (
+            imageUrl0.includes(
+              "telerappdevattachments.s3.ap-south-1.amazonaws.com"
+            )
+          ) {
+            imageUrl0 = imageUrl0.replace(
+              "https://telerappdevattachments.s3.ap-south-1.amazonaws.com/uploads/",
+              "https://d3tx83aj1g4m0j.cloudfront.net/uploads/"
+            );
+          } else if (
+            imageUrl0.includes(
+              "prod-telerapp-attachments.s3.us-east-2.amazonaws.com"
+            )
+          ) {
+            imageUrl0 = imageUrl0.replace(
+              "https://prod-telerapp-attachments.s3.us-east-2.amazonaws.com/uploads/",
+              "https://d256o3ycvhwumu.cloudfront.net/uploads/"
+            );
+          }
+
+          const imageUrl = imageUrl0;
+
+          instance.model.change((writer) => {
+            const imageElement = writer.createElement("imageBlock", {
+              src: imageUrl,
+              alt: "Doctor Signature",
+              style: "height:80px;",
+              alignment: "left",
+            });
+
+            const root = instance.model.document.getRoot();
+            const endPosition = writer.createPositionAt(root, "end");
+            instance.model.insertContent(imageElement, endPosition);
+
+            const extraDetailsHTML = `
+            ${doctorInformation?.displayName}
+            ${doctorInformation?.qualificationName}
+            ${doctorInformation?.registrationNoName}
+            ${doctorInformation?.formattedTimesName}
+            ${doctorInformation?.disclaimerDetailsName}
+          `;
+
+            const viewFragment =
+              instance.data.processor.toView(extraDetailsHTML);
+            const modelFragment = instance.data.toModel(viewFragment);
+            writer.insert(
+              modelFragment,
+              instance.model.createPositionAt(root, "end")
+            );
+          });
+
+          instance.enableReadOnlyMode("approved-mode");
+          const editorTable = document.querySelector(".editor_table");
+          if (editorTable) editorTable.classList.remove("editor_table");
+        }
+
+        // Convert editor data changes
+        instance.model.document.on("change:data", () => {
+          const newData = instance.getData();
+          const modifyData = newData
+            .replace(/class="text-tiny"(.*?)>/g, 'style="font-size:.7em;"$1>')
+            .replace(/class="text-small"(.*?)>/g, 'style="font-size:.85em;"$1>')
+            .replace(/class="text-big"(.*?)>/g, 'style="font-size:1.4em;"$1>')
+            .replace(/class="text-huge"(.*?)>/g, 'style="font-size:1.8em;"$1>')
+            .replace(
+              /<table>/g,
+              '<table border="1px;" style="border-collapse: collapse;">'
+            )
+            .replace(
+              /<img style="height:200px;"/g,
+              '<img style="height:400px;"'
+            )
+            .replace(/figure"/g, "")
+            .replace(/&nbsp;/g, "")
+            .replace(/<figure class="table">/g, "")
+            .replace(/<\/figure>/g, "");
+
+          setEditorData(modifyData);
+        });
+      } catch (error) {
+        console.error("Editor initialization failed:", error);
+      }
+    };
+
+    initializeEditor();
+
+    return () => {
+      if (editorRef.current) {
+        editorRef.current
+          .destroy()
+          .catch((err) => console.error("Editor destroy error:", err));
+      }
+    };
+  }, [
+    patientData,
+    aiReport,
+    aiEditorData,
+    assignUserDataFind,
+    patientReportDetail,
+    doctorInformation,
+  ]);
 
   useEffect(() => {
     if (popupRef.current) {
       setPopupHeight(popupRef.current.scrollHeight);
     }
   }, [transcriptText]);
-
-  useEffect(() => {
-    if (transcript.length > 0) {
-      let updatedText = `${inputValue} ${transcript}`;
-
-      // Add basic punctuation rules (improving dictation accuracy)
-      updatedText = updatedText
-        .replace(/\scomma/gi, ",") // User says "comma" → Converts to ","
-        .replace(/\speriod/gi, "."); // User says "period" → Converts to "."
-
-      setTranscriptText(updatedText);
-
-      if (transcript.toLowerCase().includes("send")) {
-        stopListening(); // Stop listening before sending
-        sendClinicalIndication(new Event("submit")); // Simulate form submission
-      }
-    }
-  }, [transcript, inputValue]);
-
-  const startListening = () => {
-    setTranscriptText("");
-    resetTranscript();
-    SpeechRecognition.startListening({
-      continuous: true,
-      interimResults: true, // Enable interim results for better accuracy and punctuation
-    });
-    setShowPopup(true); // Show popup when listening starts
-  };
-
-  const stopListening = () => {
-    SpeechRecognition.stopListening();
-    setInputValue(transcriptText);
-    setTranscriptText("");
-    resetTranscript();
-    setPopupHeight(68);
-    setShowPopup(false); // Hide popup when listening stops
-  };
 
   const generateFormattedHTML = (patientData, aiReport, clinicalHistory) => {
     const aiReportFormatted = aiReport
@@ -499,7 +1167,7 @@ const AiReportEditor = ({ apiData, user }) => {
 
   const handleApprove = () => {
     if (aiReport) {
-      setAiEditorData(editorRef.current.getData());
+      setAiEditorData(editorData);
       setAiReport("");
     }
   };
@@ -512,9 +1180,12 @@ const AiReportEditor = ({ apiData, user }) => {
     event.preventDefault();
     const handleConfirmation = async () => {
       const studyList = viewerStudy[0];
-      const oldData = await fetchPatientReportByStudy(studyInstanceUid, apiData);
+      const oldData = await fetchPatientReportByStudy(
+        studyInstanceUid,
+        apiData
+      );
       const currentTime = new Date();
-      const actionlog = "AiSubmitLogs";
+      const actionlog = "SubmitLogs";
       const currentReport = {
         aiReportDetails: aiEditorData,
         submittedBy: user?.profile?.preferred_username,
@@ -575,10 +1246,9 @@ const AiReportEditor = ({ apiData, user }) => {
           apiData,
           oldData.id,
           resData,
-          setReportData.
-          username,
+          setReportData.username,
           actionlog,
-          patientData?.institution_name,
+          patientData?.institution_name
         ).then((res) => {
           if (res.status === 200) {
             toast.success("Your report has been successfully updated");
@@ -605,9 +1275,143 @@ const AiReportEditor = ({ apiData, user }) => {
     });
   };
 
+  const handleDraft = async (event) => {
+    event.preventDefault();
+    const studyList = viewerStudy[0];
+    const oldData = await fetchPatientReportByStudy(studyInstanceUid, apiData);
+    const actionlog = "DraftLogs";
+
+    const resData = {
+      ...patientData,
+      aiReportDetails: aiEditorData,
+      study_UIDs: studyInstanceUid,
+      study_IDS: studyList.ID,
+      study_priority: patientReportDetail?.study_priority || null,
+      isDrafted: true,
+      document_status: "Read",
+      // assign: assignUserDetail !== undefined ? [assignUserDetail] : null,
+      radiologyGroup: user?.profile?.radiologyGroup,
+      created_by: user?.profile?.preferred_username,
+    };
+
+    if (!oldData) {
+      createPatientReports(
+        apiData,
+        resData,
+        username,
+        actionlog,
+        patientData?.institution_name,
+        setReportData
+      ).then((res) => {
+        if (res.status === 200) {
+          toast.success("Your report was saved as draft successfully");
+        }
+      });
+    } else {
+      updatePatientReports(
+        apiData,
+        oldData.id,
+        resData,
+        username,
+        actionlog,
+        patientData?.institution_name,
+        setReportData
+      ).then((res) => {
+        if (res.status === 200) {
+          toast.success("Your report has been successfully updated");
+        }
+      });
+    }
+  };
+
+  const handleClick = async (
+    studyInstanceUid,
+    patientId,
+    accession,
+    institutionName,
+    studyID
+  ) => {
+    // const data = patientReportsDetails?.find(item => item.study_UIDs === studyInstanceUid);
+    const data = await fetchPatientReportByStudy(studyInstanceUid, apiData);
+    const isCritical = data ? !data.critical : true;
+    if (isCritical === true) {
+      toast.success("Critical status added successfully");
+    } else {
+      toast.success("Critical status removed successfully");
+    }
+
+    handlerCriticalToggle(
+      studyInstanceUid,
+      isCritical,
+      patientId,
+      accession,
+      institutionName,
+      studyID
+    );
+  };
+
+  const handlerCriticalToggle = async (
+    studyInstanceUid,
+    isCriticalSet,
+    patientId,
+    accession,
+    institutionName,
+    studyID
+  ) => {
+    const data = await fetchPatientReportByStudy(studyInstanceUid, apiData);
+    const actionlog = "CriticalLogs";
+
+    if (!data) {
+      const newData = {
+        study_UIDs: studyInstanceUid,
+        study_IDS: studyID,
+        critical: isCriticalSet,
+        patient_id: patientId,
+        institution_name: institutionName,
+        patient_accession: accession,
+      };
+      await createPatientReports(
+        apiData,
+        newData,
+        username,
+        actionlog,
+        institutionName,
+        setReportData
+      );
+      setPatientCritical(newData);
+    } else {
+      const updatedData = {
+        ...data,
+        critical: isCriticalSet,
+      };
+      await updatePatientReports(
+        apiData,
+        data.id,
+        updatedData,
+        username,
+        actionlog,
+        institutionName,
+        setReportData
+      );
+      setPatientCritical(updatedData);
+    }
+  };
+
   return (
-    <div className="h-full w-full py-2">
-      <div className="p-2 z-[9] relative ">
+    <div className="h-full w-full py-2 bg-[#fff]">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <div className="p-2">
         <ReactSelect
           id={"promptStyle"}
           classNamePrefix="customSelect"
@@ -622,28 +1426,29 @@ const AiReportEditor = ({ apiData, user }) => {
         />
       </div>
       {/* Report Content */}
-      <div
-        className={`editor_table ${
-          patientData?.document_status === "Approved"
-            ? "pointer-events-none"
-            : "pointer-events-auto"
-        }`}
-      >
-        <div id="ai-toolbar-container"></div>
+      <div className="h-[68%] overflow-y-auto">
         <div
-          id="ai-editor"
-          ref={reportRef}
-          style={{
-            overflowY: "auto",
-            maxHeight: "691px",
-            minHeight: "475px",
-            height: "555px",
-            transition: "max-height 0.3s ease",
-          }}
-        ></div>
+          className={`editor_table ${
+            patientData?.document_status === "Approved"
+              ? "pointer-events-none"
+              : "pointer-events-auto"
+          }`}
+        >
+          <div id="ai-toolbar-container"></div>
+          <div
+            id="ai-editor"
+            style={{
+              overflowY: "auto",
+              transition: "max-height 0.3s ease",
+            }}
+          ></div>
+        </div>
       </div>
       {/* Textarea and Send Button */}
-      <div className="absolute bottom-[12px] right-0 left-0 px-2">
+      <div
+        className="absolute bottom-0 right-0 left-0 px-2"
+        style={{ height: "26%" }}
+      >
         {loader && (
           <div className="flex items-center justify-center pb-4">
             <div className="dot-stretching"></div>
@@ -651,29 +1456,40 @@ const AiReportEditor = ({ apiData, user }) => {
         )}
         <form
           className="flex items-center mb-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            sendClinicalIndication(e);
-          }}
+          onSubmit={sendClinicalIndication}
         >
           <div className="dark:bg-primary-dark relative w-full rounded-lg bg-primary-light py-3 px-2">
             <textarea
               id="ai-textarea"
-              className="memberScroll dark:bg-primary-dark bg-primary-light border-secondary-dark dark:border-primary-main dark:focus:border-inputfield-focus focus:border-inputfield-main  placeholder-inputfield-placeholder w-full appearance-none rounded-lg border p-2 pr-3 pl-3 text-[16px] leading-tight text-black shadow transition duration-300 placeholder:text-black placeholder:text-opacity-50 focus:outline-none dark:text-white dark:placeholder:text-white mb-6"
+              className={`memberScroll dark:bg-primary-dark bg-primary-light border-secondary-dark dark:border-primary-main dark:focus:border-inputfield-focus focus:border-inputfield-main placeholder-inputfield-placeholder mb-6 w-full appearance-none rounded-lg border p-2 pr-3 pl-3 text-[16px] leading-tight text-black shadow transition duration-300 placeholder:text-black placeholder:text-opacity-50 focus:outline-none dark:text-white dark:placeholder:text-white ${
+                patientData?.document_status === "Approved"
+                  ? "pointer-events-none"
+                  : "pointer-events-auto"
+              }`}
               style={{
                 boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)",
                 minHeight: "118px",
                 maxHeight: "216px",
                 overflowY: "auto",
               }}
-              ref={inputRef}
               value={inputValue}
               onChange={(e) => {
                 handleMessageType(e);
-                e.target.style.height = "118px"; // Reset height first
-                e.target.style.height = e.target.scrollHeight + "px"; // Set height dynamically
+                // e.target.style.height = "118px"; // Reset height first
+                // e.target.style.height = e.target.scrollHeight + "px"; // Set height dynamically
               }}
               placeholder="Clinical Indication"
+              onKeyDown={async (e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  if (listening) {
+                    stopListening();
+                    sendClinicalIndication(e, transcriptText); // 3. Send the message after delay
+                  } else {
+                    sendClinicalIndication(e);
+                  }
+                }
+              }}
               rows={5}
             ></textarea>
 
@@ -682,8 +1498,9 @@ const AiReportEditor = ({ apiData, user }) => {
               <button
                 type="button"
                 id="mic-container"
-                className="mic-container cursor-pointer"
+                className="mic-container cursor-pointer disabled:cursor-not-allowed"
                 onClick={listening ? stopListening : startListening}
+                disabled={patientData?.document_status === "Approved"}
               >
                 <div className={`mic-icon-chat`}>
                   <div className={`${listening ? "pulse-ring" : ""}`}></div>
@@ -700,7 +1517,11 @@ const AiReportEditor = ({ apiData, user }) => {
                 type="submit"
                 id="send-button"
                 className=" text-xl dark:text-white text-black hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-30"
-                disabled={loader}
+                disabled={
+                  loader ||
+                  !inputValue.trim() ||
+                  patientData?.document_status === "Approved"
+                }
               >
                 <IoSend />
               </button>
@@ -722,34 +1543,114 @@ const AiReportEditor = ({ apiData, user }) => {
               </div>
             )}
           </div>
-          {/* <button
-            type="submit"
-            className="pb-[4px] pl-3 text-xl text-black hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-30"
-            disabled={loader}
-          >
-            <IoSend />
-          </button> */}
         </form>
         <div className="flex justify-between">
-          <Tooltip
-            text="Submit Report"
-            position="top"
-            style={{ padding: "8px", fontWeight: "normal" }}
-          >
-            <button
-              id="submit-button"
-              onClick={handleSubmit}
-              className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm max-[1440px]:ml-2 sm:px-[10px] text-[10px]"
-              disabled={!aiEditorData}
+          <div className="flex justify-between gap-2">
+            <Tooltip
+              text="Submit Report"
+              position="top"
+              style={{ padding: "8px", fontWeight: "normal" }}
             >
-              Submit
+              <button
+                id="submit-button"
+                onClick={handleSubmit}
+                className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
+                disabled={
+                  (assignUserDetail && isPhysicianOrTechnologist) ||
+                  !aiEditorData ||
+                  isApproved
+                    ? true
+                    : (!assignUserDetail &&
+                        (canEditReport || isQaUser || isSuperAndDeputyAdmin)) ||
+                      assignUserDetail ||
+                      isSuperAndDeputyAdmin
+                    ? false
+                    : true
+                }
+              >
+                Submit
+              </button>
+            </Tooltip>
+            <Tooltip
+              text="Save as Draft"
+              position="top"
+              style={{ padding: "8px", fontWeight: "normal" }}
+            >
+              <button
+                onClick={handleDraft}
+                id="draft-button"
+                // className="ml-3 px-[5px] sm:text-sm max-[1440px]:ml-2 sm:px-[10px] text-[10px]"
+                className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
+                disabled={
+                  (assignUserDetail && isPhysicianOrTechnologist) || isApproved
+                    ? true
+                    : (!assignUserDetail &&
+                        (canEditReport || isQaUser || isSuperAndDeputyAdmin)) ||
+                      assignUserDetail ||
+                      isSuperAndDeputyAdmin
+                    ? false
+                    : true
+                }
+              >
+                Draft
+              </button>
+            </Tooltip>
+            <button
+              onClick={() =>
+                handleClick(
+                  studyInstanceUid,
+                  patientData?.patient_id,
+                  patientData?.patient_accession,
+                  patientData?.institution_name,
+                  patientData?.studyID
+                )
+              }
+              id="critical"
+              className={`${
+                !patientFind?.critical ? " text-white" : "bg-critical"
+              } box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer`}
+              // className={`${
+              //   !patientFind?.critical ? " text-white" : "bg-[#63b3ed] text-black"
+              // } ml-3 px-[5px] sm:text-sm max-[1440px]:ml-2 sm:px-[10px] text-[10px]`}
+              disabled={
+                assignUserDetail && isPhysicianOrTechnologist
+                  ? true
+                  : (!assignUserDetail &&
+                      (canEditReport || isQaUser || isSuperAndDeputyAdmin)) ||
+                    assignUserDetail ||
+                    isSuperAndDeputyAdmin
+                  ? false
+                  : true
+              }
+            >
+              Critical
             </button>
-          </Tooltip>
-          <div>
+            <Tooltip
+              text="Download PDF"
+              position="top"
+              style={{ padding: "8px", fontWeight: "normal" }}
+            >
+              <button
+                id="fileDownload"
+                // className="downloadbutton mx-3 max-[320px]:mr-4 px-[5px] text-sm max-[1440px]:mx-2 min-[425px]:px-[10px] min-[425px]:text-[14px]"
+                className="downloadbutton mx-3 box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
+                onClick={handleDownloadPdf}
+              >
+                {isLoading ? (
+                  <span className="buttonloader"></span>
+                ) : (
+                  <span className="flex">
+                    <FaFileDownload className="20px" />
+                  </span>
+                )}
+              </button>
+            </Tooltip>
+          </div>
+          <div className="flex items-center justify-between gap-2">
             <button
               id="approve-button"
               onClick={handleApprove}
-              className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] ml-3 px-[5px] sm:text-sm max-[1440px]:ml-2 sm:px-[10px] text-[10px]"
+              className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
               disabled={!aiReport}
             >
               Approve
@@ -757,7 +1658,7 @@ const AiReportEditor = ({ apiData, user }) => {
             <button
               id="reject-button"
               onClick={handleReject}
-              className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] ml-3 px-[5px] sm:text-sm max-[1440px]:ml-2 sm:px-[10px] text-[10px]"
+              className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
               disabled={!aiReport}
             >
               Reject

@@ -114,6 +114,8 @@ body.dark .pulse-ring {
 }
 
 #submit-button:disabled,
+#draft-button:disabled,
+#critical:disabled,
 #approve-button:disabled,
 #reject-button:disabled {
   cursor: not-allowed;

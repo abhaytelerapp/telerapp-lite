@@ -1167,19 +1167,9 @@ const ReportEditor = (props) => {
     const data = await fetchPatientReportByStudy(studyInstanceUid, apiData);
     const isCritical = data ? !data.critical : true;
     if (isCritical === true) {
-      display({
-        title: "Success!",
-        message: "Critical status added successfully",
-        type: SnackbarTypes.SUCCESS,
-        position: "topRight",
-      });
+      toast.success("Critical status added successfully");
     } else {
-      display({
-        title: "Success!",
-        message: "Critical status removed successfully",
-        type: SnackbarTypes.SUCCESS,
-        position: "topRight",
-      });
+      toast.success("Critical status removed successfully");
     }
 
     handlerCriticalToggle(
