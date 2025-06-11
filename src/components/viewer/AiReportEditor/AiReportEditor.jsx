@@ -1398,7 +1398,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
   };
 
   return (
-    <div className="h-full w-full py-2 bg-[#fff]">
+    <div className="h-full w-full py-2 bg-[#fff] flex flex-col justify-between">
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -1426,7 +1426,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         />
       </div>
       {/* Report Content */}
-      <div className="h-[68%] overflow-y-auto">
+      <div className=" overflow-y-auto">
         <div
           className={`editor_table ${
             patientData?.document_status === "Approved"
@@ -1446,8 +1446,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
       </div>
       {/* Textarea and Send Button */}
       <div
-        className="absolute bottom-0 right-0 left-0 px-2"
-        style={{ height: "26%" }}
+        className=" px-2"
       >
         {loader && (
           <div className="flex items-center justify-center pb-4">
