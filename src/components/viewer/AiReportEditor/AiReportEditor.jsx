@@ -46,10 +46,9 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
   } = useSpeechRecognition();
   const username = user?.profile?.name;
 
-  const inputRef = useRef(null);
-  const reportRef = useRef(null);
   const editorRef = useRef(null); // or DecoupledEditor
   const popupRef = useRef(null);
+  const textareaRef = useRef(null);
 
   const [viewerStudy, setViewerStudy] = useState([]);
   const [patientReportDetail, setPatientReportDetail] = useState(null);
@@ -89,6 +88,12 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
       }
     };
     getToken();
+  }, []);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
   }, []);
 
   const studyInstanceUid = params.pathname.includes("report-editor")
@@ -176,6 +181,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
   }, [transcript, inputValue]);
 
   const startListening = () => {
+    textareaRef.current.focus();
     setTranscriptText("");
     resetTranscript();
     SpeechRecognition.startListening({
@@ -187,8 +193,10 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
 
   const stopListening = () => {
     SpeechRecognition.stopListening();
-    setInputValue(transcriptText);
     setTranscriptText("");
+    if (transcriptText.trim() !== "") {
+      setInputValue(transcriptText);
+    }
     resetTranscript();
     setPopupHeight(68);
     setShowPopup(false); // Hide popup when listening stops
@@ -348,32 +356,6 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
     const value = e.target.value;
     setInputValue(value);
   };
-
-  useEffect(() => {
-    if (inputRef.current) {
-      const length = inputRef.current.value.length;
-      inputRef.current.setSelectionRange(length, length);
-      inputRef.current.focus();
-      inputRef.current.style.height = "118px"; // Reset height
-      inputRef.current.style.height = inputRef.current.scrollHeight + "px"; // Adjust based on content
-    }
-  }, [inputValue]);
-
-  useEffect(() => {
-    const textarea = inputRef.current;
-    const reportDiv = reportRef.current;
-
-    if (textarea && reportDiv) {
-      textarea.style.height = "118px"; // Reset height
-      textarea.style.height = textarea.scrollHeight + "px"; // Set height dynamically
-
-      const totalAvailableHeight = 691; // Adjust as per your layout
-      const calculatedReportHeight =
-        totalAvailableHeight - textarea.scrollHeight;
-
-      reportDiv.style.maxHeight = `${Math.max(100, calculatedReportHeight)}px`; // 100px is the minimum height
-    }
-  }, [inputValue]);
 
   const sendClinicalIndication = async (e, transcriptText = "") => {
     e.preventDefault();
@@ -1033,8 +1015,8 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
           if (editorTable) editorTable.classList.remove("editor_table");
         }
 
-        // Convert editor data changes
-        instance.model.document.on("change:data", () => {
+        // ✅ Shared function to modify and update data
+        const updateEditorState = () => {
           const newData = instance.getData();
           const modifyData = newData
             .replace(/class="text-tiny"(.*?)>/g, 'style="font-size:.7em;"$1>')
@@ -1055,6 +1037,14 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
             .replace(/<\/figure>/g, "");
 
           setEditorData(modifyData);
+        };
+
+        // ✅ Run immediately after setting content
+        updateEditorState();
+
+        // Convert editor data changes
+        instance.model.document.on("change:data", () => {
+          updateEditorState();
         });
       } catch (error) {
         console.error("Editor initialization failed:", error);
@@ -1094,63 +1084,62 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
 
     const patientTableHTML = `
       <table
-        className="w-full table-auto border-collapse border-spacing-0 border border-double border-[#b3b3b3] text-sm outline outline-[#dedede]"
+        style="width: 100%; border-collapse: collapse; font-size: 14px; border: 3px double #b3b3b3; outline: 1px solid #dedede;"
       >
         <tbody>
           <tr>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Patient Name:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.patient_name || ""}
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Patient Name:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.patient_name || ''}
             </td>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Patient ID:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.patient_id || ""}
-            </td>
-          </tr>
-          <tr>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">SEX:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.patient_gender || ""}
-            </td>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Age:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${parseInt(patientData?.patient_age || "")}
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Patient ID:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.patient_id || ''}
             </td>
           </tr>
           <tr>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Modality:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.patient_modality || ""}
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">SEX:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.patient_gender || ''}
             </td>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Accession No.:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.accession_number || ""}
-            </td>
-          </tr>
-          <tr>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Study Date:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.study_date || ""}
-            </td>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Ref. Physician:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.ref_physician || ""}
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Age:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${parseInt(patientData?.patient_age || '')}
             </td>
           </tr>
           <tr>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Study:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.study || ""}
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Modality:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.patient_modality || ''}
             </td>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">
-              Institution Name:
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Accession No.:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.accession_number || ''}
             </td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.institution_name || ""}
+          </tr>
+          <tr>
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Study Date:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.study_date || ''}
+            </td>
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Ref. Physician:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.ref_physician || ''}
+            </td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Study:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.study || ''}
+            </td>
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Institution Name:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.institution_name || ''}
             </td>
           </tr>
         </tbody>
-      </table>`;
+      </table>
+    `;
 
     // Check if aiReport already contains patient details
     const includesPatientInfo = /Patient Name:|Accession No:|Patient ID:/.test(
@@ -1426,7 +1415,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         />
       </div>
       {/* Report Content */}
-      <div className=" overflow-y-auto">
+      <div className="h-full overflow-y-auto">
         <div
           className={`editor_table ${
             patientData?.document_status === "Approved"
@@ -1445,9 +1434,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         </div>
       </div>
       {/* Textarea and Send Button */}
-      <div
-        className=" px-2"
-      >
+      <div className=" px-2">
         {loader && (
           <div className="flex items-center justify-center pb-4">
             <div className="dot-stretching"></div>
@@ -1457,90 +1444,93 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
           className="flex items-center mb-2"
           onSubmit={sendClinicalIndication}
         >
-          <div className="dark:bg-primary-dark relative w-full rounded-lg bg-primary-light py-3 px-2">
-            <textarea
-              id="ai-textarea"
-              className={`memberScroll dark:bg-primary-dark bg-primary-light border-secondary-dark dark:border-primary-main dark:focus:border-inputfield-focus focus:border-inputfield-main placeholder-inputfield-placeholder mb-6 w-full appearance-none rounded-lg border p-2 pr-3 pl-3 text-[16px] leading-tight text-black shadow transition duration-300 placeholder:text-black placeholder:text-opacity-50 focus:outline-none dark:text-white dark:placeholder:text-white ${
-                patientData?.document_status === "Approved"
-                  ? "pointer-events-none"
-                  : "pointer-events-auto"
-              }`}
-              style={{
-                boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)",
-                minHeight: "118px",
-                maxHeight: "216px",
-                overflowY: "auto",
-              }}
-              value={inputValue}
-              onChange={(e) => {
-                handleMessageType(e);
-                // e.target.style.height = "118px"; // Reset height first
-                // e.target.style.height = e.target.scrollHeight + "px"; // Set height dynamically
-              }}
-              placeholder="Clinical Indication"
-              onKeyDown={async (e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
+          <div className="dark:bg-[#333333] bg-[#d4d4d4] relative w-full rounded-lg py-3 px-2">
+            <div
+              className="border-[#282828] dark:border-[#6d6d6d] dark:focus:border-[#ffffff] focus:border-[#a7adba] relative w-full rounded-lg border py-2 px-2 shadow"
+              style={{ boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)" }}
+            >
+              <textarea
+                ref={textareaRef}
+                id="ai-textarea"
+                className={`memberScroll dark:bg-primary-dark bg-primary-light placeholder-inputfield-placeholder mb-5 w-full appearance-none rounded-lg text-[16px] leading-tight text-black transition duration-300 placeholder:text-black placeholder:text-opacity-50 focus:outline-none outline-none dark:text-white dark:placeholder:text-white ${
+                  patientData?.document_status === "Approved"
+                    ? "pointer-events-none"
+                    : "pointer-events-auto"
+                }`}
+                style={{
+                  minHeight: "63px",
+                  maxHeight: "216px",
+                  overflowY: "auto",
+                }}
+                value={transcriptText ? transcriptText : inputValue}
+                onChange={(e) => {
+                  handleMessageType(e);
+                  // e.target.style.height = "118px"; // Reset height first
+                  // e.target.style.height = e.target.scrollHeight + "px"; // Set height dynamically
+                }}
+                placeholder="Clinical Indication"
+                onKeyDown={async (e) => {
                   if (listening) {
                     stopListening();
-                    sendClinicalIndication(e, transcriptText); // 3. Send the message after delay
-                  } else {
-                    sendClinicalIndication(e);
                   }
-                }
-              }}
-              rows={5}
-            ></textarea>
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendClinicalIndication(e, listening ? transcriptText : "");
+                  }
+                }}
+                rows={3}
+              ></textarea>
 
-            <div className="absolute left-2 bottom-2 z-10 transform flex items-center justify-between w-[96%]">
-              {/* Mic Button (bottom-left) */}
-              <button
-                type="button"
-                id="mic-container"
-                className="mic-container cursor-pointer disabled:cursor-not-allowed"
-                onClick={listening ? stopListening : startListening}
-                disabled={patientData?.document_status === "Approved"}
-              >
-                <div className={`mic-icon-chat`}>
-                  <div className={`${listening ? "pulse-ring" : ""}`}></div>
-                  {listening ? (
-                    <FaMicrophone className="text-[18px] text-white" />
-                  ) : (
-                    <FaMicrophoneSlash className="text-xl text-white" />
-                  )}
-                </div>
-              </button>
+              <div className="absolute left-2 bottom-[6px] right-2 z-10 transform flex items-center justify-between">
+                {/* Mic Button (bottom-left) */}
+                <button
+                  type="button"
+                  id="mic-container"
+                  className="mic-container cursor-pointer disabled:cursor-not-allowed"
+                  onClick={listening ? stopListening : startListening}
+                  disabled={patientData?.document_status === "Approved"}
+                >
+                  <div className={`mic-icon-chat`}>
+                    <div className={`${listening ? "pulse-ring" : ""}`}></div>
+                    {listening ? (
+                      <FaMicrophone className="text-[18px] text-white" />
+                    ) : (
+                      <FaMicrophoneSlash className="text-xl text-white" />
+                    )}
+                  </div>
+                </button>
 
-              {/* Send Button (bottom-right) */}
-              <button
-                type="submit"
-                id="send-button"
-                className=" text-xl dark:text-white text-black hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-30"
-                disabled={
-                  loader ||
-                  !inputValue.trim() ||
-                  patientData?.document_status === "Approved"
-                }
-              >
-                <IoSend />
-              </button>
-            </div>
-
-            {/* Listening Popup */}
-            {showPopup && (
-              <div
-                ref={popupRef}
-                className="listening_popup absolute top-[-70px] right-[50px] z-10 w-72 rounded-lg p-3 text-center opacity-90 shadow-lg"
-                style={{ top: `-${popupHeight}px` }} // Adjust top dynamically
-              >
-                <h2 className="text-sm font-semibold text-white dark:text-black">
-                  Listening...
-                </h2>
-                <p className="mt-1 text-lg text-white dark:text-black">
-                  {transcriptText || "Start speaking..."}
-                </p>
+                {/* Send Button (bottom-right) */}
+                <button
+                  type="submit"
+                  id="send-button"
+                  className=" text-xl dark:text-white text-black hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-30"
+                  disabled={
+                    loader ||
+                    !inputValue.trim() ||
+                    patientData?.document_status === "Approved"
+                  }
+                >
+                  <IoSend />
+                </button>
               </div>
-            )}
+
+              {/* Listening Popup */}
+              {/* {showPopup && (
+                <div
+                  ref={popupRef}
+                  className="listening_popup absolute top-[-70px] right-[50px] z-10 w-72 rounded-lg p-3 text-center opacity-90 shadow-lg"
+                  style={{ top: `-${popupHeight}px` }} // Adjust top dynamically
+                >
+                  <h2 className="text-sm font-semibold text-white dark:text-black">
+                    Listening...
+                  </h2>
+                  <p className="mt-1 text-lg text-white dark:text-black">
+                    {transcriptText || "Start speaking..."}
+                  </p>
+                </div>
+              )} */}
+            </div>
           </div>
         </form>
         <div className="flex justify-between">
@@ -1581,7 +1571,9 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
                 // className="ml-3 px-[5px] sm:text-sm max-[1440px]:ml-2 sm:px-[10px] text-[10px]"
                 className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
                 disabled={
-                  (assignUserDetail && isPhysicianOrTechnologist) || isApproved
+                  (assignUserDetail && isPhysicianOrTechnologist) ||
+                  !aiEditorData ||
+                  isApproved
                     ? true
                     : (!assignUserDetail &&
                         (canEditReport || isQaUser || isSuperAndDeputyAdmin)) ||
@@ -1645,24 +1637,27 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
               </button>
             </Tooltip>
           </div>
-          <div className="flex items-center justify-between gap-2">
-            <button
-              id="approve-button"
-              onClick={handleApprove}
-              className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
-              disabled={!aiReport}
-            >
-              Approve
-            </button>
-            <button
-              id="reject-button"
-              onClick={handleReject}
-              className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
-              disabled={!aiReport}
-            >
-              Reject
-            </button>
-          </div>
+          {patientData?.document_status !== "Approved" &&
+            patientData?.document_status !== "Addendum" && (
+              <div className="flex items-center justify-between gap-2">
+                <button
+                  id="approve-button"
+                  onClick={handleApprove}
+                  className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
+                  disabled={!aiReport}
+                >
+                  Approve
+                </button>
+                <button
+                  id="reject-button"
+                  onClick={handleReject}
+                  className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
+                  disabled={!aiReport}
+                >
+                  Reject
+                </button>
+              </div>
+            )}
         </div>
       </div>
     </div>

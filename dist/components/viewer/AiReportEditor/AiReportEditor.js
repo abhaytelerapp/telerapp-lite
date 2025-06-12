@@ -41,10 +41,9 @@ const AiReportEditor = _ref => {
     browserSupportsSpeechRecognition
   } = (0, _reactSpeechRecognition.useSpeechRecognition)();
   const username = user?.profile?.name;
-  const inputRef = (0, _react.useRef)(null);
-  const reportRef = (0, _react.useRef)(null);
   const editorRef = (0, _react.useRef)(null); // or DecoupledEditor
   const popupRef = (0, _react.useRef)(null);
+  const textareaRef = (0, _react.useRef)(null);
   const [viewerStudy, setViewerStudy] = (0, _react.useState)([]);
   const [patientReportDetail, setPatientReportDetail] = (0, _react.useState)(null);
   const [patientData, setPatientData] = (0, _react.useState)(null);
@@ -80,6 +79,11 @@ const AiReportEditor = _ref => {
       }
     };
     getToken();
+  }, []);
+  (0, _react.useEffect)(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
   }, []);
   const studyInstanceUid = params.pathname.includes("report-editor") ? params.pathname?.split("report-editor/:")[1] : params?.search?.slice(params?.search?.indexOf("StudyInstanceUIDs=") + "StudyInstanceUIDs=".length)?.split("&")[0]?.replace(/^=/, "");
   const getReportDetails = async () => {
@@ -136,6 +140,7 @@ const AiReportEditor = _ref => {
     processTranscript();
   }, [transcript, inputValue]);
   const startListening = () => {
+    textareaRef.current.focus();
     setTranscriptText("");
     resetTranscript();
     _reactSpeechRecognition.default.startListening({
@@ -146,8 +151,10 @@ const AiReportEditor = _ref => {
   };
   const stopListening = () => {
     _reactSpeechRecognition.default.stopListening();
-    setInputValue(transcriptText);
     setTranscriptText("");
+    if (transcriptText.trim() !== "") {
+      setInputValue(transcriptText);
+    }
     resetTranscript();
     setPopupHeight(68);
     setShowPopup(false); // Hide popup when listening stops
@@ -235,27 +242,6 @@ const AiReportEditor = _ref => {
     const value = e.target.value;
     setInputValue(value);
   };
-  (0, _react.useEffect)(() => {
-    if (inputRef.current) {
-      const length = inputRef.current.value.length;
-      inputRef.current.setSelectionRange(length, length);
-      inputRef.current.focus();
-      inputRef.current.style.height = "118px"; // Reset height
-      inputRef.current.style.height = inputRef.current.scrollHeight + "px"; // Adjust based on content
-    }
-  }, [inputValue]);
-  (0, _react.useEffect)(() => {
-    const textarea = inputRef.current;
-    const reportDiv = reportRef.current;
-    if (textarea && reportDiv) {
-      textarea.style.height = "118px"; // Reset height
-      textarea.style.height = textarea.scrollHeight + "px"; // Set height dynamically
-
-      const totalAvailableHeight = 691; // Adjust as per your layout
-      const calculatedReportHeight = totalAvailableHeight - textarea.scrollHeight;
-      reportDiv.style.maxHeight = `${Math.max(100, calculatedReportHeight)}px`; // 100px is the minimum height
-    }
-  }, [inputValue]);
   const sendClinicalIndication = async function (e) {
     let transcriptText = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
     e.preventDefault();
@@ -697,11 +683,19 @@ const AiReportEditor = _ref => {
           if (editorTable) editorTable.classList.remove("editor_table");
         }
 
-        // Convert editor data changes
-        instance.model.document.on("change:data", () => {
+        // ✅ Shared function to modify and update data
+        const updateEditorState = () => {
           const newData = instance.getData();
           const modifyData = newData.replace(/class="text-tiny"(.*?)>/g, 'style="font-size:.7em;"$1>').replace(/class="text-small"(.*?)>/g, 'style="font-size:.85em;"$1>').replace(/class="text-big"(.*?)>/g, 'style="font-size:1.4em;"$1>').replace(/class="text-huge"(.*?)>/g, 'style="font-size:1.8em;"$1>').replace(/<table>/g, '<table border="1px;" style="border-collapse: collapse;">').replace(/<img style="height:200px;"/g, '<img style="height:400px;"').replace(/figure"/g, "").replace(/&nbsp;/g, "").replace(/<figure class="table">/g, "").replace(/<\/figure>/g, "");
           setEditorData(modifyData);
+        };
+
+        // ✅ Run immediately after setting content
+        updateEditorState();
+
+        // Convert editor data changes
+        instance.model.document.on("change:data", () => {
+          updateEditorState();
         });
       } catch (error) {
         console.error("Editor initialization failed:", error);
@@ -725,63 +719,62 @@ const AiReportEditor = _ref => {
     .replace(/<br><br>/g, "<br><br>");
     const patientTableHTML = `
       <table
-        className="w-full table-auto border-collapse border-spacing-0 border border-double border-[#b3b3b3] text-sm outline outline-[#dedede]"
+        style="width: 100%; border-collapse: collapse; font-size: 14px; border: 3px double #b3b3b3; outline: 1px solid #dedede;"
       >
         <tbody>
           <tr>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Patient Name:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.patient_name || ""}
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Patient Name:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.patient_name || ''}
             </td>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Patient ID:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.patient_id || ""}
-            </td>
-          </tr>
-          <tr>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">SEX:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.patient_gender || ""}
-            </td>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Age:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${parseInt(patientData?.patient_age || "")}
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Patient ID:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.patient_id || ''}
             </td>
           </tr>
           <tr>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Modality:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.patient_modality || ""}
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">SEX:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.patient_gender || ''}
             </td>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Accession No.:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.accession_number || ""}
-            </td>
-          </tr>
-          <tr>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Study Date:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.study_date || ""}
-            </td>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Ref. Physician:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.ref_physician || ""}
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Age:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${parseInt(patientData?.patient_age || '')}
             </td>
           </tr>
           <tr>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">Study:</td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.study || ""}
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Modality:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.patient_modality || ''}
             </td>
-            <td className="border border-solid border-[#bfbfbf] p-0 font-bold">
-              Institution Name:
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Accession No.:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.accession_number || ''}
             </td>
-            <td className="border border-solid border-[#bfbfbf] p-0">
-              ${patientData?.institution_name || ""}
+          </tr>
+          <tr>
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Study Date:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.study_date || ''}
+            </td>
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Ref. Physician:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.ref_physician || ''}
+            </td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Study:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.study || ''}
+            </td>
+            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Institution Name:</td>
+            <td style="border: 1px solid #bfbfbf; padding: 0;">
+              ${patientData?.institution_name || ''}
             </td>
           </tr>
         </tbody>
-      </table>`;
+      </table>
+    `;
 
     // Check if aiReport already contains patient details
     const includesPatientInfo = /Patient Name:|Accession No:|Patient ID:/.test(aiReport);
@@ -969,7 +962,7 @@ const AiReportEditor = _ref => {
     value: selectedPrompt,
     placeholder: "Select prompt style"
   })), /*#__PURE__*/_react.default.createElement("div", {
-    className: " overflow-y-auto"
+    className: "h-full overflow-y-auto"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: `editor_table ${patientData?.document_status === "Approved" ? "pointer-events-none" : "pointer-events-auto"}`
   }, /*#__PURE__*/_react.default.createElement("div", {
@@ -990,17 +983,22 @@ const AiReportEditor = _ref => {
     className: "flex items-center mb-2",
     onSubmit: sendClinicalIndication
   }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "dark:bg-primary-dark relative w-full rounded-lg bg-primary-light py-3 px-2"
-  }, /*#__PURE__*/_react.default.createElement("textarea", {
-    id: "ai-textarea",
-    className: `memberScroll dark:bg-primary-dark bg-primary-light border-secondary-dark dark:border-primary-main dark:focus:border-inputfield-focus focus:border-inputfield-main placeholder-inputfield-placeholder mb-6 w-full appearance-none rounded-lg border p-2 pr-3 pl-3 text-[16px] leading-tight text-black shadow transition duration-300 placeholder:text-black placeholder:text-opacity-50 focus:outline-none dark:text-white dark:placeholder:text-white ${patientData?.document_status === "Approved" ? "pointer-events-none" : "pointer-events-auto"}`,
+    className: "dark:bg-[#333333] bg-[#d4d4d4] relative w-full rounded-lg py-3 px-2"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "border-[#282828] dark:border-[#6d6d6d] dark:focus:border-[#ffffff] focus:border-[#a7adba] relative w-full rounded-lg border py-2 px-2 shadow",
     style: {
-      boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)",
-      minHeight: "118px",
+      boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)"
+    }
+  }, /*#__PURE__*/_react.default.createElement("textarea", {
+    ref: textareaRef,
+    id: "ai-textarea",
+    className: `memberScroll dark:bg-primary-dark bg-primary-light placeholder-inputfield-placeholder mb-5 w-full appearance-none rounded-lg text-[16px] leading-tight text-black transition duration-300 placeholder:text-black placeholder:text-opacity-50 focus:outline-none outline-none dark:text-white dark:placeholder:text-white ${patientData?.document_status === "Approved" ? "pointer-events-none" : "pointer-events-auto"}`,
+    style: {
+      minHeight: "63px",
       maxHeight: "216px",
       overflowY: "auto"
     },
-    value: inputValue,
+    value: transcriptText ? transcriptText : inputValue,
     onChange: e => {
       handleMessageType(e);
       // e.target.style.height = "118px"; // Reset height first
@@ -1008,19 +1006,17 @@ const AiReportEditor = _ref => {
     },
     placeholder: "Clinical Indication",
     onKeyDown: async e => {
+      if (listening) {
+        stopListening();
+      }
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
-        if (listening) {
-          stopListening();
-          sendClinicalIndication(e, transcriptText); // 3. Send the message after delay
-        } else {
-          sendClinicalIndication(e);
-        }
+        sendClinicalIndication(e, listening ? transcriptText : "");
       }
     },
-    rows: 5
+    rows: 3
   }), /*#__PURE__*/_react.default.createElement("div", {
-    className: "absolute left-2 bottom-2 z-10 transform flex items-center justify-between w-[96%]"
+    className: "absolute left-2 bottom-[6px] right-2 z-10 transform flex items-center justify-between"
   }, /*#__PURE__*/_react.default.createElement("button", {
     type: "button",
     id: "mic-container",
@@ -1040,17 +1036,7 @@ const AiReportEditor = _ref => {
     id: "send-button",
     className: " text-xl dark:text-white text-black hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-30",
     disabled: loader || !inputValue.trim() || patientData?.document_status === "Approved"
-  }, /*#__PURE__*/_react.default.createElement(_io.IoSend, null))), showPopup && /*#__PURE__*/_react.default.createElement("div", {
-    ref: popupRef,
-    className: "listening_popup absolute top-[-70px] right-[50px] z-10 w-72 rounded-lg p-3 text-center opacity-90 shadow-lg",
-    style: {
-      top: `-${popupHeight}px`
-    } // Adjust top dynamically
-  }, /*#__PURE__*/_react.default.createElement("h2", {
-    className: "text-sm font-semibold text-white dark:text-black"
-  }, "Listening..."), /*#__PURE__*/_react.default.createElement("p", {
-    className: "mt-1 text-lg text-white dark:text-black"
-  }, transcriptText || "Start speaking...")))), /*#__PURE__*/_react.default.createElement("div", {
+  }, /*#__PURE__*/_react.default.createElement(_io.IoSend, null)))))), /*#__PURE__*/_react.default.createElement("div", {
     className: "flex justify-between"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "flex justify-between gap-2"
@@ -1079,7 +1065,7 @@ const AiReportEditor = _ref => {
     // className="ml-3 px-[5px] sm:text-sm max-[1440px]:ml-2 sm:px-[10px] text-[10px]"
     ,
     className: "box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer",
-    disabled: assignUserDetail && isPhysicianOrTechnologist || isApproved ? true : !assignUserDetail && (canEditReport || isQaUser || isSuperAndDeputyAdmin) || assignUserDetail || isSuperAndDeputyAdmin ? false : true
+    disabled: assignUserDetail && isPhysicianOrTechnologist || !aiEditorData || isApproved ? true : !assignUserDetail && (canEditReport || isQaUser || isSuperAndDeputyAdmin) || assignUserDetail || isSuperAndDeputyAdmin ? false : true
   }, "Draft")), /*#__PURE__*/_react.default.createElement("button", {
     onClick: () => handleClick(studyInstanceUid, patientData?.patient_id, patientData?.patient_accession, patientData?.institution_name, patientData?.studyID),
     id: "critical",
@@ -1108,7 +1094,7 @@ const AiReportEditor = _ref => {
     className: "flex"
   }, /*#__PURE__*/_react.default.createElement(_fa.FaFileDownload, {
     className: "20px"
-  }))))), /*#__PURE__*/_react.default.createElement("div", {
+  }))))), patientData?.document_status !== "Approved" && patientData?.document_status !== "Addendum" && /*#__PURE__*/_react.default.createElement("div", {
     className: "flex items-center justify-between gap-2"
   }, /*#__PURE__*/_react.default.createElement("button", {
     id: "approve-button",
