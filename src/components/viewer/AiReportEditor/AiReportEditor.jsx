@@ -94,7 +94,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
     if (textareaRef.current) {
       textareaRef.current.focus();
     }
-  }, []);
+  }, [editorData]);
 
   const studyInstanceUid = params.pathname.includes("report-editor")
     ? params.pathname?.split("report-editor/:")[1]

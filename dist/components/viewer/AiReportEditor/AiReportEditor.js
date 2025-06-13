@@ -84,7 +84,7 @@ const AiReportEditor = _ref => {
     if (textareaRef.current) {
       textareaRef.current.focus();
     }
-  }, []);
+  }, [editorData]);
   const studyInstanceUid = params.pathname.includes("report-editor") ? params.pathname?.split("report-editor/:")[1] : params?.search?.slice(params?.search?.indexOf("StudyInstanceUIDs=") + "StudyInstanceUIDs=".length)?.split("&")[0]?.replace(/^=/, "");
   const getReportDetails = async () => {
     const patient = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid, apiData);
