@@ -256,6 +256,7 @@ const AiReportEditor = _ref => {
         clinicalHistory: patientData?.clinicalHistory || "None"
       };
       setInputValue("");
+      setAiEditorData("");
       setLoader(true);
       try {
         const report = await (0, _RequestHandler.genAiRadiologyReporter)(apiData, data);

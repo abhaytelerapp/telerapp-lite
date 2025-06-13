@@ -383,6 +383,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         clinicalHistory: patientData?.clinicalHistory || "None",
       };
       setInputValue("");
+      setAiEditorData("");
       setLoader(true);
       try {
         const report = await genAiRadiologyReporter(apiData, data);
