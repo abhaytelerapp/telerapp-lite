@@ -80,11 +80,13 @@ const AiReportEditor = _ref => {
     };
     getToken();
   }, []);
-  setTimeout(() => {
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  }, 1000);
+  (0, _react.useEffect)(() => {
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, 1000);
+  }, []);
   const studyInstanceUid = params.pathname.includes("report-editor") ? params.pathname?.split("report-editor/:")[1] : params?.search?.slice(params?.search?.indexOf("StudyInstanceUIDs=") + "StudyInstanceUIDs=".length)?.split("&")[0]?.replace(/^=/, "");
   const getReportDetails = async () => {
     const patient = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid, apiData);

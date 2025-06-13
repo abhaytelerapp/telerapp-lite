@@ -90,11 +90,13 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
     getToken();
   }, []);
 
-  setTimeout(() => {
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  }, 1000);
+  useEffect(() => {
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, 1000);
+  }, []);
 
   const studyInstanceUid = params.pathname.includes("report-editor")
     ? params.pathname?.split("report-editor/:")[1]
