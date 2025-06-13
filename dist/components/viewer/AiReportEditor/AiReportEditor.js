@@ -964,7 +964,7 @@ const AiReportEditor = _ref => {
     options: promptOptions,
     value: selectedPrompt,
     placeholder: "Select prompt style"
-  })), patientData?.document_status ? /*#__PURE__*/_react.default.createElement("div", {
+  })), patientData?.patient_name ? /*#__PURE__*/_react.default.createElement("div", {
     className: "h-full overflow-y-auto"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: `ai_editor_table ${patientData?.document_status === "Approved" ? "pointer-events-none" : "pointer-events-auto"}`

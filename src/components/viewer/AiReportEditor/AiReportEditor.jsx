@@ -1431,7 +1431,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         />
       </div>
       {/* Report Content */}
-      {patientData?.document_status ? (
+      {patientData?.patient_name ? (
         <div className="h-full overflow-y-auto">
           <div
             className={`ai_editor_table ${
