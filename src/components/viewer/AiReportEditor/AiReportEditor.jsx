@@ -1649,28 +1649,26 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
               </button>
             </Tooltip>
           </div>
-          {patientData?.document_status !== "Approved" &&
-            patientData?.document_status !== "Addendum" &&
-            editorData && (
-              <div className="flex items-center justify-between gap-2">
-                <button
-                  id="approve-button"
-                  onClick={handleApprove}
-                  className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
-                  disabled={!aiReport}
-                >
-                  Approve
-                </button>
-                <button
-                  id="reject-button"
-                  onClick={handleReject}
-                  className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
-                  disabled={!aiReport}
-                >
-                  Reject
-                </button>
-              </div>
-            )}
+          {patientData?.document_status !== "Approved" && editorData && (
+            <div className="flex items-center justify-between gap-2">
+              <button
+                id="approve-button"
+                onClick={handleApprove}
+                className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
+                disabled={!aiReport}
+              >
+                Approve
+              </button>
+              <button
+                id="reject-button"
+                onClick={handleReject}
+                className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
+                disabled={!aiReport}
+              >
+                Reject
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

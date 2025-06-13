@@ -1102,7 +1102,7 @@ const AiReportEditor = _ref => {
     className: "flex"
   }, /*#__PURE__*/_react.default.createElement(_fa.FaFileDownload, {
     className: "20px"
-  }))))), patientData?.document_status !== "Approved" && patientData?.document_status !== "Addendum" && editorData && /*#__PURE__*/_react.default.createElement("div", {
+  }))))), patientData?.document_status !== "Approved" && editorData && /*#__PURE__*/_react.default.createElement("div", {
     className: "flex items-center justify-between gap-2"
   }, /*#__PURE__*/_react.default.createElement("button", {
     id: "approve-button",
