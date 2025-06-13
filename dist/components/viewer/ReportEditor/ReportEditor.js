@@ -352,15 +352,16 @@ const ReportEditor = props => {
   }, [studyInstanceUid, patientCritical]);
   (0, _react.useEffect)(() => {
     const fetchReportSettings = async () => {
-      if (_RequestHandler.fetchReportSetting && apiData) {
-        const fetchUserInformation = await (0, _getUserInformation.getUserInformation)(_RequestHandler.fetchReportSetting, viewerStudy[0]?.MainDicomTags.InstitutionName, patientFind, radiologistUserList, apiData);
+      if (_RequestHandler.fetchReportSetting && viewerStudy?.length > 0 && viewerStudy[0]?.MainDicomTags?.InstitutionName && patientFind && radiologistUserList?.length > 0) {
+        const fetchUserInformation = await (0, _getUserInformation.getUserInformation)(_RequestHandler.fetchReportSetting, viewerStudy[0].MainDicomTags.InstitutionName, patientFind, radiologistUserList, apiData);
+        console.log(fetchUserInformation, "fetchUserInformation");
         setReportSetting(fetchUserInformation?.reportSetting);
         setAssignUserDataFind(fetchUserInformation?.assignUserDataFind);
         setDoctorInformation(fetchUserInformation?.doctorInformation);
       }
     };
     fetchReportSettings();
-  }, [viewerStudy, patientFind]);
+  }, [_RequestHandler.fetchReportSetting, viewerStudy, patientFind, radiologistUserList, apiData]);
   const fetchViewerStudys2 = async () => {
     if (!apiData) return;
     const response = await (0, _RequestHandler.fetchViewerStudy)(studyInstanceUid, apiData);

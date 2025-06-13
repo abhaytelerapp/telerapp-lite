@@ -118,12 +118,12 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
 
   useEffect(() => {
     if (!apiData || !keycloak_url) return;
-    fetchUsers(user.access_token, keycloak_url)
+    fetchUsers(user?.access_token, keycloak_url)
       .then((data) => {
         setRadiologistUserList(data);
       })
       .catch((error) => console.error("Error fetching users:", error));
-  }, [user.access_token, apiData, keycloak_url]);
+  }, [user?.access_token, apiData, keycloak_url]);
 
   const fetchViewerStudys2 = async () => {
     const response = await fetchViewerStudy(studyInstanceUid, apiData);
@@ -139,15 +139,22 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
 
   useEffect(() => {
     const fetchReportSettings = async () => {
-      if (fetchReportSetting) {
+      if (
+        fetchReportSetting &&
+        viewerStudy?.length > 0 &&
+        viewerStudy[0]?.MainDicomTags?.InstitutionName &&
+        patientFind &&
+        radiologistUserList?.length > 0
+      ) {
         const fetchUserInformation = await getUserInformation(
           fetchReportSetting,
-          viewerStudy[0]?.MainDicomTags.InstitutionName,
+          viewerStudy[0].MainDicomTags.InstitutionName,
           patientFind,
           radiologistUserList,
           apiData
         );
-        // console.log(fetchUserInformation,'fetchUserInformation')
+
+        console.log(fetchUserInformation, "fetchUserInformation");
         setReportSetting(fetchUserInformation?.reportSetting);
         setAssignUserDataFind(fetchUserInformation?.assignUserDataFind);
         setDoctorInformation(fetchUserInformation?.doctorInformation);
@@ -155,7 +162,13 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
     };
 
     fetchReportSettings();
-  }, [viewerStudy, patientFind]);
+  }, [
+    fetchReportSetting,
+    viewerStudy,
+    patientFind,
+    radiologistUserList,
+    apiData,
+  ]);
 
   useEffect(() => {
     const processTranscript = async () => {
@@ -1011,8 +1024,8 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
           });
 
           instance.enableReadOnlyMode("approved-mode");
-          const editorTable = document.querySelector(".editor_table");
-          if (editorTable) editorTable.classList.remove("editor_table");
+          const editorTable = document.querySelector(".ai_editor_table");
+          if (editorTable) editorTable.classList.remove("ai_editor_table");
         }
 
         // ✅ Shared function to modify and update data
@@ -1061,7 +1074,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
       }
     };
   }, [
-    patientData,
+    patientData?.patient_name,
     aiReport,
     aiEditorData,
     assignUserDataFind,
@@ -1090,51 +1103,51 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
           <tr>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Patient Name:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.patient_name || ''}
+              ${patientData?.patient_name || ""}
             </td>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Patient ID:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.patient_id || ''}
+              ${patientData?.patient_id || ""}
             </td>
           </tr>
           <tr>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">SEX:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.patient_gender || ''}
+              ${patientData?.patient_gender || ""}
             </td>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Age:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${parseInt(patientData?.patient_age || '')}
+              ${parseInt(patientData?.patient_age || "")}
             </td>
           </tr>
           <tr>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Modality:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.patient_modality || ''}
+              ${patientData?.patient_modality || ""}
             </td>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Accession No.:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.accession_number || ''}
+              ${patientData?.accession_number || ""}
             </td>
           </tr>
           <tr>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Study Date:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.study_date || ''}
+              ${patientData?.study_date || ""}
             </td>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Ref. Physician:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.ref_physician || ''}
+              ${patientData?.ref_physician || ""}
             </td>
           </tr>
           <tr>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Study:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.study || ''}
+              ${patientData?.study || ""}
             </td>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Institution Name:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.institution_name || ''}
+              ${patientData?.institution_name || ""}
             </td>
           </tr>
         </tbody>
@@ -1415,24 +1428,31 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         />
       </div>
       {/* Report Content */}
-      <div className="h-full overflow-y-auto">
-        <div
-          className={`editor_table ${
-            patientData?.document_status === "Approved"
-              ? "pointer-events-none"
-              : "pointer-events-auto"
-          }`}
-        >
-          <div id="ai-toolbar-container"></div>
+      {patientData?.document_status ? (
+        <div className="h-full overflow-y-auto">
           <div
-            id="ai-editor"
-            style={{
-              overflowY: "auto",
-              transition: "max-height 0.3s ease",
-            }}
-          ></div>
+            className={`ai_editor_table ${
+              patientData?.document_status === "Approved"
+                ? "pointer-events-none"
+                : "pointer-events-auto"
+            }`}
+          >
+            <div id="ai-toolbar-container"></div>
+            <div
+              id="ai-editor"
+              className="h-full"
+              style={{
+                overflowY: "auto",
+                transition: "max-height 0.3s ease",
+              }}
+            ></div>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="flex h-[615px] !w-full grow flex-col items-center justify-center">
+          <span className="loader01"></span>
+        </div>
+      )}
       {/* Textarea and Send Button */}
       <div className=" px-2">
         {loader && (
@@ -1440,99 +1460,88 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
             <div className="dot-stretching"></div>
           </div>
         )}
-        <form
-          className="flex items-center mb-2"
-          onSubmit={sendClinicalIndication}
-        >
-          <div className="dark:bg-[#333333] bg-[#d4d4d4] relative w-full rounded-lg py-3 px-2">
-            <div
-              className="border-[#282828] dark:border-[#6d6d6d] dark:focus:border-[#ffffff] focus:border-[#a7adba] relative w-full rounded-lg border py-2 px-2 shadow"
-              style={{ boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)" }}
-            >
-              <textarea
-                ref={textareaRef}
-                id="ai-textarea"
-                className={`memberScroll dark:bg-primary-dark bg-primary-light placeholder-inputfield-placeholder mb-5 w-full appearance-none rounded-lg text-[16px] leading-tight text-black transition duration-300 placeholder:text-black placeholder:text-opacity-50 focus:outline-none outline-none dark:text-white dark:placeholder:text-white ${
-                  patientData?.document_status === "Approved"
-                    ? "pointer-events-none"
-                    : "pointer-events-auto"
-                }`}
-                style={{
-                  minHeight: "63px",
-                  maxHeight: "216px",
-                  overflowY: "auto",
-                }}
-                value={transcriptText ? transcriptText : inputValue}
-                onChange={(e) => {
-                  handleMessageType(e);
-                  // e.target.style.height = "118px"; // Reset height first
-                  // e.target.style.height = e.target.scrollHeight + "px"; // Set height dynamically
-                }}
-                placeholder="Clinical Indication"
-                onKeyDown={async (e) => {
-                  if (listening) {
-                    stopListening();
-                  }
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    sendClinicalIndication(e, listening ? transcriptText : "");
-                  }
-                }}
-                rows={3}
-              ></textarea>
-
-              <div className="absolute left-2 bottom-[6px] right-2 z-10 transform flex items-center justify-between">
-                {/* Mic Button (bottom-left) */}
-                <button
-                  type="button"
-                  id="mic-container"
-                  className="mic-container cursor-pointer disabled:cursor-not-allowed"
-                  onClick={listening ? stopListening : startListening}
-                  disabled={patientData?.document_status === "Approved"}
-                >
-                  <div className={`mic-icon-chat`}>
-                    <div className={`${listening ? "pulse-ring" : ""}`}></div>
-                    {listening ? (
-                      <FaMicrophone className="text-[18px] text-white" />
-                    ) : (
-                      <FaMicrophoneSlash className="text-xl text-white" />
-                    )}
-                  </div>
-                </button>
-
-                {/* Send Button (bottom-right) */}
-                <button
-                  type="submit"
-                  id="send-button"
-                  className=" text-xl dark:text-white text-black hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-30"
-                  disabled={
-                    loader ||
-                    !inputValue.trim() ||
+        {patientData?.document_status !== "Approved" && editorData ? (
+          <form
+            className="flex items-center mb-2"
+            onSubmit={sendClinicalIndication}
+          >
+            <div className="dark:bg-[#333333] bg-[#d4d4d4] relative w-full rounded-lg py-3 px-2">
+              <div
+                className="border-[#282828] dark:border-[#6d6d6d] dark:focus:border-[#ffffff] focus:border-[#a7adba] relative w-full rounded-lg border py-2 px-2 shadow"
+                style={{ boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)" }}
+              >
+                <textarea
+                  ref={textareaRef}
+                  id="ai-textarea"
+                  className={`memberScroll dark:bg-primary-dark bg-primary-light placeholder-inputfield-placeholder mb-5 w-full appearance-none rounded-lg text-[16px] leading-tight text-black transition duration-300 placeholder:text-black placeholder:text-opacity-50 focus:outline-none outline-none dark:text-white dark:placeholder:text-white ${
                     patientData?.document_status === "Approved"
-                  }
-                >
-                  <IoSend />
-                </button>
-              </div>
+                      ? "pointer-events-none"
+                      : "pointer-events-auto"
+                  }`}
+                  style={{
+                    minHeight: "63px",
+                    maxHeight: "216px",
+                    overflowY: "auto",
+                  }}
+                  value={transcriptText ? transcriptText : inputValue}
+                  onChange={(e) => {
+                    handleMessageType(e);
+                    // e.target.style.height = "118px"; // Reset height first
+                    // e.target.style.height = e.target.scrollHeight + "px"; // Set height dynamically
+                  }}
+                  placeholder="Clinical Indication"
+                  onKeyDown={async (e) => {
+                    if (listening) {
+                      stopListening();
+                    }
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      sendClinicalIndication(
+                        e,
+                        listening ? transcriptText : ""
+                      );
+                    }
+                  }}
+                  rows={3}
+                ></textarea>
 
-              {/* Listening Popup */}
-              {/* {showPopup && (
-                <div
-                  ref={popupRef}
-                  className="listening_popup absolute top-[-70px] right-[50px] z-10 w-72 rounded-lg p-3 text-center opacity-90 shadow-lg"
-                  style={{ top: `-${popupHeight}px` }} // Adjust top dynamically
-                >
-                  <h2 className="text-sm font-semibold text-white dark:text-black">
-                    Listening...
-                  </h2>
-                  <p className="mt-1 text-lg text-white dark:text-black">
-                    {transcriptText || "Start speaking..."}
-                  </p>
+                <div className="absolute left-2 bottom-[6px] right-2 z-10 transform flex items-center justify-between">
+                  {/* Mic Button (bottom-left) */}
+                  <button
+                    type="button"
+                    id="mic-container"
+                    className="mic-container cursor-pointer disabled:cursor-not-allowed"
+                    onClick={listening ? stopListening : startListening}
+                    disabled={patientData?.document_status === "Approved"}
+                  >
+                    <div className={`mic-icon-chat`}>
+                      <div className={`${listening ? "pulse-ring" : ""}`}></div>
+                      {listening ? (
+                        <FaMicrophone className="text-[18px] text-white" />
+                      ) : (
+                        <FaMicrophoneSlash className="text-xl text-white" />
+                      )}
+                    </div>
+                  </button>
+
+                  {/* Send Button (bottom-right) */}
+                  <button
+                    type="submit"
+                    id="send-button"
+                    className=" text-xl dark:text-white text-black hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-30"
+                    disabled={
+                      loader ||
+                      !inputValue.trim() ||
+                      patientData?.document_status === "Approved"
+                    }
+                  >
+                    <IoSend />
+                  </button>
                 </div>
-              )} */}
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        ) : null}
         <div className="flex justify-between">
           <div className="flex justify-between gap-2">
             <Tooltip
@@ -1638,7 +1647,8 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
             </Tooltip>
           </div>
           {patientData?.document_status !== "Approved" &&
-            patientData?.document_status !== "Addendum" && (
+            patientData?.document_status !== "Addendum" &&
+            editorData && (
               <div className="flex items-center justify-between gap-2">
                 <button
                   id="approve-button"

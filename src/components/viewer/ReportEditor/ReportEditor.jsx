@@ -430,16 +430,36 @@ const ReportEditor = (props) => {
 
   useEffect(() => {
     const fetchReportSettings = async () => {
-      if (fetchReportSetting && apiData) {
-        const fetchUserInformation = await getUserInformation(fetchReportSetting, viewerStudy[0]?.MainDicomTags.InstitutionName, patientFind, radiologistUserList, apiData);
+      if (
+        fetchReportSetting &&
+        viewerStudy?.length > 0 &&
+        viewerStudy[0]?.MainDicomTags?.InstitutionName &&
+        patientFind &&
+        radiologistUserList?.length > 0
+      ) {
+        const fetchUserInformation = await getUserInformation(
+          fetchReportSetting,
+          viewerStudy[0].MainDicomTags.InstitutionName,
+          patientFind,
+          radiologistUserList,
+          apiData
+        );
+
+        console.log(fetchUserInformation, "fetchUserInformation");
         setReportSetting(fetchUserInformation?.reportSetting);
         setAssignUserDataFind(fetchUserInformation?.assignUserDataFind);
         setDoctorInformation(fetchUserInformation?.doctorInformation);
       }
-    }
+    };
 
     fetchReportSettings();
-  }, [viewerStudy, patientFind]);
+  }, [
+    fetchReportSetting,
+    viewerStudy,
+    patientFind,
+    radiologistUserList,
+    apiData,
+  ]);
 
   const fetchViewerStudys2 = async () => {
     if (!apiData) return;

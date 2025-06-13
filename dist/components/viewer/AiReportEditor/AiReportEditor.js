@@ -96,10 +96,10 @@ const AiReportEditor = _ref => {
   }, [studyInstanceUid, patientCritical]);
   (0, _react.useEffect)(() => {
     if (!apiData || !keycloak_url) return;
-    (0, _RequestHandler.fetchUsers)(user.access_token, keycloak_url).then(data => {
+    (0, _RequestHandler.fetchUsers)(user?.access_token, keycloak_url).then(data => {
       setRadiologistUserList(data);
     }).catch(error => console.error("Error fetching users:", error));
-  }, [user.access_token, apiData, keycloak_url]);
+  }, [user?.access_token, apiData, keycloak_url]);
   const fetchViewerStudys2 = async () => {
     const response = await (0, _RequestHandler.fetchViewerStudy)(studyInstanceUid, apiData);
     setViewerStudy(response);
@@ -112,16 +112,16 @@ const AiReportEditor = _ref => {
   }, [studyInstanceUid, apiData]);
   (0, _react.useEffect)(() => {
     const fetchReportSettings = async () => {
-      if (_RequestHandler.fetchReportSetting) {
-        const fetchUserInformation = await (0, _getUserInformation.getUserInformation)(_RequestHandler.fetchReportSetting, viewerStudy[0]?.MainDicomTags.InstitutionName, patientFind, radiologistUserList, apiData);
-        // console.log(fetchUserInformation,'fetchUserInformation')
+      if (_RequestHandler.fetchReportSetting && viewerStudy?.length > 0 && viewerStudy[0]?.MainDicomTags?.InstitutionName && patientFind && radiologistUserList?.length > 0) {
+        const fetchUserInformation = await (0, _getUserInformation.getUserInformation)(_RequestHandler.fetchReportSetting, viewerStudy[0].MainDicomTags.InstitutionName, patientFind, radiologistUserList, apiData);
+        console.log(fetchUserInformation, "fetchUserInformation");
         setReportSetting(fetchUserInformation?.reportSetting);
         setAssignUserDataFind(fetchUserInformation?.assignUserDataFind);
         setDoctorInformation(fetchUserInformation?.doctorInformation);
       }
     };
     fetchReportSettings();
-  }, [viewerStudy, patientFind]);
+  }, [_RequestHandler.fetchReportSetting, viewerStudy, patientFind, radiologistUserList, apiData]);
   (0, _react.useEffect)(() => {
     const processTranscript = async () => {
       if (transcript.length > 0) {
@@ -679,8 +679,8 @@ const AiReportEditor = _ref => {
             writer.insert(modelFragment, instance.model.createPositionAt(root, "end"));
           });
           instance.enableReadOnlyMode("approved-mode");
-          const editorTable = document.querySelector(".editor_table");
-          if (editorTable) editorTable.classList.remove("editor_table");
+          const editorTable = document.querySelector(".ai_editor_table");
+          if (editorTable) editorTable.classList.remove("ai_editor_table");
         }
 
         // ✅ Shared function to modify and update data
@@ -707,7 +707,7 @@ const AiReportEditor = _ref => {
         editorRef.current.destroy().catch(err => console.error("Editor destroy error:", err));
       }
     };
-  }, [patientData, aiReport, aiEditorData, assignUserDataFind, patientReportDetail, doctorInformation]);
+  }, [patientData?.patient_name, aiReport, aiEditorData, assignUserDataFind, patientReportDetail, doctorInformation]);
   (0, _react.useEffect)(() => {
     if (popupRef.current) {
       setPopupHeight(popupRef.current.scrollHeight);
@@ -725,51 +725,51 @@ const AiReportEditor = _ref => {
           <tr>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Patient Name:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.patient_name || ''}
+              ${patientData?.patient_name || ""}
             </td>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Patient ID:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.patient_id || ''}
+              ${patientData?.patient_id || ""}
             </td>
           </tr>
           <tr>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">SEX:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.patient_gender || ''}
+              ${patientData?.patient_gender || ""}
             </td>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Age:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${parseInt(patientData?.patient_age || '')}
+              ${parseInt(patientData?.patient_age || "")}
             </td>
           </tr>
           <tr>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Modality:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.patient_modality || ''}
+              ${patientData?.patient_modality || ""}
             </td>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Accession No.:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.accession_number || ''}
+              ${patientData?.accession_number || ""}
             </td>
           </tr>
           <tr>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Study Date:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.study_date || ''}
+              ${patientData?.study_date || ""}
             </td>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Ref. Physician:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.ref_physician || ''}
+              ${patientData?.ref_physician || ""}
             </td>
           </tr>
           <tr>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Study:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.study || ''}
+              ${patientData?.study || ""}
             </td>
             <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Institution Name:</td>
             <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.institution_name || ''}
+              ${patientData?.institution_name || ""}
             </td>
           </tr>
         </tbody>
@@ -961,25 +961,30 @@ const AiReportEditor = _ref => {
     options: promptOptions,
     value: selectedPrompt,
     placeholder: "Select prompt style"
-  })), /*#__PURE__*/_react.default.createElement("div", {
+  })), patientData?.document_status ? /*#__PURE__*/_react.default.createElement("div", {
     className: "h-full overflow-y-auto"
   }, /*#__PURE__*/_react.default.createElement("div", {
-    className: `editor_table ${patientData?.document_status === "Approved" ? "pointer-events-none" : "pointer-events-auto"}`
+    className: `ai_editor_table ${patientData?.document_status === "Approved" ? "pointer-events-none" : "pointer-events-auto"}`
   }, /*#__PURE__*/_react.default.createElement("div", {
     id: "ai-toolbar-container"
   }), /*#__PURE__*/_react.default.createElement("div", {
     id: "ai-editor",
+    className: "h-full",
     style: {
       overflowY: "auto",
       transition: "max-height 0.3s ease"
     }
-  }))), /*#__PURE__*/_react.default.createElement("div", {
+  }))) : /*#__PURE__*/_react.default.createElement("div", {
+    className: "flex h-[615px] !w-full grow flex-col items-center justify-center"
+  }, /*#__PURE__*/_react.default.createElement("span", {
+    className: "loader01"
+  })), /*#__PURE__*/_react.default.createElement("div", {
     className: " px-2"
   }, loader && /*#__PURE__*/_react.default.createElement("div", {
     className: "flex items-center justify-center pb-4"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "dot-stretching"
-  })), /*#__PURE__*/_react.default.createElement("form", {
+  })), patientData?.document_status !== "Approved" && editorData ? /*#__PURE__*/_react.default.createElement("form", {
     className: "flex items-center mb-2",
     onSubmit: sendClinicalIndication
   }, /*#__PURE__*/_react.default.createElement("div", {
@@ -1036,7 +1041,7 @@ const AiReportEditor = _ref => {
     id: "send-button",
     className: " text-xl dark:text-white text-black hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-30",
     disabled: loader || !inputValue.trim() || patientData?.document_status === "Approved"
-  }, /*#__PURE__*/_react.default.createElement(_io.IoSend, null)))))), /*#__PURE__*/_react.default.createElement("div", {
+  }, /*#__PURE__*/_react.default.createElement(_io.IoSend, null)))))) : null, /*#__PURE__*/_react.default.createElement("div", {
     className: "flex justify-between"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "flex justify-between gap-2"
@@ -1094,7 +1099,7 @@ const AiReportEditor = _ref => {
     className: "flex"
   }, /*#__PURE__*/_react.default.createElement(_fa.FaFileDownload, {
     className: "20px"
-  }))))), patientData?.document_status !== "Approved" && patientData?.document_status !== "Addendum" && /*#__PURE__*/_react.default.createElement("div", {
+  }))))), patientData?.document_status !== "Approved" && patientData?.document_status !== "Addendum" && editorData && /*#__PURE__*/_react.default.createElement("div", {
     className: "flex items-center justify-between gap-2"
   }, /*#__PURE__*/_react.default.createElement("button", {
     id: "approve-button",

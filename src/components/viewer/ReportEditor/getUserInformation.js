@@ -13,7 +13,7 @@ export const getUserInformation = async (
   const assignUserDataFind = radiologistUserList?.find(item => {
     return findAssignUserName?.includes(item.username);
   });
-  const signature = assignUserDataFind?.attributes?.uploadSignature[0];
+  const signature = await assignUserDataFind?.attributes?.uploadSignature[0];
   const reportSubmit_time =
     patientFind?.report_submit_time && new Date(patientFind?.report_submit_time);
 
