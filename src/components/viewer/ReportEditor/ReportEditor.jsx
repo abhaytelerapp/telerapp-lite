@@ -390,7 +390,6 @@ const ReportEditor = (props) => {
         console.error("Error fetching default templates:", error)
       );
 
-
     fetchDocumentUpload(apiData)
       .then((data) => setDocumentUploadDetails(data))
       .catch((error) =>
@@ -480,7 +479,10 @@ const ReportEditor = (props) => {
     if (!apiData) return;
     // const data = await getCurrentPatient(params, query, studyInstanceUid);
     const data = await fetchStudyData(studyInstanceUid, apiData);
-     const patientReportData = await fetchEditorPatientReportData(apiData, studyInstanceUid)
+    const patientReportData = await fetchEditorPatientReportData(
+      apiData,
+      studyInstanceUid
+    );
     // const patient = await patientReportsDetails && patientReportsDetails?.find(
     //   items => items.study_UIDs === data[0]?.studyInstanceUid
     // );
@@ -512,10 +514,9 @@ const ReportEditor = (props) => {
           ["YYYYMMDD", "YYYY.MM.DD"],
           true
         ).isValid() &&
-        moment(patientReportData.studydate, [
-          "YYYYMMDD",
-          "YYYY.MM.DD",
-        ]).format(t("Common:localDateFormat", "MMM-DD-YYYY"));
+        moment(patientReportData.studydate, ["YYYYMMDD", "YYYY.MM.DD"]).format(
+          t("Common:localDateFormat", "MMM-DD-YYYY")
+        );
       const studyTime =
         patientReportData.studytime &&
         moment(patientReportData.studytime, [
@@ -544,10 +545,7 @@ const ReportEditor = (props) => {
             age !== undefined
               ? age
               : patientReportData.patientage
-              ? parseInt(
-                  patientReportData.patientage.replace(/\D/g, ""),
-                  10
-                )
+              ? parseInt(patientReportData.patientage.replace(/\D/g, ""), 10)
               : 0,
           patient_gender: sex,
           patient_accession: patientReportData.accessionnumber,
@@ -565,11 +563,15 @@ const ReportEditor = (props) => {
           studyID: patientReportData?.studyid,
           document_status: patient?.document_status,
           priority: patient?.study_priority || "Routine",
-          institution_name: studyList?.MainDicomTags.InstitutionName || patientReportData.institutionname,
-          study_description: studyList?.MainDicomTags.StudyDescription || patientReportData.studydescription,
-          patient_dob: moment(
-            patientReportData.patientbirthdate
-          ).format("MM/DD/YYYY"),
+          institution_name:
+            studyList?.MainDicomTags.InstitutionName ||
+            patientReportData.institutionname,
+          study_description:
+            studyList?.MainDicomTags.StudyDescription ||
+            patientReportData.studydescription,
+          patient_dob: moment(patientReportData.patientbirthdate).format(
+            "MM/DD/YYYY"
+          ),
           clinical_history: patient?.clinical_history || "None",
           image_perview: imageDataUrl,
         });
@@ -657,7 +659,7 @@ const ReportEditor = (props) => {
         label: name,
         value: name,
         isCapture: isCapture,
-        template: templates
+        template: templates,
       };
     });
   });
@@ -676,7 +678,7 @@ const ReportEditor = (props) => {
       label: name,
       value: name,
       isCapture,
-      template: templates
+      template: templates,
     }));
 
   const [selectedItems, setSelectedItems] = useState(
@@ -948,7 +950,10 @@ const ReportEditor = (props) => {
     patientName,
     institutionName
   ) => {
-    const findHistory = await fetchPatientReportByStudy(studyInstanceUid, apiData);
+    const findHistory = await fetchPatientReportByStudy(
+      studyInstanceUid,
+      apiData
+    );
     show({
       content: AddClinicalHistoryModel,
       title: t("ReportStatus:Clinical History"),
@@ -992,13 +997,17 @@ const ReportEditor = (props) => {
       // );
 
       const studyList = viewerStudy[0];
-      const oldData = await fetchPatientReportByStudy(studyInstanceUid, apiData);
+      const oldData = await fetchPatientReportByStudy(
+        studyInstanceUid,
+        apiData
+      );
       const currentTime = new Date();
       const actionlog = "SubmitLogs";
 
       const resData = {
         ...patientData,
         reportdetails: editorData,
+        submitReportDetails: editorData,
         study_UIDs: studyInstanceUid,
         study_IDS: studyList?.ID,
         study_priority: patientReportDetail?.study_priority || "Routine",
@@ -1917,8 +1926,14 @@ const ReportEditor = (props) => {
           viewerStudy[0]?.MainDicomTags?.InstitutionName;
 
         // Ensure patientReportDetail.reportdetails is defined
-        const patientReportDetail1 = patientReportDetail?.reportdetails
-          ? Object.values(patientReportDetail.reportdetails).join("")
+        const reportDetails =
+          patientReportDetail &&
+          patientReportDetail.document_status === "Approved" &&
+          patientReportDetail?.submitReportDetails
+            ? patientReportDetail?.submitReportDetails
+            : patientReportDetail?.reportdetails;
+        const patientReportDetail1 = reportDetails
+          ? Object.values(reportDetails).join("")
           : "";
 
         const temaplateDataReport = patientReportDetail1 + notApproved;

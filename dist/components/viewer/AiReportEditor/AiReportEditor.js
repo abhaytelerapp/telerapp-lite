@@ -201,7 +201,7 @@ const AiReportEditor = _ref => {
       }
       const studyDate = patientReportData.studydate && (0, _moment.default)(patientReportData.studydate, ["YYYYMMDD", "YYYY.MM.DD"], true).isValid() && (0, _moment.default)(patientReportData.studydate, ["YYYYMMDD", "YYYY.MM.DD"]).format(t("Common:localDateFormat", "MMM-DD-YYYY"));
       const studyTime = patientReportData.studytime && (0, _moment.default)(patientReportData.studytime, ["HH", "HHmm", "HHmmss", "HHmmss.SSS"]).isValid() && (0, _moment.default)(patientReportData.studytime, ["HH", "HHmm", "HHmmss", "HHmmss.SSS"]).format(t("Common:localTimeFormat", "hh:mm A"));
-      if (patient?.aiReportDetails !== null && patient?.aiReportDetails !== undefined) {
+      if (patient?.aiReportDetails !== null && patient?.aiReportDetails !== undefined || patient?.submitReportDetails !== null && patient?.submitReportDetails !== undefined) {
         setAiEditorData(patient?.aiReportDetails);
         setPatientData(patient);
       } else {
@@ -284,8 +284,15 @@ const AiReportEditor = _ref => {
     try {
       setIsLoading(true);
       const editorDatas = editorData ? editorData : patientReportDetail?.aiEditorData;
+      // 1. Find the last index of <figure
+      const lastFigureIndex = editorDatas.lastIndexOf("<figure");
+      let cleanedEditorDatas = editorDatas;
+      if (lastFigureIndex !== -1) {
+        // 2. Slice from the start to just before the last <figure>
+        cleanedEditorDatas = editorDatas.slice(0, lastFigureIndex);
+      }
       const parser = new DOMParser();
-      const doc = parser.parseFromString(editorDatas, "text/html");
+      const doc = parser.parseFromString(cleanedEditorDatas, "text/html");
       let tableData = doc.querySelector("table");
       let table = tableData ? tableData.outerHTML : "";
       let modifiedEditorData = doc.body.innerHTML;
@@ -596,6 +603,7 @@ const AiReportEditor = _ref => {
       const toolbarContainer = document.querySelector("#ai-toolbar-container");
       if (!editorElement || !patientData) return;
       const clinicalHistory = patientData?.clinicalHistory || "None";
+      const reportDetails = (patientData && patientData.document_status === "Approved" && patientData?.submitReportDetails ? patientData?.submitReportDetails : aiReport || aiEditorData) || "";
       try {
         instance = await DecoupledEditor.create(editorElement, {
           fontSize: {
@@ -648,8 +656,23 @@ const AiReportEditor = _ref => {
         });
 
         // Set initial formatted HTML data
-        const formattedHTML = generateFormattedHTML(patientData, aiReport || aiEditorData, clinicalHistory);
+        const formattedHTML = generateFormattedHTML(patientData, reportDetails, clinicalHistory);
         instance.setData(formattedHTML);
+
+        // ✅ Shared function to modify and update data
+        const updateEditorState = () => {
+          const newData = instance.getData();
+          const modifyData = newData.replace(/class="text-tiny"(.*?)>/g, 'style="font-size:.7em;"$1>').replace(/class="text-small"(.*?)>/g, 'style="font-size:.85em;"$1>').replace(/class="text-big"(.*?)>/g, 'style="font-size:1.4em;"$1>').replace(/class="text-huge"(.*?)>/g, 'style="font-size:1.8em;"$1>').replace(/<table>/g, '<table border="1px;" style="border-collapse: collapse;">').replace(/<img style="height:200px;"/g, '<img style="height:400px;"').replace(/figure"/g, "").replace(/&nbsp;/g, "").replace(/<figure class="table">/g, "").replace(/<\/figure>/g, "");
+          setEditorData(modifyData);
+        };
+
+        // ✅ Run immediately after setting content
+        updateEditorState();
+
+        // Convert editor data changes
+        instance.model.document.on("change:data", () => {
+          updateEditorState();
+        });
 
         // Handle image + doctor info if Approved
         if (patientReportDetail?.document_status === "Approved") {
@@ -685,21 +708,6 @@ const AiReportEditor = _ref => {
           const editorTable = document.querySelector(".ai_editor_table");
           if (editorTable) editorTable.classList.remove("ai_editor_table");
         }
-
-        // ✅ Shared function to modify and update data
-        const updateEditorState = () => {
-          const newData = instance.getData();
-          const modifyData = newData.replace(/class="text-tiny"(.*?)>/g, 'style="font-size:.7em;"$1>').replace(/class="text-small"(.*?)>/g, 'style="font-size:.85em;"$1>').replace(/class="text-big"(.*?)>/g, 'style="font-size:1.4em;"$1>').replace(/class="text-huge"(.*?)>/g, 'style="font-size:1.8em;"$1>').replace(/<table>/g, '<table border="1px;" style="border-collapse: collapse;">').replace(/<img style="height:200px;"/g, '<img style="height:400px;"').replace(/figure"/g, "").replace(/&nbsp;/g, "").replace(/<figure class="table">/g, "").replace(/<\/figure>/g, "");
-          setEditorData(modifyData);
-        };
-
-        // ✅ Run immediately after setting content
-        updateEditorState();
-
-        // Convert editor data changes
-        instance.model.document.on("change:data", () => {
-          updateEditorState();
-        });
       } catch (error) {
         console.error("Editor initialization failed:", error);
       }
@@ -816,6 +824,7 @@ const AiReportEditor = _ref => {
       const resData = {
         ...patientData,
         aiReportDetails: aiEditorData,
+        submitReportDetails: aiEditorData,
         report_history: reportHistory,
         study_UIDs: studyInstanceUid,
         study_IDS: studyList?.ID,

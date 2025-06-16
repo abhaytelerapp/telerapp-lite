@@ -713,6 +713,7 @@ const ReportEditor = props => {
       const resData = {
         ...patientData,
         reportdetails: editorData,
+        submitReportDetails: editorData,
         study_UIDs: studyInstanceUid,
         study_IDS: studyList?.ID,
         study_priority: patientReportDetail?.study_priority || "Routine",
@@ -1305,7 +1306,8 @@ const ReportEditor = props => {
         const institutionNameFromStorage = viewerStudy[0]?.MainDicomTags?.InstitutionName;
 
         // Ensure patientReportDetail.reportdetails is defined
-        const patientReportDetail1 = patientReportDetail?.reportdetails ? Object.values(patientReportDetail.reportdetails).join("") : "";
+        const reportDetails = patientReportDetail && patientReportDetail.document_status === "Approved" && patientReportDetail?.submitReportDetails ? patientReportDetail?.submitReportDetails : patientReportDetail?.reportdetails;
+        const patientReportDetail1 = reportDetails ? Object.values(reportDetails).join("") : "";
         const temaplateDataReport = patientReportDetail1 + notApproved;
         const patientTemaplateDataReport = temaplateDataReport.replace(/<table style="border-collapse: collapse; width: 100%;" border="1"[\s\S]*?<\/table>/g, match => {
           matchCount++;
