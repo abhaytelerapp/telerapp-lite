@@ -591,7 +591,7 @@ const AiReportEditor = _ref => {
         `;
       }
       // Generate the PDF with the modified content
-      generateReportPdf(modifiedEditor, setIsLoading, patientData?.patient_name);
+      (0, _RequestHandler.generateReportPdf)(apiData, modifiedEditor, setIsLoading, patientData?.patient_name);
     } catch (error) {
       console.error("Error downloading PDF:", error);
     }

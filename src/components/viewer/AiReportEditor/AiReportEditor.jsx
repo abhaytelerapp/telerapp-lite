@@ -26,6 +26,7 @@ import {
   fetchUsers,
   fetchViewerStudy,
   genAiRadiologyReporter,
+  generateReportPdf,
   updateOrthancStudy,
   updatePatientReports,
   userToken,
@@ -877,6 +878,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
       }
       // Generate the PDF with the modified content
       generateReportPdf(
+        apiData,
         modifiedEditor,
         setIsLoading,
         patientData?.patient_name
