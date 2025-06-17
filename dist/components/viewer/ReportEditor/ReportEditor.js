@@ -1306,7 +1306,7 @@ const ReportEditor = props => {
         const institutionNameFromStorage = viewerStudy[0]?.MainDicomTags?.InstitutionName;
 
         // Ensure patientReportDetail.reportdetails is defined
-        const reportDetails = patientReportDetail && patientReportDetail.document_status === "Approved" && patientReportDetail?.submitReportDetails ? patientReportDetail?.submitReportDetails : patientReportDetail?.reportdetails;
+        const reportDetails = patientReportDetail && (patientReportDetail.document_status === 'Approved' || patientReportDetail.document_status === 'Addendum' || patientReportDetail.document_status === 'Final') && patientReportDetail?.submitReportDetails ? patientReportDetail?.submitReportDetails : patientReportDetail?.reportdetails;
         const patientReportDetail1 = reportDetails ? Object.values(reportDetails).join("") : "";
         const temaplateDataReport = patientReportDetail1 + notApproved;
         const patientTemaplateDataReport = temaplateDataReport.replace(/<table style="border-collapse: collapse; width: 100%;" border="1"[\s\S]*?<\/table>/g, match => {
@@ -1314,7 +1314,7 @@ const ReportEditor = props => {
           return matchCount > 1 ? "" : match;
         });
         if (typeof _handlebars.default !== "undefined") {
-          const compiledTemplate = _handlebars.default.compile(patientReportDetail?.reportdetails ? patientTemaplateDataReport : templateData1);
+          const compiledTemplate = _handlebars.default.compile(reportDetails ? patientTemaplateDataReport : templateData1);
           const templateData = compiledTemplate(patientData);
           const cleanedTemplateData = templateData.replace(/Default Template/g, "");
           const updatedTemplateData = cleanedTemplateData.replace(/(<td[^>]*>\s*<strong>\s*Institution Name:\s*<\/strong>\s*<\/td>\s*<td[^>]*>)(\s*<\/td>)/i, (match, prefix, emptyTd) => {

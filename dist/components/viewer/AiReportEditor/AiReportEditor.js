@@ -224,7 +224,8 @@ const AiReportEditor = _ref => {
           institution_name: studyList?.MainDicomTags.InstitutionName || patientReportData.institutionname,
           study_description: studyList?.MainDicomTags.StudyDescription || patientReportData.studydescription,
           patient_dob: (0, _moment.default)(patientReportData.patientbirthdate).format("MM/DD/YYYY"),
-          document_status: patient?.document_status
+          document_status: patient?.document_status,
+          clinical_history: patient?.clinical_history
         });
       }
     }
@@ -255,7 +256,7 @@ const AiReportEditor = _ref => {
         patient_age: parseInt(patientData?.patient_age),
         modality: patientData?.patient_modality,
         study_description: patientData?.study,
-        clinicalHistory: patientData?.clinicalHistory || "None"
+        clinicalHistory: patientData?.clinical_history || "None"
       };
       setInputValue("");
       setAiEditorData("");
@@ -602,8 +603,8 @@ const AiReportEditor = _ref => {
       const editorElement = document.querySelector("#ai-editor");
       const toolbarContainer = document.querySelector("#ai-toolbar-container");
       if (!editorElement || !patientData) return;
-      const clinicalHistory = patientData?.clinicalHistory || "None";
-      const reportDetails = (patientData && patientData.document_status === "Approved" && patientData?.submitReportDetails ? patientData?.submitReportDetails : aiReport || aiEditorData) || "";
+      const clinicalHistory = patientData?.clinical_history || "None";
+      const reportDetails = (patientData && (patientData.document_status === "Approved" || patientData.document_status === "Addendum" || patientData.document_status === "Final") && patientData?.submitReportDetails ? patientData?.submitReportDetails : aiReport || aiEditorData) || "";
       try {
         instance = await DecoupledEditor.create(editorElement, {
           fontSize: {

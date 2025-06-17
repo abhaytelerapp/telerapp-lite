@@ -1928,10 +1928,13 @@ const ReportEditor = (props) => {
         // Ensure patientReportDetail.reportdetails is defined
         const reportDetails =
           patientReportDetail &&
-          patientReportDetail.document_status === "Approved" &&
+          (patientReportDetail.document_status === 'Approved' ||
+            patientReportDetail.document_status === 'Addendum' ||
+            patientReportDetail.document_status === 'Final') &&
           patientReportDetail?.submitReportDetails
             ? patientReportDetail?.submitReportDetails
             : patientReportDetail?.reportdetails;
+            
         const patientReportDetail1 = reportDetails
           ? Object.values(reportDetails).join("")
           : "";
@@ -1948,7 +1951,7 @@ const ReportEditor = (props) => {
 
         if (typeof Handlebars !== "undefined") {
           const compiledTemplate = Handlebars.compile(
-            patientReportDetail?.reportdetails
+            reportDetails
               ? patientTemaplateDataReport
               : templateData1
           );

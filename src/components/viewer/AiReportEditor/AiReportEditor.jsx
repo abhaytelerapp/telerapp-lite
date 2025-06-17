@@ -341,6 +341,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
             "MM/DD/YYYY"
           ),
           document_status: patient?.document_status,
+          clinical_history: patient?.clinical_history,
         });
       }
     }
@@ -385,7 +386,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         patient_age: parseInt(patientData?.patient_age),
         modality: patientData?.patient_modality,
         study_description: patientData?.study,
-        clinicalHistory: patientData?.clinicalHistory || "None",
+        clinicalHistory: patientData?.clinical_history || "None",
       };
       setInputValue("");
       setAiEditorData("");
@@ -897,11 +898,13 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
 
       if (!editorElement || !patientData) return;
 
-      const clinicalHistory = patientData?.clinicalHistory || "None";
+      const clinicalHistory = patientData?.clinical_history || "None";
 
       const reportDetails =
         (patientData &&
-        patientData.document_status === "Approved" &&
+        (patientData.document_status === "Approved" ||
+          patientData.document_status === "Addendum" ||
+          patientData.document_status === "Final") &&
         patientData?.submitReportDetails
           ? patientData?.submitReportDetails
           : aiReport || aiEditorData) || "";
