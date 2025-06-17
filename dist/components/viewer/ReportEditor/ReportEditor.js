@@ -1298,7 +1298,7 @@ const ReportEditor = props => {
 
         // Ensure templates is an array before calling Object.values
         const data = templates.length ? Object.values(templates).join("<p></p>") : "";
-        const notApproved = patientReportDetail?.document_status === "Approved" && data.length !== 0 ? "" : data;
+        const notApproved = (patientReportDetail?.document_status === 'Approved' || patientReportDetail.document_status === 'Addendum' || patientReportDetail.document_status === 'Final') && data.length !== 0 ? "" : data;
         const templateData1 = data.replace(/<table style="border-collapse: collapse; width: 100%;" border="1"[\s\S]*?<\/table>/g, match => {
           matchCount++;
           return matchCount > 1 ? "" : match; // Remove only the second occurrence of the table
