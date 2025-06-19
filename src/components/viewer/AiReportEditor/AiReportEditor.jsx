@@ -1266,7 +1266,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
           if (res.status === 200) {
             toast.success("Your report has been successfully submitted");
             setTimeout(() => {
-              navigate({ pathname: "/" });
+              window.location.href = "/";
             }, 1500);
           }
         });
@@ -1282,7 +1282,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
           if (res.status === 200) {
             toast.success("Your report has been successfully updated");
             setTimeout(() => {
-              navigate({ pathname: "/" });
+              window.location.href = "/";
             }, 1500);
           }
         });

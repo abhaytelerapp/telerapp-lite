@@ -849,9 +849,7 @@ const AiReportEditor = _ref => {
           if (res.status === 200) {
             _reactToastify.toast.success("Your report has been successfully submitted");
             setTimeout(() => {
-              navigate({
-                pathname: "/"
-              });
+              window.location.href = "/";
             }, 1500);
           }
         });
@@ -860,9 +858,7 @@ const AiReportEditor = _ref => {
           if (res.status === 200) {
             _reactToastify.toast.success("Your report has been successfully updated");
             setTimeout(() => {
-              navigate({
-                pathname: "/"
-              });
+              window.location.href = "/";
             }, 1500);
           }
         });
