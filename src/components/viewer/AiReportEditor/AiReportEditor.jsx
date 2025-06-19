@@ -902,9 +902,9 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
 
       const reportDetails =
         (patientData &&
-        (patientData.document_status === "Approved" ||
-          patientData.document_status === "Addendum" ||
-          patientData.document_status === "Final") &&
+        (patientData?.document_status === "Approved" ||
+          patientData?.document_status === "Addendum" ||
+          patientData?.document_status === "Final") &&
         patientData?.submitReportDetails
           ? patientData?.submitReportDetails
           : aiReport || aiEditorData) || "";
@@ -1215,7 +1215,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
       const currentTime = new Date();
       const actionlog = "SubmitLogs";
       const currentReport = {
-        aiReportDetails: aiEditorData,
+        aiReportDetails: editorData,
         submittedBy: user?.profile?.preferred_username,
         submittedAt: currentTime,
       };
@@ -1229,8 +1229,8 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
 
       const resData = {
         ...patientData,
-        aiReportDetails: aiEditorData,
-        submitReportDetails: aiEditorData,
+        aiReportDetails: editorData,
+        submitReportDetails: editorData,
         report_history: reportHistory,
         study_UIDs: studyInstanceUid,
         study_IDS: studyList?.ID,
@@ -1312,7 +1312,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
 
     const resData = {
       ...patientData,
-      aiReportDetails: aiEditorData,
+      aiReportDetails: editorData,
       study_UIDs: studyInstanceUid,
       study_IDS: studyList.ID,
       study_priority: patientReportDetail?.study_priority || null,

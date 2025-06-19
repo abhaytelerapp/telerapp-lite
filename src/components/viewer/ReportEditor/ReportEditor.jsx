@@ -1910,8 +1910,8 @@ const ReportEditor = (props) => {
 
         const notApproved =
           (patientReportDetail?.document_status === 'Approved' ||
-            patientReportDetail.document_status === 'Addendum' ||
-            patientReportDetail.document_status === 'Final') &&
+            patientReportDetail?.document_status === 'Addendum' ||
+            patientReportDetail?.document_status === 'Final') &&
           data.length !== 0
             ? ""
             : data;
