@@ -604,7 +604,7 @@ const AiReportEditor = _ref => {
       const toolbarContainer = document.querySelector("#ai-toolbar-container");
       if (!editorElement || !patientData) return;
       const clinicalHistory = patientData?.clinical_history || "None";
-      const reportDetails = (patientData && (patientData.document_status === "Approved" || patientData.document_status === "Addendum" || patientData.document_status === "Final") && patientData?.submitReportDetails ? patientData?.submitReportDetails : aiReport || aiEditorData) || "";
+      const reportDetails = (patientData && (patientData?.document_status === "Approved" || patientData?.document_status === "Addendum" || patientData?.document_status === "Final") && patientData?.submitReportDetails ? patientData?.submitReportDetails : aiReport || aiEditorData) || "";
       try {
         instance = await DecoupledEditor.create(editorElement, {
           fontSize: {
@@ -813,7 +813,7 @@ const AiReportEditor = _ref => {
       const currentTime = new Date();
       const actionlog = "SubmitLogs";
       const currentReport = {
-        aiReportDetails: aiEditorData,
+        aiReportDetails: editorData,
         submittedBy: user?.profile?.preferred_username,
         submittedAt: currentTime
       };
@@ -824,8 +824,8 @@ const AiReportEditor = _ref => {
       reportHistory.push(currentReport);
       const resData = {
         ...patientData,
-        aiReportDetails: aiEditorData,
-        submitReportDetails: aiEditorData,
+        aiReportDetails: editorData,
+        submitReportDetails: editorData,
         report_history: reportHistory,
         study_UIDs: studyInstanceUid,
         study_IDS: studyList?.ID,
@@ -890,7 +890,7 @@ const AiReportEditor = _ref => {
     const actionlog = "DraftLogs";
     const resData = {
       ...patientData,
-      aiReportDetails: aiEditorData,
+      aiReportDetails: editorData,
       study_UIDs: studyInstanceUid,
       study_IDS: studyList.ID,
       study_priority: patientReportDetail?.study_priority || null,
