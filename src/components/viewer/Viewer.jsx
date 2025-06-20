@@ -135,8 +135,6 @@ const Viewer = (props) => {
     data?.user?.profile?.permission?.includes("AI Editor") ||
     token?.realm_access?.roles?.includes("super-admin");
 
-  const pic = getByid("modality_prior");
-  var priorIcon_span = document.createElement("SPAN");
   return (
     <div style={{ backgroundColor: "#000000" }} onWheel={() => {}}>
       <header
