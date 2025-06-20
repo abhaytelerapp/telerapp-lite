@@ -32,6 +32,7 @@ var _md = require("react-icons/md");
 var _RequestHandler = require("./RequestHandler");
 var _contextProviders = require("../contextProviders");
 var _getUserInformation = require("./getUserInformation");
+var _PreviousReport = _interopRequireDefault(require("../PreviousReport/PreviousReport"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -72,12 +73,15 @@ const ReportEditor = props => {
   const [availableReportTemplates, setAvailableReportTemplates] = (0, _react.useState)("");
   const [documentUploadDetails, setDocumentUploadDetails] = (0, _react.useState)("");
   const [reportData, setReportData] = (0, _react.useState)({});
+  const [previouPatientReports, setPreviouPatientReports] = (0, _react.useState)([]);
+  const [patientAllReport, setPatientAllReport] = (0, _react.useState)([]);
   const {
     t
   } = (0, _reactI18next.useTranslation)();
   const {
     show: display
   } = (0, _contextProviders.useSnackbar)();
+  const hasFetchedReportsRef = (0, _react.useRef)(false);
   const {
     toggleDisplayReportEditor,
     setToggleDisplayReportEditor,
@@ -341,7 +345,17 @@ const ReportEditor = props => {
       setUsersList(data);
     }).catch(error => console.error("Error fetching users:", error));
   }, [user.access_token, apiData, keycloak_url]);
-  const studyInstanceUid = params.pathname.includes("report-editor") ? params.pathname?.split("report-editor/:")[1] : params?.search?.slice(params?.search?.indexOf("StudyInstanceUIDs=") + "StudyInstanceUIDs=".length)?.split("&")[0]?.replace(/^=/, "");
+  const studyInstanceUid = params.pathname.includes("report-editor") ? params.pathname?.split("report-editor/:")[1] : params?.search?.slice(params?.search?.indexOf("StudyInstanceUIDs=") + "StudyInstanceUIDs=".length)?.split("&")[0]?.split(",")[0]?.replace(/^=/, "");
+  (0, _react.useEffect)(() => {
+    const query = params?.search;
+    const uids = query?.slice(query.indexOf("StudyInstanceUID=") + "StudyInstanceUID=".length)?.split("&")[0]?.split(",")?.map(uid => ({
+      studyInstanceUid: uid.trim()
+    })); // store objects
+
+    if (uids?.length) {
+      setPatientAllReport(uids);
+    }
+  }, [params?.search]);
   const getReportDetails = async () => {
     const patient = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid, apiData);
     setPatientFind(patient);
@@ -350,6 +364,44 @@ const ReportEditor = props => {
     if (!studyInstanceUid && patientCritical) return;
     getReportDetails();
   }, [studyInstanceUid, patientCritical]);
+  (0, _react.useEffect)(() => {
+    const fetchReports = async () => {
+      if (hasFetchedReportsRef.current || patientAllReport.length === 0) return;
+      hasFetchedReportsRef.current = true;
+      if (!studyInstanceUid) {
+        console.warn("studyInstanceUid missing");
+        return;
+      }
+      const filtered = patientAllReport.filter(study => study.studyInstanceUid !== studyInstanceUid);
+      if (filtered.length === 0) {
+        setPreviouPatientReports([]);
+        return;
+      }
+      const updatedStudies = await Promise.all(filtered.map(async study => {
+        const reportDetails = await (0, _RequestHandler.fetchPatientReportByStudy)(study.studyInstanceUid, apiData);
+        const viewerStudy = await (0, _RequestHandler.fetchViewerStudy)(reportDetails?.study_UIDs, apiData);
+        let fetchUserInformation = null;
+        if (_RequestHandler.fetchReportSetting && viewerStudy?.length > 0 && viewerStudy[0]?.MainDicomTags?.InstitutionName && patientFind && radiologistUserList?.length > 0) {
+          fetchUserInformation = await (0, _getUserInformation.getUserInformation)(_RequestHandler.fetchReportSetting, viewerStudy?.[0]?.MainDicomTags?.InstitutionName, reportDetails, radiologistUserList, apiData);
+        }
+        return {
+          studyData: viewerStudy?.[0]?.MainDicomTags?.StudyDate,
+          modality: viewerStudy?.[0]?.RequestedTags?.ModalitiesInStudy,
+          instances: viewerStudy?.[0]?.RequestedTags?.NumberOfStudyRelatedInstances,
+          template: reportDetails?.reportdetails || null,
+          document_status: reportDetails?.document_status || null,
+          displayName: fetchUserInformation?.doctorInformation?.displayName,
+          qualificationName: fetchUserInformation?.doctorInformation?.qualificationName,
+          registrationNoName: fetchUserInformation?.doctorInformation?.registrationNoName,
+          formattedTimesName: fetchUserInformation?.doctorInformation?.formattedTimesName,
+          disclaimerDetailsName: fetchUserInformation?.doctorInformation?.disclaimerDetailsName,
+          signature: fetchUserInformation?.doctorInformation?.signature
+        };
+      }));
+      setPreviouPatientReports(updatedStudies);
+    };
+    fetchReports();
+  }, [_RequestHandler.fetchReportSetting, radiologistUserList?.length > 0, studyInstanceUid, apiData]);
   (0, _react.useEffect)(() => {
     const fetchReportSettings = async () => {
       if (_RequestHandler.fetchReportSetting && viewerStudy?.length > 0 && viewerStudy[0]?.MainDicomTags?.InstitutionName && patientFind && radiologistUserList?.length > 0) {
@@ -627,7 +679,7 @@ const ReportEditor = props => {
     const documentData = await (0, _RequestHandler.fetchDocumentUploadForStudy)(apiData, studyInstanceUid);
     show({
       content: _AttachMent.default,
-      title: t("ReportStatus:Attachment"),
+      title: t("Attachment"),
       contentProps: {
         hide,
         studyInstanceUid,
@@ -668,7 +720,7 @@ const ReportEditor = props => {
     const findHistory = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid, apiData);
     show({
       content: _AddClinicalHistoryModel.default,
-      title: t("ReportStatus:Clinical History"),
+      title: t("Clinical History"),
       contentProps: {
         hide,
         studyInstanceUid,
@@ -1298,7 +1350,7 @@ const ReportEditor = props => {
 
         // Ensure templates is an array before calling Object.values
         const data = templates.length ? Object.values(templates).join("<p></p>") : "";
-        const notApproved = (patientReportDetail?.document_status === 'Approved' || patientReportDetail?.document_status === 'Addendum' || patientReportDetail?.document_status === 'Final') && data.length !== 0 ? "" : data;
+        const notApproved = (patientReportDetail?.document_status === "Approved" || patientReportDetail?.document_status === "Addendum" || patientReportDetail?.document_status === "Final") && data.length !== 0 ? "" : data;
         const templateData1 = data.replace(/<table style="border-collapse: collapse; width: 100%;" border="1"[\s\S]*?<\/table>/g, match => {
           matchCount++;
           return matchCount > 1 ? "" : match; // Remove only the second occurrence of the table
@@ -1306,7 +1358,7 @@ const ReportEditor = props => {
         const institutionNameFromStorage = viewerStudy[0]?.MainDicomTags?.InstitutionName;
 
         // Ensure patientReportDetail.reportdetails is defined
-        const reportDetails = patientReportDetail && (patientReportDetail.document_status === 'Approved' || patientReportDetail.document_status === 'Addendum' || patientReportDetail.document_status === 'Final') && patientReportDetail?.submitReportDetails ? patientReportDetail?.submitReportDetails : patientReportDetail?.reportdetails;
+        const reportDetails = patientReportDetail && (patientReportDetail.document_status === "Approved" || patientReportDetail.document_status === "Addendum" || patientReportDetail.document_status === "Final") && patientReportDetail?.submitReportDetails ? patientReportDetail?.submitReportDetails : patientReportDetail?.reportdetails;
         const patientReportDetail1 = reportDetails ? Object.values(reportDetails).join("") : "";
         const temaplateDataReport = patientReportDetail1 + notApproved;
         const patientTemaplateDataReport = temaplateDataReport.replace(/<table style="border-collapse: collapse; width: 100%;" border="1"[\s\S]*?<\/table>/g, match => {
@@ -1533,6 +1585,20 @@ const ReportEditor = props => {
       }
     }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_reactSelect.components.MultiValueContainer, props)));
   };
+
+  // see previous report
+  const handleSeePreviousReport = () => {
+    // setToggleDisplayReportEditor((show: boolean) => !show);
+    show({
+      content: _PreviousReport.default,
+      title: t("Previous Reports"),
+      contentProps: {
+        show,
+        hide,
+        previouPatientReports
+      }
+    });
+  };
   return /*#__PURE__*/_react.default.createElement("div", {
     className: ` report_ckeditor z-10 h-full overflow-y-auto md:h-[96%] h-[83%]`
     // style={{ height: isNewTab ? '95vh' : '100%' }}
@@ -1573,7 +1639,19 @@ const ReportEditor = props => {
     }
   })), /*#__PURE__*/_react.default.createElement("div", {
     className: " flex justify-between items-center"
-  }, /*#__PURE__*/_react.default.createElement("div", {
+  }, previouPatientReports?.length > 0 && previouPatientReports?.some(report => report?.document_status === "Approved") && /*#__PURE__*/_react.default.createElement("div", {
+    onClick: handleSeePreviousReport,
+    className: "text-primary-main rounded p-[6px] hover:bg-[#dedede]"
+  }, /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
+    text: "See Previous Reports",
+    position: "bottom",
+    style: {
+      padding: "8px",
+      fontWeight: "normal"
+    }
+  }, /*#__PURE__*/_react.default.createElement(_hi.HiClipboardDocumentCheck, {
+    className: `text-2xl`
+  }))), /*#__PURE__*/_react.default.createElement("div", {
     onClick: handleSaveReportTemaplate,
     className: "text-primary-main p-[6px] hover:bg-[#dedede] rounded inline-flex"
   }, /*#__PURE__*/_react.default.createElement(_Tooltip.default, {

@@ -31,7 +31,7 @@ import {
   FaMicrophoneSlash,
   FaNotesMedical,
 } from "react-icons/fa";
-import { HiMiniDocumentPlus } from "react-icons/hi2";
+import { HiClipboardDocumentCheck, HiMiniDocumentPlus } from "react-icons/hi2";
 import { GrDocumentUpdate } from "react-icons/gr";
 import Tooltip from "../Tooltip";
 import SnackbarTypes from "../Snackbar/SnackbarTypes";
@@ -64,6 +64,7 @@ import {
 } from "./RequestHandler";
 import { useModal, useSnackbar } from "../contextProviders";
 import { getUserInformation } from "./getUserInformation";
+import PreviousReport from "../PreviousReport/PreviousReport";
 
 const ReportEditor = (props) => {
   const [patientData, setPatientData] = React.useState(null);
@@ -86,8 +87,11 @@ const ReportEditor = (props) => {
   const [availableReportTemplates, setAvailableReportTemplates] = useState("");
   const [documentUploadDetails, setDocumentUploadDetails] = useState("");
   const [reportData, setReportData] = useState({});
+  const [previouPatientReports, setPreviouPatientReports] = useState([]);
+  const [patientAllReport, setPatientAllReport] = useState([]);
   const { t } = useTranslation();
   const { show: display } = useSnackbar();
+  const hasFetchedReportsRef = useRef(false);
 
   const {
     toggleDisplayReportEditor,
@@ -415,7 +419,21 @@ const ReportEditor = (props) => {
             "StudyInstanceUIDs=".length
         )
         ?.split("&")[0]
+        ?.split(",")[0]
         ?.replace(/^=/, "");
+
+  useEffect(() => {
+    const query = params?.search;
+    const uids = query
+      ?.slice(query.indexOf("StudyInstanceUID=") + "StudyInstanceUID=".length)
+      ?.split("&")[0]
+      ?.split(",")
+      ?.map((uid) => ({ studyInstanceUid: uid.trim() })); // store objects
+
+    if (uids?.length) {
+      setPatientAllReport(uids);
+    }
+  }, [params?.search]);
 
   const getReportDetails = async () => {
     const patient = await fetchPatientReportByStudy(studyInstanceUid, apiData);
@@ -426,6 +444,83 @@ const ReportEditor = (props) => {
     if (!studyInstanceUid && patientCritical) return;
     getReportDetails();
   }, [studyInstanceUid, patientCritical]);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      if (hasFetchedReportsRef.current || patientAllReport.length === 0) return;
+      hasFetchedReportsRef.current = true;
+
+      if (!studyInstanceUid) {
+        console.warn("studyInstanceUid missing");
+        return;
+      }
+
+      const filtered = patientAllReport.filter(
+        (study) => study.studyInstanceUid !== studyInstanceUid
+      );
+
+      if (filtered.length === 0) {
+        setPreviouPatientReports([]);
+        return;
+      }
+
+      const updatedStudies = await Promise.all(
+        filtered.map(async (study) => {
+          const reportDetails = await fetchPatientReportByStudy(
+            study.studyInstanceUid,
+            apiData
+          );
+          const viewerStudy = await fetchViewerStudy(
+            reportDetails?.study_UIDs,
+            apiData
+          );
+
+          let fetchUserInformation = null;
+          if (
+            fetchReportSetting &&
+            viewerStudy?.length > 0 &&
+            viewerStudy[0]?.MainDicomTags?.InstitutionName &&
+            patientFind &&
+            radiologistUserList?.length > 0
+          ) {
+            fetchUserInformation = await getUserInformation(
+              fetchReportSetting,
+              viewerStudy?.[0]?.MainDicomTags?.InstitutionName,
+              reportDetails,
+              radiologistUserList,
+              apiData
+            );
+          }
+
+          return {
+            studyData: viewerStudy?.[0]?.MainDicomTags?.StudyDate,
+            modality: viewerStudy?.[0]?.RequestedTags?.ModalitiesInStudy,
+            instances: viewerStudy?.[0]?.RequestedTags?.NumberOfStudyRelatedInstances,
+            template: reportDetails?.reportdetails || null,
+            document_status: reportDetails?.document_status || null,
+            displayName: fetchUserInformation?.doctorInformation?.displayName,
+            qualificationName:
+              fetchUserInformation?.doctorInformation?.qualificationName,
+            registrationNoName:
+              fetchUserInformation?.doctorInformation?.registrationNoName,
+            formattedTimesName:
+              fetchUserInformation?.doctorInformation?.formattedTimesName,
+            disclaimerDetailsName:
+              fetchUserInformation?.doctorInformation?.disclaimerDetailsName,
+            signature: fetchUserInformation?.doctorInformation?.signature,
+          };
+        })
+      );
+      setPreviouPatientReports(updatedStudies);
+    };
+
+    fetchReports();
+  }, [
+    fetchReportSetting,
+    radiologistUserList?.length > 0,
+    studyInstanceUid,
+    apiData,
+  ]);
 
   useEffect(() => {
     const fetchReportSettings = async () => {
@@ -882,7 +977,7 @@ const ReportEditor = (props) => {
     );
     show({
       content: AddAttachmentModel,
-      title: t("ReportStatus:Attachment"),
+      title: t("Attachment"),
       contentProps: {
         hide,
         studyInstanceUid,
@@ -956,7 +1051,7 @@ const ReportEditor = (props) => {
     );
     show({
       content: AddClinicalHistoryModel,
-      title: t("ReportStatus:Clinical History"),
+      title: t("Clinical History"),
       contentProps: {
         hide,
         studyInstanceUid,
@@ -1909,9 +2004,9 @@ const ReportEditor = (props) => {
           : "";
 
         const notApproved =
-          (patientReportDetail?.document_status === 'Approved' ||
-            patientReportDetail?.document_status === 'Addendum' ||
-            patientReportDetail?.document_status === 'Final') &&
+          (patientReportDetail?.document_status === "Approved" ||
+            patientReportDetail?.document_status === "Addendum" ||
+            patientReportDetail?.document_status === "Final") &&
           data.length !== 0
             ? ""
             : data;
@@ -1930,13 +2025,13 @@ const ReportEditor = (props) => {
         // Ensure patientReportDetail.reportdetails is defined
         const reportDetails =
           patientReportDetail &&
-          (patientReportDetail.document_status === 'Approved' ||
-            patientReportDetail.document_status === 'Addendum' ||
-            patientReportDetail.document_status === 'Final') &&
+          (patientReportDetail.document_status === "Approved" ||
+            patientReportDetail.document_status === "Addendum" ||
+            patientReportDetail.document_status === "Final") &&
           patientReportDetail?.submitReportDetails
             ? patientReportDetail?.submitReportDetails
             : patientReportDetail?.reportdetails;
-            
+
         const patientReportDetail1 = reportDetails
           ? Object.values(reportDetails).join("")
           : "";
@@ -1953,9 +2048,7 @@ const ReportEditor = (props) => {
 
         if (typeof Handlebars !== "undefined") {
           const compiledTemplate = Handlebars.compile(
-            reportDetails
-              ? patientTemaplateDataReport
-              : templateData1
+            reportDetails ? patientTemaplateDataReport : templateData1
           );
           const templateData = compiledTemplate(patientData);
           const cleanedTemplateData = templateData.replace(
@@ -2266,6 +2359,20 @@ const ReportEditor = (props) => {
     );
   };
 
+  // see previous report
+  const handleSeePreviousReport = () => {
+    // setToggleDisplayReportEditor((show: boolean) => !show);
+    show({
+      content: PreviousReport,
+      title: t("Previous Reports"),
+      contentProps: {
+        show,
+        hide,
+        previouPatientReports,
+      },
+    });
+  };
+
   return (
     <div
       className={` report_ckeditor z-10 h-full overflow-y-auto md:h-[96%] h-[83%]`}
@@ -2304,6 +2411,23 @@ const ReportEditor = (props) => {
         </div>
 
         <div className=" flex justify-between items-center">
+          {previouPatientReports?.length > 0 &&
+            previouPatientReports?.some(
+              (report) => report?.document_status === "Approved"
+            ) && (
+              <div
+                onClick={handleSeePreviousReport}
+                className="text-primary-main rounded p-[6px] hover:bg-[#dedede]"
+              >
+                <Tooltip
+                  text={"See Previous Reports"}
+                  position="bottom"
+                  style={{ padding: "8px", fontWeight: "normal" }}
+                >
+                  <HiClipboardDocumentCheck className={`text-2xl`} />
+                </Tooltip>
+              </div>
+            )}
           <div
             onClick={handleSaveReportTemaplate}
             className="text-primary-main p-[6px] hover:bg-[#dedede] rounded inline-flex"

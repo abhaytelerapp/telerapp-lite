@@ -296,7 +296,7 @@ function loadPicture(url) {
         //改成無論是否曾出現在左側面板，都嘗試加到左側面板
         var qrLv = new QRLv({});
         qrLv.study = imageObj.StudyInstanceUID, qrLv.series = imageObj.SeriesInstanceUID, qrLv.sop = imageObj.SOPInstanceUID;
-        leftLayout.setImg2Left(qrLv, imageObj.patientId);
+        leftLayout.setImg2Left(qrLv, imageObj.patientId, imageObj);
         leftLayout.appendCanvasBySeries(imageObj.SeriesInstanceUID, imageObj, imageObj.pixelData);
         leftLayout.refleshMarkWithSeries(imageObj.SeriesInstanceUID);
         resetViewport();

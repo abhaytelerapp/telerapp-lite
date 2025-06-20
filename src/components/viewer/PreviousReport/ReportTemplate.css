@@ -1,0 +1,80 @@
+.template-checkbox {
+  box-shadow:
+    rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  margin-bottom: 10px;
+  padding: 7px 15px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.template-checkbox:hover {
+  box-shadow:
+    rgba(60, 64, 67, 0.3) 0px 2px 4px,
+    rgba(60, 64, 67, 0.3) 0px 7px 13px -3px,
+    rgba(60, 64, 67, 0.3) 0px -3px 0px inset;
+}
+/* .hedingdesign{
+  margin: 0 0 18px 0;
+  font-size: 20px;
+}
+@media (min-width: 431px){
+  .hedingdesign{
+      margin: 0 0 18px 50px;
+      font-size: 20px;
+  }
+} */
+
+.template-checkbox input {
+  width: 15px;
+  height: 15px;
+  margin-right: 18px;
+}
+
+@media (min-width:770px){
+  .template-checkbox input {
+    width: 20px;
+    height: 20px;
+    margin-right: 18px;
+  }
+}
+
+
+.template-checkbox span {
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+
+@media (min-width:770px){
+  .template-checkbox span {
+    font-size: 14px;
+    text-transform: capitalize;
+  }
+}
+
+.headingMaindesign {
+  text-align: center;
+  font-size: 20px;
+  margin: 0 0 20px 0;
+}
+
+@media (min-width:640px) {
+  .headingMaindesign {
+    text-align: center;
+    font-size: 28px;
+    margin: 0 0 20px 0;
+  }
+}
+
+.ck .ck-widget.ck-widget_selected > .ck-widget__type-around > .ck-widget__type-around__button,
+.ck .ck-widget:hover > .ck-widget__type-around > .ck-widget__type-around__button {
+  display: none;
+}
+
+.ck
+  .ck-widget.ck-widget_with-selection-handle.ck-widget_selected:hover
+  > .ck-widget__selection-handle,
+.ck .ck-widget.ck-widget_with-selection-handle.ck-widget_selected > .ck-widget__selection-handle {
+  display: none;
+}

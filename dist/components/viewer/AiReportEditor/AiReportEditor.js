@@ -87,7 +87,7 @@ const AiReportEditor = _ref => {
       }
     }, 1000);
   }, []);
-  const studyInstanceUid = params.pathname.includes("report-editor") ? params.pathname?.split("report-editor/:")[1] : params?.search?.slice(params?.search?.indexOf("StudyInstanceUIDs=") + "StudyInstanceUIDs=".length)?.split("&")[0]?.replace(/^=/, "");
+  const studyInstanceUid = params.pathname.includes("report-editor") ? params.pathname?.split("report-editor/:")[1] : params?.search?.slice(params?.search?.indexOf("StudyInstanceUIDs=") + "StudyInstanceUIDs=".length)?.split("&")[0]?.split(',')[0]?.replace(/^=/, "");
   const getReportDetails = async () => {
     const patient = await (0, _RequestHandler.fetchPatientReportByStudy)(studyInstanceUid, apiData);
     setPatientFind(patient);

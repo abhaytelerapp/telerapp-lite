@@ -88,21 +88,13 @@ const Viewer = props => {
   };
   const leftPannel = () => {
     setIsLeftClose(!isLeftClose);
-    const outLeftImg = document.querySelector(".OutLeftImg");
+    const outLeftImgs = document.querySelectorAll(".OutLeftImg");
     const leftPicture = document.querySelector("#LeftPicture");
-    if (outLeftImg) {
-      if (outLeftImg.style.display === "none") {
-        outLeftImg.style.display = "flex";
-      } else {
-        outLeftImg.style.display = "none";
-      }
-    }
+    outLeftImgs.forEach(img => {
+      img.style.display = img.style.display === "none" ? "flex" : "none";
+    });
     if (leftPicture) {
-      if (leftPicture.style.marginLeft === "-120px") {
-        leftPicture.style.marginLeft = "0px";
-      } else {
-        leftPicture.style.marginLeft = "-120px";
-      }
+      leftPicture.style.marginLeft = leftPicture.style.marginLeft === "-120px" ? "0px" : "-120px";
     }
   };
   const toggleDisplayReportEditorView = () => {
@@ -136,6 +128,8 @@ const Viewer = props => {
     getToken();
   }, [data?.data]);
   const hasAIEditorPermission = data?.user?.profile?.permission?.includes("AI Editor") || token?.realm_access?.roles?.includes("super-admin");
+  const pic = getByid("modality_prior");
+  var priorIcon_span = document.createElement("SPAN");
   return /*#__PURE__*/_react.default.createElement("div", {
     style: {
       backgroundColor: "#000000"
@@ -1176,8 +1170,9 @@ const Viewer = props => {
       flexDirection: "column",
       position: "relative",
       zIndex: 9,
-      maxWidth: "147px",
-      width: "147px"
+      maxWidth: "140px",
+      width: "140px",
+      marginRight: "8px"
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "leftPannelCloseOpen"

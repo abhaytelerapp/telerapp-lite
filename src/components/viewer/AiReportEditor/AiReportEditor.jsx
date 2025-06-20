@@ -107,6 +107,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
             "StudyInstanceUIDs=".length
         )
         ?.split("&")[0]
+        ?.split(',')[0]
         ?.replace(/^=/, "");
 
   const getReportDetails = async () => {

@@ -168,7 +168,7 @@ class BlueLightImageManager {
             var LoadImgSop = null;
             for (var sop of preLoadSops) {
                 if (!leftLayout.findSeries(sop.dataSet.string(Tag.SeriesInstanceUID))) {
-                    leftLayout.setImg2Left(new QRLv(sop.dataSet), sop.dataSet.string(Tag.PatientID));
+                    leftLayout.setImg2Left(new QRLv(sop.dataSet), sop.dataSet.string(Tag.PatientID), sop.dataSet);
                     if (sop.image.imageDataLoaded == false && sop.image.loadImageData) sop.image.loadImageData();
                     leftLayout.appendCanvasBySeries(sop.dataSet.string(Tag.SeriesInstanceUID), sop.image, sop.image.getPixelData());
                     LoadImgSop = sop.Sop;

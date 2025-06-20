@@ -187,7 +187,7 @@ body.dark .custom-size {
 }
 
 select,
-button:not(#mic-container, .ck, #previewBtn, #critical, #draft, #submit, #discard, #captureImage, #fileDownload, .swal2-styled, .Toastify__close-button, #send-button, #submit-button, #approve-button, #reject-button, #draft-button),
+button:not(#mic-container, .ck, #previewBtn, #critical, #draft, #submit, #discard, #captureImage, #fileDownload, .swal2-styled, .Toastify__close-button, #send-button, #submit-button, #approve-button, #reject-button, #draft-button, #preview-button),
 #overlay2seg,
 #seg2stl,
 #RemoveSEG,
@@ -365,10 +365,108 @@ img{
 
 .OutLeftImg {
   display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2.5px 2.5px 2.5px 4px;
+  overflow-y: auto;
+  border: 1px solid #555;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  background-color: #404048;
+}
+
+body.dark .OutLeftImg {
+  background-color: #282828;
+  border-color: #666;
+}
+
+/* Patient Dropdown Header Styles */
+.PatientDropdownHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background-color: #555;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  transition: background-color 0.2s ease;
+  border-radius: 4px 4px 0 0;
+}
+
+body.dark .PatientDropdownHeader {
+  background-color: #444;
+}
+
+.PatientDropdownHeader:hover {
+  background-color: #666;
+}
+
+body.dark .PatientDropdownHeader:hover {
+  background-color: #555;
+}
+
+.dropdown-icon {
+  transition: transform 0.2s ease;
+  font-size: 12px;
+}
+
+/* Patient Series Content Styles */
+.PatientSeriesContent {
+  display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  padding: 2.5px 0 12px 4px;
+  background-color: #404048;
+  border-radius: 0 0 4px 4px;
+  transition: all 0.3s ease;
+  max-height: 500px;
   overflow-y: auto;
+}
+
+body.dark .PatientSeriesContent {
+  background-color: #282828;
+}
+
+/* Custom scrollbar for series content */
+.PatientSeriesContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.PatientSeriesContent::-webkit-scrollbar-track {
+  background: #333;
+}
+
+.PatientSeriesContent::-webkit-scrollbar-thumb {
+  background: #666;
+  border-radius: 3px;
+}
+
+.PatientSeriesContent::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+/* Animation for collapsed state */
+.PatientSeriesContent.collapsed {
+  max-height: 0;
+  padding: 0 8px;
+  overflow: hidden;
+}
+
+/* Empty state styling */
+.PatientSeriesContent:empty::after {
+  content: "No series available";
+  display: block;
+  text-align: center;
+  padding: 20px;
+  color: #888;
+  font-style: italic;
+  width: 100%;
+}
+
+/* Better spacing for LeftImgAndMark within dropdowns */
+.PatientSeriesContent .LeftImgAndMark {
+  margin-bottom: 4px;
 }
 
 .LeftCanvas {
@@ -558,7 +656,6 @@ body.dark .SeriesDescriptionLabel{
   padding: 6px 0 2px 0;
   border-radius: 0 4px 4px 0;
   text-align: center;
-  margin-right: 8px;
   font-size: 13px;
 }
 

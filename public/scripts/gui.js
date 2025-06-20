@@ -114,8 +114,16 @@ class LeftLayout {
     }
 
     findSeries(series) {
-        for (var series_div of getClass("LeftImgAndMark")) {
-            if (series_div.series == series) return series_div;
+        // Search within all PatientSeriesContent containers
+         var patientContainers = getClass("OutLeftImg");
+        for (var patientContainer of patientContainers) {
+            var seriesContent = patientContainer.querySelector(".PatientSeriesContent");
+            if (seriesContent) {
+                var series_divs = seriesContent.getElementsByClassName("LeftImgAndMark");
+                for (var series_div of series_divs) {
+                    if (series_div.series == series) return series_div;
+                }
+            }
         }
         return null;
     }
@@ -153,16 +161,108 @@ class LeftLayout {
         return null;
     }
 
-    setImg2Left(QRLevel, patientID) {
+    setImg2Left(QRLevel, patientID, dataSet) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const allStudyInstanceUIDs = urlParams.getAll('StudyInstanceUID');
+        const firstStudyInstanceUID = allStudyInstanceUIDs[0]?.split(',')[0];
+        const dataSetStudyInstanceUID = dataSet.string(Tag.StudyInstanceUID);
+
+        const studyDescription = dataSet.string(Tag.StudyDescription);
+        const studyDate = dataSet.string(Tag.StudyDate);
+        const modality = dataSet.string(Tag.Modality);
         var pic = getByid("LeftPicture");
         var Patient_div = document.createElement("DIV");
         Patient_div.className = "OutLeftImg";
         //Patient_div.id = "OutLeftImg" + patientID;
         Patient_div.PatientId = patientID;
-        if (!this.findPatienID(patientID)) pic.appendChild(Patient_div);
-        else {
-            for (let elem of getClass("OutLeftImg")) // Use 'let' before 'elem'
+        Patient_div.studyInstanceUID = dataSetStudyInstanceUID;
+        Patient_div.studyDescription = studyDescription;
+        Patient_div.studyDate = studyDate;
+        Patient_div.modality = modality;
+        if (!this.findPatienID(patientID)) {
+            // Create dropdown header for new patient
+            var dropdownHeader = document.createElement("DIV");
+            dropdownHeader.className = "PatientDropdownHeader";
+            dropdownHeader.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px;">
+                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                    <span class="patient-date">${studyDate ? formatStudyDate(studyDate) : "No Study Date"}</span>
+                    <span style="width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${studyDescription ? studyDescription : ""}</span>
+                    </div>
+                    <div id="modality_prior" style="margin-right: 8px;">
+                        <span class="patient-modality">${modality ? modality : ""}</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+            `;
+            dropdownHeader.onclick = function() {
+                var content = Patient_div.querySelector(".PatientSeriesContent");
+                var icon = dropdownHeader.querySelector(".dropdown-icon");
+                if (content.classList.contains("collapsed") || content.style.display === "none" || content.style.display === "") {
+                    content.style.display = "flex";
+                    content.classList.remove("collapsed");
+                    icon.className = "fa-solid fa-chevron-up dropdown-icon";
+                } else {
+                    content.classList.add("collapsed");
+                    setTimeout(() => {
+                        if (content.classList.contains("collapsed")) {
+                            content.style.display = "none";
+                        }
+                    }, 300); // Match the CSS transition duration
+                    icon.className = "fa-solid fa-chevron-down dropdown-icon";
+                }
+            };
+            
+            // Create content container for series
+            var seriesContent = document.createElement("DIV");
+            seriesContent.className = "PatientSeriesContent";
+            seriesContent.style.display = "flex";
+            seriesContent.style.flexWrap = "wrap";
+            seriesContent.style.gap = "4px";
+            seriesContent.style.scrollbarWidth = "none"; // Hide scrollbar
+            
+            Patient_div.appendChild(dropdownHeader);
+            Patient_div.appendChild(seriesContent);
+            var leftPanel = pic.querySelector('.leftPannelCloseOpen');
+            if (dataSetStudyInstanceUID === firstStudyInstanceUID) {
+                if (leftPanel) {
+                    if (leftPanel.nextSibling) {
+                        pic.insertBefore(Patient_div, leftPanel.nextSibling);
+                    } else {
+                        pic.appendChild(Patient_div);
+                    }
+                } else {
+                    pic.insertBefore(Patient_div, pic.firstChild);
+                }
+            } else {
+                pic.appendChild(Patient_div);
+            }
+
+             // Set dropdown open/close state based on StudyInstanceUID
+            // var icon = dropdownHeader.querySelector(".dropdown-icon");
+            // if (dataSetStudyInstanceUID === firstStudyInstanceUID) {
+            //     seriesContent.style.display = "flex";
+            //     icon.className = "fa-solid fa-chevron-up dropdown-icon";
+            // } else {
+            //     seriesContent.style.display = "none";
+            //     icon.className = "fa-solid fa-chevron-down dropdown-icon";
+            // }
+        } else {
+            for (let elem of getClass("OutLeftImg"))
                 if (elem.PatientId == patientID) Patient_div = elem;
+        }
+
+        function formatStudyDate(rawDate) {
+            if (!rawDate || rawDate.length !== 8) return "";
+
+            const year = rawDate.substring(0, 4);
+            const month = rawDate.substring(4, 6);
+            const day = rawDate.substring(6, 8);
+
+            const date = new Date(`${year}-${month}-${day}`);
+
+            const options = { day: '2-digit', month: 'short', year: 'numeric' };
+            return date.toLocaleDateString('en-GB', options).replace(/ /g, '-');
         }
 
         if (this.findSeries(QRLevel.series)) return;
@@ -199,9 +299,17 @@ class LeftLayout {
         }
         series_div.appendChild(ImgDiv);
         series_div.ImgDiv = ImgDiv;
-        //series_div.appendChild(smallDiv);
-        Patient_div.appendChild(series_div);
-        //應該會return一個DIV供Display Canvas
+        
+        // Add series to the content container
+        var seriesContent = Patient_div.querySelector(".PatientSeriesContent");
+        if (seriesContent) {
+            seriesContent.appendChild(series_div);
+        } else {
+            Patient_div.appendChild(series_div);
+        }
+        
+        // Update dropdown headers with new counts
+        this.updatePatientDropdownHeaders();
     }
 
     appendCanvasBySeries(series, image, pixelData) {
@@ -406,6 +514,51 @@ class LeftLayout {
     reflesh() {
 
     }
+    updatePatientDropdownHeaders() {
+        var patientContainers = getClass("OutLeftImg");
+        for (var patientContainer of patientContainers) {
+            var header = patientContainer.querySelector(".PatientDropdownHeader");
+            var seriesContent = patientContainer.querySelector(".PatientSeriesContent");
+            if (header && seriesContent) {
+                var seriesCount = seriesContent.getElementsByClassName("LeftImgAndMark").length;
+                var patientId = patientContainer.PatientId;
+                var span = header.querySelector("span");
+                // if (span) {
+                //     span.textContent = `Patient ${patientId} (${seriesCount})`;
+                // }
+            }
+        }
+    }
+
+    // Method to expand all patient dropdowns
+    expandAllPatientDropdowns() {
+        var patientContainers = getClass("OutLeftImg");
+        for (var patientContainer of patientContainers) {
+            var header = patientContainer.querySelector(".PatientDropdownHeader");
+            var seriesContent = patientContainer.querySelector(".PatientSeriesContent");
+            var icon = header ? header.querySelector(".dropdown-icon") : null;
+            
+            if (seriesContent && icon) {
+                seriesContent.style.display = "flex";
+                icon.className = "fa-solid fa-chevron-up dropdown-icon";
+            }
+        }
+    }
+
+    // Method to collapse all patient dropdowns
+    collapseAllPatientDropdowns() {
+        var patientContainers = getClass("OutLeftImg");
+        for (var patientContainer of patientContainers) {
+            var header = patientContainer.querySelector(".PatientDropdownHeader");
+            var seriesContent = patientContainer.querySelector(".PatientSeriesContent");
+            var icon = header ? header.querySelector(".dropdown-icon") : null;
+            
+            if (seriesContent && icon) {
+                seriesContent.style.display = "none";
+                icon.className = "fa-solid fa-chevron-down dropdown-icon";
+            }
+        }
+    }
 }
 
 //此段原有Bug，若沒有載入滿Series，便載入最後一個，現在已修復
@@ -527,3 +680,45 @@ function SetTable(row0, col0) {
     refleshGUI();
     // window.onresize();
 }
+
+
+// Global function to test patient dropdown functionality
+window.testPatientDropdownSystem = function() {
+    if (!leftLayout) {
+        console.log("LeftLayout not initialized");
+        return;
+    }
+    
+    console.log("Testing patient dropdown system...");
+    
+    // Test expanding all dropdowns
+    leftLayout.expandAllPatientDropdowns();
+    console.log("All patient dropdowns expanded");
+    
+    // Test collapsing all dropdowns after 2 seconds
+    setTimeout(() => {
+        leftLayout.collapseAllPatientDropdowns();
+        console.log("All patient dropdowns collapsed");
+    }, 2000);
+};
+
+// Global function to expand all patient dropdowns
+window.expandAllPatientDropdowns = function() {
+    if (leftLayout) {
+        leftLayout.expandAllPatientDropdowns();
+    }
+};
+
+// Global function to collapse all patient dropdowns
+window.collapseAllPatientDropdowns = function() {
+    if (leftLayout) {
+        leftLayout.collapseAllPatientDropdowns();
+    }
+};
+
+// Global function to update all patient dropdown headers
+window.updatePatientDropdownHeaders = function() {
+    if (leftLayout) {
+        leftLayout.updatePatientDropdownHeaders();
+    }
+};
