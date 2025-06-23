@@ -2417,7 +2417,7 @@ const ReportEditor = (props) => {
             ) && (
               <div
                 onClick={handleSeePreviousReport}
-                className="text-primary-main rounded p-[6px] hover:bg-[#dedede]"
+                className="text-primary-main rounded p-[6px] hover:bg-[#dedede] flex"
               >
                 <Tooltip
                   text={"See Previous Reports"}

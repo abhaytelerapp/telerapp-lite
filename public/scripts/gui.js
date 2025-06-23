@@ -106,9 +106,9 @@ class BlueLightPage {
 class LeftLayout {
     constructor() { }
 
-    findPatienID(PatientId) {
+    findPatienID(studyInstanceUID) {
         for (var Patient_div of getClass("OutLeftImg")) {
-            if (Patient_div.PatientId == PatientId) return Patient_div;
+            if (Patient_div.studyInstanceUID === studyInstanceUID) return Patient_div;
         }
         return null;
     }
@@ -174,23 +174,28 @@ class LeftLayout {
         var Patient_div = document.createElement("DIV");
         Patient_div.className = "OutLeftImg";
         //Patient_div.id = "OutLeftImg" + patientID;
-        Patient_div.PatientId = patientID;
         Patient_div.studyInstanceUID = dataSetStudyInstanceUID;
+        Patient_div.PatientId = patientID;
         Patient_div.studyDescription = studyDescription;
         Patient_div.studyDate = studyDate;
         Patient_div.modality = modality;
-        if (!this.findPatienID(patientID)) {
+        if (!this.findPatienID(dataSetStudyInstanceUID)) {
             // Create dropdown header for new patient
             var dropdownHeader = document.createElement("DIV");
             dropdownHeader.className = "PatientDropdownHeader";
             dropdownHeader.innerHTML = `
                 <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px;">
                     <div style="display: flex; flex-direction: column; gap: 2px;">
-                    <span class="patient-date">${studyDate ? formatStudyDate(studyDate) : "No Study Date"}</span>
-                    <span style="width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${studyDescription ? studyDescription : ""}</span>
+                        <span class="patient-date">${studyDate ? formatStudyDate(studyDate) : "No Study Date"}</span>
+                        <span style="width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${studyDescription ? studyDescription : ""}</span>
                     </div>
-                    <div id="modality_prior" style="margin-right: 8px;">
+                    <div id="modality_prior" style="margin-right: 8px; display: flex; align-items: center; gap: 4px; flex-direction: column;">
                         <span class="patient-modality">${modality ? modality : ""}</span>
+                        ${dataSetStudyInstanceUID === firstStudyInstanceUID ? (
+                            `<span class="status-dot" style="width: 14px; height: 14px; border-radius: 50%; background-color: green; display: inline-block;"></span>`
+                        ) : (
+                            `<span class="status-dot" style="width: 14px; height: 14px; border-radius: 50%; background-color: yellow; display: inline-block;"></span>`
+                        )}
                     </div>
                 </div>
                 <i class="fa-solid fa-chevron-down dropdown-icon"></i>
@@ -238,18 +243,16 @@ class LeftLayout {
                 pic.appendChild(Patient_div);
             }
 
-             // Set dropdown open/close state based on StudyInstanceUID
-            // var icon = dropdownHeader.querySelector(".dropdown-icon");
-            // if (dataSetStudyInstanceUID === firstStudyInstanceUID) {
-            //     seriesContent.style.display = "flex";
-            //     icon.className = "fa-solid fa-chevron-up dropdown-icon";
-            // } else {
-            //     seriesContent.style.display = "none";
-            //     icon.className = "fa-solid fa-chevron-down dropdown-icon";
-            // }
+            if (dataSetStudyInstanceUID === firstStudyInstanceUID) {
+                dropdownHeader.style.backgroundColor = "#282828";
+                Patient_div.style.backgroundColor = "#444";
+            } else {
+                dropdownHeader.style.backgroundColor = "#444";
+                Patient_div.style.backgroundColor = "#282828";
+            }
         } else {
             for (let elem of getClass("OutLeftImg"))
-                if (elem.PatientId == patientID) Patient_div = elem;
+                if (elem.studyInstanceUID == dataSetStudyInstanceUID) Patient_div = elem;
         }
 
         function formatStudyDate(rawDate) {
