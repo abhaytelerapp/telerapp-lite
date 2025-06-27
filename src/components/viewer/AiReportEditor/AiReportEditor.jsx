@@ -23,6 +23,7 @@ import {
   fetchInstitutionPromptAccess,
   fetchPatientReportByStudy,
   fetchReportSetting,
+  fetchReportTemplatesWithInstitution,
   fetchUsers,
   fetchViewerStudy,
   genAiRadiologyReporter,
@@ -33,6 +34,7 @@ import {
 } from "../ReportEditor/RequestHandler";
 import "./AIReportEditor.css";
 import { getUserInformation } from "../ReportEditor/getUserInformation";
+import Handlebars from "handlebars";
 
 const AiReportEditor = ({ apiData, user, keycloak_url }) => {
   const params = useLocation();
@@ -75,6 +77,9 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
   const [patientCritical, setPatientCritical] = useState({});
   const [editorData, setEditorData] = useState(null);
   const [token, setToken] = useState("");
+  const [institutionDemographics, setInstitutionDemographics] = useState("");
+  const [formattedHTML, setFormattedHTML] = useState("");
+  const [demographicsHTMLTable, setDemographicsHTMLTable] = useState("");
 
   useEffect(() => {
     const getToken = async () => {
@@ -107,7 +112,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
             "StudyInstanceUIDs=".length
         )
         ?.split("&")[0]
-        ?.split(',')[0]
+        ?.split(",")[0]
         ?.replace(/^=/, "");
 
   const getReportDetails = async () => {
@@ -306,6 +311,12 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         (patient?.submitReportDetails !== null &&
           patient?.submitReportDetails !== undefined)
       ) {
+        const demographicsTableMatch = patient?.aiReportDetails?.match(
+          /<table[\s\S]*?<\/table>/i
+        );
+        if (demographicsTableMatch) {
+          setDemographicsHTMLTable(demographicsTableMatch[0]); // Set only the table
+        }
         setAiEditorData(patient?.aiReportDetails);
         setPatientData(patient);
       } else {
@@ -343,6 +354,12 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
           ),
           document_status: patient?.document_status,
           clinical_history: patient?.clinical_history,
+          report_time:
+            (patient?.report_submit_time &&
+              moment(patient && patient?.report_submit_time).format(
+                "MM/DD/YYYY"
+              )) ||
+            "None",
         });
       }
     }
@@ -351,6 +368,90 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
   useEffect(() => {
     fetchPatientData();
   }, [viewerStudy, apiData]);
+
+  useEffect(() => {
+    const fetchInstitutionDemographics = async () => {
+      if (user?.profile?.radiologyGroup) {
+        await fetchReportTemplatesWithInstitution(
+          apiData,
+          user?.profile?.radiologyGroup
+        ).then((institutionData) => {
+          if (!institutionData || institutionData.length === 0) {
+            setInstitutionDemographics("");
+            return;
+          }
+          const orderedItems = institutionData[0]?.demographicsAttribute[0]
+            ?.map((str) => {
+              try {
+                return JSON.parse(str);
+              } catch (e) {
+                console.warn("Failed to parse item:", str);
+                return null;
+              }
+            })
+            ?.filter(Boolean); // remove any nulls
+          const itemsValues = orderedItems.map((item) => item.name);
+          const columnCount = 2;
+
+          const rowCount = Math.ceil(itemsValues.length / columnCount);
+
+          function capitalizeFirstLetter(string) {
+            return string.replace(/\b\w/g, (match) => match.toUpperCase());
+          }
+
+          const exactLabelMap = {
+            patient_dob: "DOB",
+            patient_id: "Patient ID",
+            uid: "UID",
+            ref_physician: "Ref. Physician",
+            study_tat: "Study TAT",
+            accession_number: "Accession No.",
+            patient_gender: "SEX",
+            patient_modality: "Modality",
+            patient_age: "Age",
+          };
+
+          function formatLabel(key) {
+            return (
+              exactLabelMap[key] ||
+              capitalizeFirstLetter(key.replace(/_/g, " "))
+            );
+          }
+
+          let tableRows = "";
+          for (let i = 0; i < rowCount; i++) {
+            const startIdx = i * columnCount;
+            const endIdx = startIdx + columnCount;
+            const rowData = itemsValues.slice(startIdx, endIdx);
+
+            const rowCells = rowData
+              .map(
+                (key) =>
+                  `<td style="width: 17.7931%;"><strong>${formatLabel(
+                    key
+                  )}:</strong></td><td style="width: 33.5161%;"> {{${key}}}</td>`
+              )
+              .join("");
+            tableRows += `<tr>${rowCells}</tr>`;
+          }
+
+          const Table = `
+                <table style="border-collapse: collapse; width: 100%;" border="1">
+                  <tbody>
+                    ${tableRows}
+                  </tbody>
+                </table>
+              `;
+
+          setInstitutionDemographics(Table);
+        });
+      } else {
+        setInstitutionDemographics("");
+      }
+    };
+
+    fetchInstitutionDemographics();
+  }, [user]);
 
   const assignUserFind = patientFind?.assign?.map((item) => JSON.parse(item));
 
@@ -891,6 +992,62 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
   };
 
   useEffect(() => {
+    const defaultDemographics = `
+      <table style="border-collapse: collapse; width: 100%;" border="1">
+        <tbody>
+          <tr><td><strong>Patient Name:</strong></td><td>{{patient_name}}</td><td><strong>Patient ID:</strong></td><td>{{patient_id}}</td></tr>
+          <tr><td><strong>SEX:</strong></td><td>{{patient_gender}}</td><td><strong>Age:</strong></td><td>{{patient_age}}</td></tr>
+          <tr><td><strong>Modality:</strong></td><td>{{patient_modality}}</td><td><strong>Accession No.:</strong></td><td>{{patient_accession}}</td></tr>
+          <tr><td><strong>Study Date:</strong></td><td>{{study_date}}</td><td><strong>Ref. Physician:</strong></td><td>{{ref_physician}}</td></tr>
+          <tr><td><strong>Study:</strong></td><td>{{study}}</td><td><strong>Institution Name:</strong></td><td>{{institution_name}}</td></tr>
+          <tr><td><strong>Report Time:</strong></td><td>{{report_time}}</td></tr>
+        </tbody>
+      </table>
+    `;
+
+    if (patientData && demographicsHTMLTable.trim() === "") {
+      console.log(demographicsHTMLTable, "demographicsHTMLTable");
+      const template = institutionDemographics || defaultDemographics;
+      const compiledTemplate = Handlebars.compile(template);
+      const html = compiledTemplate(patientData);
+      setDemographicsHTMLTable(html);
+    }
+  }, [patientData, institutionDemographics]);
+
+  useEffect(() => {
+    const generateFormattedHTML = (aiReportRaw, clinicalHistory) => {
+      const aiReportFormatted = aiReportRaw
+        ?.replace(/\\n/g, "<br>")
+        .replace(/\n\n/g, "<br>")
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/<br><br>/g, "<br><br>");
+
+      const includesDemographicsTable = /<table[\s\S]*?>[\s\S]*?<\/table>/.test(
+        aiReportFormatted
+      );
+
+      return includesDemographicsTable
+        ? aiReportFormatted
+        : `${demographicsHTMLTable}<p><strong>CLINICAL HISTORY:</strong> ${clinicalHistory}</p>${aiReportFormatted}`;
+    };
+
+    if (patientData && demographicsHTMLTable) {
+      const clinicalHistory = patientData?.clinical_history || "None";
+      const reportDetails =
+        (["Approved", "Addendum", "Final"].includes(
+          patientData?.document_status
+        ) &&
+          patientData?.submitReportDetails) ||
+        aiReport ||
+        aiEditorData ||
+        "";
+
+      const finalHTML = generateFormattedHTML(reportDetails, clinicalHistory);
+      setFormattedHTML(finalHTML);
+    }
+  }, [demographicsHTMLTable, patientData, aiReport, aiEditorData]);
+
+  useEffect(() => {
     let instance;
 
     const initializeEditor = async () => {
@@ -988,12 +1145,22 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         });
 
         // Set initial formatted HTML data
-        const formattedHTML = generateFormattedHTML(
-          patientData,
-          reportDetails,
-          clinicalHistory
-        );
-        instance.setData(formattedHTML);
+        // const formattedHTML = generateFormattedHTML(
+        //   patientData,
+        //   reportDetails,
+        //   clinicalHistory
+        // );
+        let addReportSubmitTime = formattedHTML;
+        // Replace "Report Time: None" or "Report Time:" (if empty) with actual time if available
+        if (patientData?.report_submit_time) {
+          const formattedTime = moment(patientData.report_submit_time).format('MMM-DD-YYYY');
+
+          addReportSubmitTime = formattedHTML.replace(
+            /(<strong>Report Time:<\/strong><\/td><td>)(.*?)(<\/td>)/,
+            `$1${formattedTime}$3`
+          );
+        }
+        instance.setData(addReportSubmitTime);
 
         // ✅ Shared function to modify and update data
         const updateEditorState = () => {
@@ -1107,6 +1274,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
     assignUserDataFind,
     patientReportDetail,
     doctorInformation,
+    formattedHTML,
   ]);
 
   useEffect(() => {
@@ -1115,84 +1283,84 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
     }
   }, [transcriptText]);
 
-  const generateFormattedHTML = (patientData, aiReport, clinicalHistory) => {
-    const aiReportFormatted = aiReport
-      ?.replace(/\\n/g, "<br>") // Convert escaped newlines to HTML line breaks
-      .replace(/\n\n/g, "<br>")
-      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Markdown-style bold to <strong>
-      .replace(/<br><br>/g, "<br><br>");
+  // const generateFormattedHTML = (patientData, aiReport, clinicalHistory) => {
+  //   const aiReportFormatted = aiReport
+  //     ?.replace(/\\n/g, "<br>") // Convert escaped newlines to HTML line breaks
+  //     .replace(/\n\n/g, "<br>")
+  //     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Markdown-style bold to <strong>
+  //     .replace(/<br><br>/g, "<br><br>");
 
-    const patientTableHTML = `
-      <table
-        style="width: 100%; border-collapse: collapse; font-size: 14px; border: 3px double #b3b3b3; outline: 1px solid #dedede;"
-      >
-        <tbody>
-          <tr>
-            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Patient Name:</td>
-            <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.patient_name || ""}
-            </td>
-            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Patient ID:</td>
-            <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.patient_id || ""}
-            </td>
-          </tr>
-          <tr>
-            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">SEX:</td>
-            <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.patient_gender || ""}
-            </td>
-            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Age:</td>
-            <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${parseInt(patientData?.patient_age || "")}
-            </td>
-          </tr>
-          <tr>
-            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Modality:</td>
-            <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.patient_modality || ""}
-            </td>
-            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Accession No.:</td>
-            <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.accession_number || ""}
-            </td>
-          </tr>
-          <tr>
-            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Study Date:</td>
-            <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.study_date || ""}
-            </td>
-            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Ref. Physician:</td>
-            <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.ref_physician || ""}
-            </td>
-          </tr>
-          <tr>
-            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Study:</td>
-            <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.study || ""}
-            </td>
-            <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Institution Name:</td>
-            <td style="border: 1px solid #bfbfbf; padding: 0;">
-              ${patientData?.institution_name || ""}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    `;
+  //   const patientTableHTML = `
+  //     <table
+  //       style="width: 100%; border-collapse: collapse; font-size: 14px; border: 3px double #b3b3b3; outline: 1px solid #dedede;"
+  //     >
+  //       <tbody>
+  //         <tr>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Patient Name:</td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
+  //             ${patientData?.patient_name || ""}
+  //           </td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Patient ID:</td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
+  //             ${patientData?.patient_id || ""}
+  //           </td>
+  //         </tr>
+  //         <tr>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">SEX:</td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
+  //             ${patientData?.patient_gender || ""}
+  //           </td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Age:</td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
+  //             ${parseInt(patientData?.patient_age || "")}
+  //           </td>
+  //         </tr>
+  //         <tr>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Modality:</td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
+  //             ${patientData?.patient_modality || ""}
+  //           </td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Accession No.:</td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
+  //             ${patientData?.accession_number || ""}
+  //           </td>
+  //         </tr>
+  //         <tr>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Study Date:</td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
+  //             ${patientData?.study_date || ""}
+  //           </td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Ref. Physician:</td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
+  //             ${patientData?.ref_physician || ""}
+  //           </td>
+  //         </tr>
+  //         <tr>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Study:</td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
+  //             ${patientData?.study || ""}
+  //           </td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Institution Name:</td>
+  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
+  //             ${patientData?.institution_name || ""}
+  //           </td>
+  //         </tr>
+  //       </tbody>
+  //     </table>
+  //   `;
 
-    // Check if aiReport already contains patient details
-    const includesPatientInfo = /Patient Name:|Accession No:|Patient ID:/.test(
-      aiReport
-    );
+  //   // Check if aiReport already contains patient details
+  //   const includesPatientInfo = /Patient Name:|Accession No:|Patient ID:/.test(
+  //     aiReport
+  //   );
 
-    const formattedHTML = includesPatientInfo
-      ? aiReportFormatted // Only aiReport
-      : `${patientTableHTML}<p><strong>CLINICAL HISTORY:</strong> ${clinicalHistory}</p>
-      ${aiReportFormatted}`; // Table + aiReport
+  //   const formattedHTML = includesPatientInfo
+  //     ? aiReportFormatted // Only aiReport
+  //     : `${patientTableHTML}<p><strong>CLINICAL HISTORY:</strong> ${clinicalHistory}</p>
+  //     ${aiReportFormatted}`; // Table + aiReport
 
-    return formattedHTML;
-  };
+  //   return formattedHTML;
+  // };
 
   const handleApprove = () => {
     if (aiReport) {

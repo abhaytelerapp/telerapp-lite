@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.userToken = exports.updatePatientReports = exports.updateOrthancStudy = exports.updateDocument = exports.generateReportPdf = exports.genAiRadiologyReporter = exports.fetchViewerStudy = exports.fetchUsers = exports.fetchStudyData = exports.fetchReportSetting = exports.fetchPatientReportsById = exports.fetchPatientReports = exports.fetchPatientReportByStudy = exports.fetchInstitutionPromptAccess = exports.fetchEditorPatientReportData = exports.fetchDocumentUploadForStudy = exports.fetchDocumentUpload = exports.fetchDefaultReportTemplates = exports.deleteDocumentUrl = exports.createPatientReports = exports.createDocument = exports.createDefaultTemplates = void 0;
+exports.userToken = exports.updatePatientReports = exports.updateOrthancStudy = exports.updateDocument = exports.generateReportPdf = exports.genAiRadiologyReporter = exports.fetchViewerStudy = exports.fetchUsers = exports.fetchStudyData = exports.fetchReportTemplatesWithInstitution = exports.fetchReportSetting = exports.fetchPatientReportsById = exports.fetchPatientReports = exports.fetchPatientReportByStudy = exports.fetchInstitutionPromptAccess = exports.fetchEditorPatientReportData = exports.fetchDocumentUploadForStudy = exports.fetchDocumentUpload = exports.fetchDefaultReportTemplates = exports.deleteDocumentUrl = exports.createPatientReports = exports.createDocument = exports.createDefaultTemplates = void 0;
 const userToken = async (accessToken, apiData) => {
   const response = await fetch(`${apiData}/user-token`, {
     method: "POST",
@@ -283,3 +283,7 @@ const updateOrthancStudy = async (apiData, aianalysis, studyInstanceUid) => {
   return await response.json();
 };
 exports.updateOrthancStudy = updateOrthancStudy;
+const fetchReportTemplatesWithInstitution = (apiData, institution_name) => {
+  return fetch(`${apiData}/report_templates_with_institution?institution_name=${institution_name}`).then(response => response.json());
+};
+exports.fetchReportTemplatesWithInstitution = fetchReportTemplatesWithInstitution;

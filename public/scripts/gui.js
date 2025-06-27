@@ -243,12 +243,17 @@ class LeftLayout {
                 pic.appendChild(Patient_div);
             }
 
+            var icon = dropdownHeader.querySelector(".dropdown-icon");
             if (dataSetStudyInstanceUID === firstStudyInstanceUID) {
                 dropdownHeader.style.backgroundColor = "#282828";
                 Patient_div.style.backgroundColor = "#444";
+                seriesContent.style.display = "flex";
+                icon.className = "fa-solid fa-chevron-up dropdown-icon";
             } else {
                 dropdownHeader.style.backgroundColor = "#444";
                 Patient_div.style.backgroundColor = "#282828";
+                seriesContent.style.display = "none";
+                icon.className = "fa-solid fa-chevron-down dropdown-icon";
             }
         } else {
             for (let elem of getClass("OutLeftImg"))

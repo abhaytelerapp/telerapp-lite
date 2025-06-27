@@ -377,3 +377,8 @@ export const updateOrthancStudy = async (apiData, aianalysis, studyInstanceUid) 
   
   return await response.json();
 }
+
+export const fetchReportTemplatesWithInstitution = (apiData, institution_name) => {
+  return fetch(`${apiData}/report_templates_with_institution?institution_name=${institution_name}`)
+    .then((response) => response.json());
+};

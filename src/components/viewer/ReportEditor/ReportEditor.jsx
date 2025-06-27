@@ -54,6 +54,7 @@ import {
   fetchPatientReportByStudy,
   fetchPatientReports,
   fetchReportSetting,
+  fetchReportTemplatesWithInstitution,
   fetchStudyData,
   fetchUsers,
   fetchViewerStudy,
@@ -286,6 +287,7 @@ const ReportEditor = (props) => {
   const [doctorInformation, setDoctorInformation] = useState({});
   const [patientFind, setPatientFind] = useState({});
   const [patientCritical, setPatientCritical] = useState({});
+  const [institutionDemographics, setInstitutionDemographics] = useState("");
 
   const {
     transcript,
@@ -495,7 +497,8 @@ const ReportEditor = (props) => {
           return {
             studyData: viewerStudy?.[0]?.MainDicomTags?.StudyDate,
             modality: viewerStudy?.[0]?.RequestedTags?.ModalitiesInStudy,
-            instances: viewerStudy?.[0]?.RequestedTags?.NumberOfStudyRelatedInstances,
+            instances:
+              viewerStudy?.[0]?.RequestedTags?.NumberOfStudyRelatedInstances,
             template: reportDetails?.reportdetails || null,
             document_status: reportDetails?.document_status || null,
             displayName: fetchUserInformation?.doctorInformation?.displayName,
@@ -669,6 +672,12 @@ const ReportEditor = (props) => {
           ),
           clinical_history: patient?.clinical_history || "None",
           image_perview: imageDataUrl,
+          report_time:
+            (patient?.report_submit_time &&
+              moment(patient && patient?.report_submit_time).format(
+                "MM/DD/YYYY"
+              )) ||
+            "None",
         });
       }
     }
@@ -764,6 +773,90 @@ const ReportEditor = (props) => {
       setAcessTemplates(displayTemplateOptions?.length);
     }
   }, [displayTemplateOptions]);
+
+  useEffect(() => {
+    const fetchInstitutionDemographics = async () => {
+      if (user?.profile?.radiologyGroup) {
+        await fetchReportTemplatesWithInstitution(
+          apiData,
+          user?.profile?.radiologyGroup
+        ).then((institutionData) => {
+          if (!institutionData || institutionData.length === 0) {
+            setInstitutionDemographics("");
+            return;
+          }
+          const orderedItems = institutionData[0]?.demographicsAttribute[0]
+            ?.map((str) => {
+              try {
+                return JSON.parse(str);
+              } catch (e) {
+                console.warn("Failed to parse item:", str);
+                return null;
+              }
+            })
+            ?.filter(Boolean); // remove any nulls
+          const itemsValues = orderedItems.map((item) => item.name);
+          const columnCount = 2;
+
+          const rowCount = Math.ceil(itemsValues.length / columnCount);
+
+          function capitalizeFirstLetter(string) {
+            return string.replace(/\b\w/g, (match) => match.toUpperCase());
+          }
+
+          const exactLabelMap = {
+            patient_dob: "DOB",
+            patient_id: "Patient ID",
+            uid: "UID",
+            ref_physician: "Ref. Physician",
+            study_tat: "Study TAT",
+            accession_number: "Accession No.",
+            patient_gender: "SEX",
+            patient_modality: "Modality",
+            patient_age: "Age",
+          };
+
+          function formatLabel(key) {
+            return (
+              exactLabelMap[key] ||
+              capitalizeFirstLetter(key.replace(/_/g, " "))
+            );
+          }
+
+          let tableRows = "";
+          for (let i = 0; i < rowCount; i++) {
+            const startIdx = i * columnCount;
+            const endIdx = startIdx + columnCount;
+            const rowData = itemsValues.slice(startIdx, endIdx);
+
+            const rowCells = rowData
+              .map(
+                (key) =>
+                  `<td style="width: 17.7931%;"><strong>${formatLabel(
+                    key
+                  )}:</strong></td><td style="width: 33.5161%;"> {{${key}}}</td>`
+              )
+              .join("");
+            tableRows += `<tr>${rowCells}</tr>`;
+          }
+
+          const Table = `
+              <table style="border-collapse: collapse; width: 100%;" border="1">
+                <tbody>
+                  ${tableRows}
+                </tbody>
+              </table>
+            `;
+
+          setInstitutionDemographics(Table);
+        });
+      } else {
+        setInstitutionDemographics("");
+      }
+    };
+
+    fetchInstitutionDemographics();
+  }, [user]);
 
   // Map template options only if they have changed
   const mappedOptions =
@@ -1998,9 +2091,28 @@ const ReportEditor = (props) => {
             ? selectedTemplateOptions.map((data) => data.template)
             : [];
 
+        // Function to replace the table in templates[0] with institutionDemographics
+        const replaceDemographicsTable = (templateStr, newTable) => {
+          if (newTable && newTable?.trim()) {
+            // Replace first table in template with newTable
+            return templateStr.replace(
+              /<table[^>]*>[\s\S]*?<\/table>/,
+              newTable.trim()
+            );
+          } else {
+            // No replacement needed, return original
+            return templateStr;
+          }
+        };
+
+        // Apply replacement to all templates if needed
+        const updatedTemplates = templates?.map((template) =>
+          replaceDemographicsTable(template, institutionDemographics)
+        );
+
         // Ensure templates is an array before calling Object.values
-        const data = templates.length
-          ? Object.values(templates).join("<p></p>")
+        const data = updatedTemplates?.length
+          ? Object.values(updatedTemplates)?.join("<p></p>")
           : "";
 
         const notApproved =
@@ -2055,7 +2167,20 @@ const ReportEditor = (props) => {
             /Default Template/g,
             ""
           );
-          const updatedTemplateData = cleanedTemplateData.replace(
+
+          let addReportSubmitTime = cleanedTemplateData;
+          // Replace "Report Time: None" or "Report Time:" (if empty) with actual time if available
+          if (patientData?.report_submit_time) {
+            const formattedTime = moment(patientData.report_submit_time).format(
+              "MMM-DD-YYYY"
+            );
+
+            addReportSubmitTime = cleanedTemplateData.replace(
+              /(<strong>Report Time:<\/strong><\/td><td>)(.*?)(<\/td>)/,
+              `$1${formattedTime}$3`
+            );
+          }
+          const updatedTemplateData = addReportSubmitTime.replace(
             /(<td[^>]*>\s*<strong>\s*Institution Name:\s*<\/strong>\s*<\/td>\s*<td[^>]*>)(\s*<\/td>)/i,
             (match, prefix, emptyTd) => {
               return `${prefix}${institutionNameFromStorage}</td>`;
