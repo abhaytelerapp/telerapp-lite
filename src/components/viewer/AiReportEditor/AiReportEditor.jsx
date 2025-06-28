@@ -371,10 +371,10 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
 
   useEffect(() => {
     const fetchInstitutionDemographics = async () => {
-      if (user?.profile?.radiologyGroup) {
+      if (patientData?.institution_name) {
         await fetchReportTemplatesWithInstitution(
           apiData,
-          user?.profile?.radiologyGroup
+          patientData?.institution_name
         ).then((institutionData) => {
           if (!institutionData || institutionData.length === 0) {
             setInstitutionDemographics("");
@@ -446,12 +446,27 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
           setInstitutionDemographics(Table);
         });
       } else {
-        setInstitutionDemographics("");
+        const defaultDemographics = `
+          <table style="border-collapse: collapse; width: 100%;" border="1">
+            <tbody>
+              <tr><td><strong>Patient Name:</strong></td><td>{{patient_name}}</td><td><strong>Patient ID:</strong></td><td>{{patient_id}}</td></tr>
+              <tr><td><strong>SEX:</strong></td><td>{{patient_gender}}</td><td><strong>Age:</strong></td><td>{{patient_age}}</td></tr>
+              <tr><td><strong>Modality:</strong></td><td>{{patient_modality}}</td><td><strong>Accession No.:</strong></td><td>{{patient_accession}}</td></tr>
+              <tr><td><strong>Study Date:</strong></td><td>{{study_date}}</td><td><strong>Ref. Physician:</strong></td><td>{{ref_physician}}</td></tr>
+              <tr><td><strong>Study:</strong></td><td>{{study}}</td><td><strong>Institution Name:</strong></td><td>{{institution_name}}</td></tr>
+              <tr><td><strong>Report Time:</strong></td><td>{{report_time}}</td></tr>
+            </tbody>
+          </table>
+        `;
+        setInstitutionDemographics(defaultDemographics);
       }
     };
 
-    fetchInstitutionDemographics();
-  }, [user]);
+    
+    if(patientData?.institution_name){
+      fetchInstitutionDemographics();
+    }
+  }, [patientData?.institution_name]);
 
   const assignUserFind = patientFind?.assign?.map((item) => JSON.parse(item));
 
@@ -992,27 +1007,14 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
   };
 
   useEffect(() => {
-    const defaultDemographics = `
-      <table style="border-collapse: collapse; width: 100%;" border="1">
-        <tbody>
-          <tr><td><strong>Patient Name:</strong></td><td>{{patient_name}}</td><td><strong>Patient ID:</strong></td><td>{{patient_id}}</td></tr>
-          <tr><td><strong>SEX:</strong></td><td>{{patient_gender}}</td><td><strong>Age:</strong></td><td>{{patient_age}}</td></tr>
-          <tr><td><strong>Modality:</strong></td><td>{{patient_modality}}</td><td><strong>Accession No.:</strong></td><td>{{patient_accession}}</td></tr>
-          <tr><td><strong>Study Date:</strong></td><td>{{study_date}}</td><td><strong>Ref. Physician:</strong></td><td>{{ref_physician}}</td></tr>
-          <tr><td><strong>Study:</strong></td><td>{{study}}</td><td><strong>Institution Name:</strong></td><td>{{institution_name}}</td></tr>
-          <tr><td><strong>Report Time:</strong></td><td>{{report_time}}</td></tr>
-        </tbody>
-      </table>
-    `;
 
     if (patientData && demographicsHTMLTable.trim() === "") {
-      console.log(demographicsHTMLTable, "demographicsHTMLTable");
-      const template = institutionDemographics || defaultDemographics;
+      const template = institutionDemographics;
       const compiledTemplate = Handlebars.compile(template);
       const html = compiledTemplate(patientData);
       setDemographicsHTMLTable(html);
     }
-  }, [patientData, institutionDemographics]);
+  }, [patientData?.patient_name, institutionDemographics]);
 
   useEffect(() => {
     const generateFormattedHTML = (aiReportRaw, clinicalHistory) => {

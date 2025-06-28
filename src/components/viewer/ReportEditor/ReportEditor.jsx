@@ -776,10 +776,10 @@ const ReportEditor = (props) => {
 
   useEffect(() => {
     const fetchInstitutionDemographics = async () => {
-      if (user?.profile?.radiologyGroup) {
+      if (patientData?.institution_name) {
         await fetchReportTemplatesWithInstitution(
           apiData,
-          user?.profile?.radiologyGroup
+          patientData?.institution_name
         ).then((institutionData) => {
           if (!institutionData || institutionData.length === 0) {
             setInstitutionDemographics("");
@@ -855,8 +855,10 @@ const ReportEditor = (props) => {
       }
     };
 
-    fetchInstitutionDemographics();
-  }, [user]);
+    if(patientData?.institution_name){
+      fetchInstitutionDemographics();
+    }
+  }, [patientData?.institution_name]);
 
   // Map template options only if they have changed
   const mappedOptions =
@@ -2075,7 +2077,7 @@ const ReportEditor = (props) => {
   useEffect(() => {
     let matchCount = 0;
     const interval = setInterval(() => {
-      if (selectedTemplateOptions && patientData && viewerStudy?.length > 0) {
+      if (selectedTemplateOptions && patientData && viewerStudy?.length > 0  && patientData?.institution_name.trim() !== '') {
         clearInterval(interval); // Stop checking once data is available
         // Ensure selectedTemplateOptions is an array before mapping
         const hasDefaultTemplate =
@@ -2196,7 +2198,7 @@ const ReportEditor = (props) => {
     }, 500); // Check every 500ms
 
     return () => clearInterval(interval); // Cleanup on unmount
-  }, [selectedTemplateOptions, patientData, patientReportDetail, viewerStudy]);
+  }, [selectedTemplateOptions, patientData?.institution_name, patientReportDetail, viewerStudy, institutionDemographics]);
 
   function DefaultFontSizePlugin(editor) {
     // editor.model.schema.extend('$text', { allowAttributes: 'fontSize' });

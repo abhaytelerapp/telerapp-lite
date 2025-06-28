@@ -545,8 +545,8 @@ const ReportEditor = props => {
   }, [displayTemplateOptions]);
   (0, _react.useEffect)(() => {
     const fetchInstitutionDemographics = async () => {
-      if (user?.profile?.radiologyGroup) {
-        await (0, _RequestHandler.fetchReportTemplatesWithInstitution)(apiData, user?.profile?.radiologyGroup).then(institutionData => {
+      if (patientData?.institution_name) {
+        await (0, _RequestHandler.fetchReportTemplatesWithInstitution)(apiData, patientData?.institution_name).then(institutionData => {
           if (!institutionData || institutionData.length === 0) {
             setInstitutionDemographics("");
             return;
@@ -600,8 +600,10 @@ const ReportEditor = props => {
         setInstitutionDemographics("");
       }
     };
-    fetchInstitutionDemographics();
-  }, [user]);
+    if (patientData?.institution_name) {
+      fetchInstitutionDemographics();
+    }
+  }, [patientData?.institution_name]);
 
   // Map template options only if they have changed
   const mappedOptions = templateOptions && templateOptions?.map(_ref2 => {
@@ -1403,7 +1405,7 @@ const ReportEditor = props => {
   (0, _react.useEffect)(() => {
     let matchCount = 0;
     const interval = setInterval(() => {
-      if (selectedTemplateOptions && patientData && viewerStudy?.length > 0) {
+      if (selectedTemplateOptions && patientData && viewerStudy?.length > 0 && patientData?.institution_name.trim() !== '') {
         clearInterval(interval); // Stop checking once data is available
         // Ensure selectedTemplateOptions is an array before mapping
         const hasDefaultTemplate = Array.isArray(selectedTemplateOptions) && selectedTemplateOptions.some(option => option.label === "Default Template");
@@ -1462,7 +1464,7 @@ const ReportEditor = props => {
     }, 500); // Check every 500ms
 
     return () => clearInterval(interval); // Cleanup on unmount
-  }, [selectedTemplateOptions, patientData, patientReportDetail, viewerStudy]);
+  }, [selectedTemplateOptions, patientData?.institution_name, patientReportDetail, viewerStudy, institutionDemographics]);
   function DefaultFontSizePlugin(editor) {
     // editor.model.schema.extend('$text', { allowAttributes: 'fontSize' });
     // editor.conversion.attributeToElement({
