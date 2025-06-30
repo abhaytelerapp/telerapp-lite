@@ -321,7 +321,7 @@ const AiReportEditor = _ref => {
         setInstitutionDemographics(defaultDemographics);
       }
     };
-    if (patientData?.institution_name) {
+    if (patientData?.patient_name && (patientData?.institution_name == null || patientData?.institution_name)) {
       fetchInstitutionDemographics();
     }
   }, [patientData?.institution_name]);

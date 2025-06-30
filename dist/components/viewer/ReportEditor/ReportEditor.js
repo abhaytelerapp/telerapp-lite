@@ -1404,7 +1404,7 @@ const ReportEditor = props => {
   (0, _react.useEffect)(() => {
     let matchCount = 0;
     const interval = setInterval(() => {
-      if (selectedTemplateOptions && patientData && viewerStudy?.length > 0 && patientData?.institution_name.trim() !== '') {
+      if (selectedTemplateOptions && patientData && viewerStudy?.length > 0 && patientData?.institution_name?.trim() !== '') {
         clearInterval(interval); // Stop checking once data is available
         // Ensure selectedTemplateOptions is an array before mapping
         const hasDefaultTemplate = Array.isArray(selectedTemplateOptions) && selectedTemplateOptions.some(option => option.label === "Default Template");
@@ -1414,7 +1414,7 @@ const ReportEditor = props => {
         const replaceDemographicsTable = (templateStr, newTable) => {
           if (newTable && newTable?.trim()) {
             // Replace first table in template with newTable
-            return templateStr.replace(/<table[^>]*>[\s\S]*?<\/table>/, newTable.trim());
+            return templateStr.replace(/<table[^>]*>[\s\S]*?<\/table>/, newTable?.trim());
           } else {
             // No replacement needed, return original
             return templateStr;

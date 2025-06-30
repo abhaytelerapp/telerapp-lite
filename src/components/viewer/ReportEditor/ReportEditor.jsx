@@ -2076,7 +2076,7 @@ const ReportEditor = (props) => {
   useEffect(() => {
     let matchCount = 0;
     const interval = setInterval(() => {
-      if (selectedTemplateOptions && patientData && viewerStudy?.length > 0  && patientData?.institution_name.trim() !== '') {
+      if (selectedTemplateOptions && patientData && viewerStudy?.length > 0  && patientData?.institution_name?.trim() !== '') {
         clearInterval(interval); // Stop checking once data is available
         // Ensure selectedTemplateOptions is an array before mapping
         const hasDefaultTemplate =
@@ -2098,7 +2098,7 @@ const ReportEditor = (props) => {
             // Replace first table in template with newTable
             return templateStr.replace(
               /<table[^>]*>[\s\S]*?<\/table>/,
-              newTable.trim()
+              newTable?.trim()
             );
           } else {
             // No replacement needed, return original
