@@ -205,12 +205,12 @@ const AiReportEditor = _ref => {
       }
       const studyDate = patientReportData.studydate && (0, _moment.default)(patientReportData.studydate, ["YYYYMMDD", "YYYY.MM.DD"], true).isValid() && (0, _moment.default)(patientReportData.studydate, ["YYYYMMDD", "YYYY.MM.DD"]).format(t("Common:localDateFormat", "MMM-DD-YYYY"));
       const studyTime = patientReportData.studytime && (0, _moment.default)(patientReportData.studytime, ["HH", "HHmm", "HHmmss", "HHmmss.SSS"]).isValid() && (0, _moment.default)(patientReportData.studytime, ["HH", "HHmm", "HHmmss", "HHmmss.SSS"]).format(t("Common:localTimeFormat", "hh:mm A"));
-      if (patient?.aiReportDetails !== null && patient?.aiReportDetails !== undefined || patient?.submitReportDetails !== null && patient?.submitReportDetails !== undefined) {
-        const demographicsTableMatch = patient?.aiReportDetails?.match(/<table[\s\S]*?<\/table>/i);
+      if (patient?.reportdetails !== null && patient?.reportdetails !== undefined) {
+        const demographicsTableMatch = patient?.reportdetails?.match(/<table[\s\S]*?<\/table>/i);
         if (demographicsTableMatch) {
           setDemographicsHTMLTable(demographicsTableMatch[0]); // Set only the table
         }
-        setAiEditorData(patient?.aiReportDetails);
+        setAiEditorData(patient?.reportdetails);
         setPatientData(patient);
       } else {
         setPatientData({
@@ -705,7 +705,7 @@ const AiReportEditor = _ref => {
     };
     if (patientData && demographicsHTMLTable) {
       const clinicalHistory = patientData?.clinical_history || "None";
-      const reportDetails = ["Approved", "Addendum", "Final"].includes(patientData?.document_status) && patientData?.submitReportDetails || aiReport || aiEditorData || "";
+      const reportDetails = aiEditorData || aiReport;
       const finalHTML = generateFormattedHTML(reportDetails, clinicalHistory);
       setFormattedHTML(finalHTML);
     }
@@ -716,8 +716,6 @@ const AiReportEditor = _ref => {
       const editorElement = document.querySelector("#ai-editor");
       const toolbarContainer = document.querySelector("#ai-toolbar-container");
       if (!editorElement || !patientData) return;
-      const clinicalHistory = patientData?.clinical_history || "None";
-      const reportDetails = (patientData && (patientData?.document_status === "Approved" || patientData?.document_status === "Addendum" || patientData?.document_status === "Final") && patientData?.submitReportDetails ? patientData?.submitReportDetails : aiReport || aiEditorData) || "";
       try {
         instance = await DecoupledEditor.create(editorElement, {
           fontSize: {
@@ -848,86 +846,6 @@ const AiReportEditor = _ref => {
       setPopupHeight(popupRef.current.scrollHeight);
     }
   }, [transcriptText]);
-
-  // const generateFormattedHTML = (patientData, aiReport, clinicalHistory) => {
-  //   const aiReportFormatted = aiReport
-  //     ?.replace(/\\n/g, "<br>") // Convert escaped newlines to HTML line breaks
-  //     .replace(/\n\n/g, "<br>")
-  //     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Markdown-style bold to <strong>
-  //     .replace(/<br><br>/g, "<br><br>");
-
-  //   const patientTableHTML = `
-  //     <table
-  //       style="width: 100%; border-collapse: collapse; font-size: 14px; border: 3px double #b3b3b3; outline: 1px solid #dedede;"
-  //     >
-  //       <tbody>
-  //         <tr>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Patient Name:</td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
-  //             ${patientData?.patient_name || ""}
-  //           </td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Patient ID:</td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
-  //             ${patientData?.patient_id || ""}
-  //           </td>
-  //         </tr>
-  //         <tr>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">SEX:</td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
-  //             ${patientData?.patient_gender || ""}
-  //           </td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Age:</td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
-  //             ${parseInt(patientData?.patient_age || "")}
-  //           </td>
-  //         </tr>
-  //         <tr>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Modality:</td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
-  //             ${patientData?.patient_modality || ""}
-  //           </td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Accession No.:</td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
-  //             ${patientData?.accession_number || ""}
-  //           </td>
-  //         </tr>
-  //         <tr>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Study Date:</td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
-  //             ${patientData?.study_date || ""}
-  //           </td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Ref. Physician:</td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
-  //             ${patientData?.ref_physician || ""}
-  //           </td>
-  //         </tr>
-  //         <tr>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Study:</td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
-  //             ${patientData?.study || ""}
-  //           </td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0; font-weight: 700;">Institution Name:</td>
-  //           <td style="border: 1px solid #bfbfbf; padding: 0;">
-  //             ${patientData?.institution_name || ""}
-  //           </td>
-  //         </tr>
-  //       </tbody>
-  //     </table>
-  //   `;
-
-  //   // Check if aiReport already contains patient details
-  //   const includesPatientInfo = /Patient Name:|Accession No:|Patient ID:/.test(
-  //     aiReport
-  //   );
-
-  //   const formattedHTML = includesPatientInfo
-  //     ? aiReportFormatted // Only aiReport
-  //     : `${patientTableHTML}<p><strong>CLINICAL HISTORY:</strong> ${clinicalHistory}</p>
-  //     ${aiReportFormatted}`; // Table + aiReport
-
-  //   return formattedHTML;
-  // };
-
   const handleApprove = () => {
     if (aiReport) {
       setAiEditorData(editorData);
@@ -945,7 +863,7 @@ const AiReportEditor = _ref => {
       const currentTime = new Date();
       const actionlog = "SubmitLogs";
       const currentReport = {
-        aiReportDetails: editorData,
+        reportdetails: editorData,
         submittedBy: user?.profile?.preferred_username,
         submittedAt: currentTime
       };
@@ -956,8 +874,7 @@ const AiReportEditor = _ref => {
       reportHistory.push(currentReport);
       const resData = {
         ...patientData,
-        aiReportDetails: editorData,
-        submitReportDetails: editorData,
+        reportdetails: editorData,
         report_history: reportHistory,
         study_UIDs: studyInstanceUid,
         study_IDS: studyList?.ID,
@@ -1018,7 +935,7 @@ const AiReportEditor = _ref => {
     const actionlog = "DraftLogs";
     const resData = {
       ...patientData,
-      aiReportDetails: editorData,
+      reportdetails: editorData,
       study_UIDs: studyInstanceUid,
       study_IDS: studyList.ID,
       study_priority: patientReportDetail?.study_priority || null,

@@ -828,7 +828,6 @@ const ReportEditor = props => {
       const resData = {
         ...patientData,
         reportdetails: editorData,
-        submitReportDetails: editorData,
         study_UIDs: studyInstanceUid,
         study_IDS: studyList?.ID,
         study_priority: patientReportDetail?.study_priority || "Routine",
@@ -1433,17 +1432,14 @@ const ReportEditor = props => {
           return matchCount > 1 ? "" : match; // Remove only the second occurrence of the table
         });
         const institutionNameFromStorage = viewerStudy[0]?.MainDicomTags?.InstitutionName;
-
-        // Ensure patientReportDetail.reportdetails is defined
-        const reportDetails = patientReportDetail && (patientReportDetail.document_status === "Approved" || patientReportDetail.document_status === "Addendum" || patientReportDetail.document_status === "Final") && patientReportDetail?.submitReportDetails ? patientReportDetail?.submitReportDetails : patientReportDetail?.reportdetails;
-        const patientReportDetail1 = reportDetails ? Object.values(reportDetails).join("") : "";
+        const patientReportDetail1 = patientReportDetail?.reportdetails ? Object.values(patientReportDetail?.reportdetails).join("") : "";
         const temaplateDataReport = patientReportDetail1 + notApproved;
         const patientTemaplateDataReport = temaplateDataReport.replace(/<table style="border-collapse: collapse; width: 100%;" border="1"[\s\S]*?<\/table>/g, match => {
           matchCount++;
           return matchCount > 1 ? "" : match;
         });
         if (typeof _handlebars.default !== "undefined") {
-          const compiledTemplate = _handlebars.default.compile(reportDetails ? patientTemaplateDataReport : templateData1);
+          const compiledTemplate = _handlebars.default.compile(patientReportDetail?.reportdetails ? patientTemaplateDataReport : templateData1);
           const templateData = compiledTemplate(patientData);
           const cleanedTemplateData = templateData.replace(/Default Template/g, "");
           let addReportSubmitTime = cleanedTemplateData;
