@@ -255,7 +255,6 @@ const AiReportEditor = _ref => {
                   <tr><td><strong>Modality:</strong></td><td>{{patient_modality}}</td><td><strong>Accession No.:</strong></td><td>{{patient_accession}}</td></tr>
                   <tr><td><strong>Study Date:</strong></td><td>{{study_date}}</td><td><strong>Ref. Physician:</strong></td><td>{{ref_physician}}</td></tr>
                   <tr><td><strong>Study:</strong></td><td>{{study}}</td><td><strong>Institution Name:</strong></td><td>{{institution_name}}</td></tr>
-                  <tr><td><strong>Report Time:</strong></td><td>{{report_time}}</td></tr>
                 </tbody>
               </table>
             `;
@@ -316,7 +315,6 @@ const AiReportEditor = _ref => {
               <tr><td><strong>Modality:</strong></td><td>{{patient_modality}}</td><td><strong>Accession No.:</strong></td><td>{{patient_accession}}</td></tr>
               <tr><td><strong>Study Date:</strong></td><td>{{study_date}}</td><td><strong>Ref. Physician:</strong></td><td>{{ref_physician}}</td></tr>
               <tr><td><strong>Study:</strong></td><td>{{study}}</td><td><strong>Institution Name:</strong></td><td>{{institution_name}}</td></tr>
-              <tr><td><strong>Report Time:</strong></td><td>{{report_time}}</td></tr>
             </tbody>
           </table>
         `;
