@@ -597,12 +597,12 @@ const ReportEditor = (props) => {
       const age =
         patientReportData?.patientage ||
         patientReportData?.patientname?.match(/\d/g)?.join("");
-      const [name] = patientReportData?.patientname?.split(age);
+      const [name] = patientReportData?.patientname?.split(age) || 'Unknown';
       let sex;
 
       if (patientReportData?.patientsex?.toLowerCase() === "m") {
         sex = "Male";
-      } else {
+      } else if(patientReportData?.patientsex?.toLowerCase() === 'f') {
         sex = "Female";
       }
       const studyDate =
@@ -637,7 +637,7 @@ const ReportEditor = (props) => {
         setPatientData(patient);
       } else {
         setPatientData({
-          patient_name: name,
+          patient_name: name === 'U' ? 'Unknown' : name,
           // patient_age: age || parseInt(studyList?.RequestedTags?.PatientAge.replace(/\D/g, ''), 10) || 'Null',
           patient_age:
             age !== undefined
@@ -647,7 +647,7 @@ const ReportEditor = (props) => {
               : 0,
           patient_gender: sex,
           patient_accession: patientReportData.accessionnumber,
-          patient_id: patientReportData.patientid,
+          patient_id: patientReportData.patientid  || 'Undefined',
           patient_modality: patientReportData.modalitiesinstudy,
           study: patientReportData.studydescription,
           study_date: studyDate,
@@ -656,7 +656,7 @@ const ReportEditor = (props) => {
           ref_doctor: patientReportData.referringphysicianname,
           accession_number:
             studyList?.MainDicomTags.AccessionNumber ||
-            patientReportData.accessionnumber,
+            patientReportData.accessionnumber || 'Undefined',
           uid: patientReportData.studyInstanceUid,
           studyID: patientReportData?.studyid,
           document_status: patient?.document_status,
