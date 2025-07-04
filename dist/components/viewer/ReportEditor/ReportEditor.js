@@ -551,50 +551,71 @@ const ReportEditor = props => {
             setInstitutionDemographics("");
             return;
           }
-          const orderedItems = institutionData[0]?.demographicsAttribute[0]?.map(str => {
-            try {
-              return JSON.parse(str);
-            } catch (e) {
-              console.warn("Failed to parse item:", str);
-              return null;
-            }
-          })?.filter(Boolean); // remove any nulls
-          const itemsValues = orderedItems.map(item => item.name);
-          const columnCount = 2;
-          const rowCount = Math.ceil(itemsValues.length / columnCount);
-          function capitalizeFirstLetter(string) {
-            return string.replace(/\b\w/g, match => match.toUpperCase());
-          }
-          const exactLabelMap = {
-            patient_dob: "DOB",
-            patient_id: "Patient ID",
-            uid: "UID",
-            ref_physician: "Ref. Physician",
-            study_tat: "Study TAT",
-            accession_number: "Accession No.",
-            patient_gender: "SEX",
-            patient_modality: "Modality",
-            patient_age: "Age"
-          };
-          function formatLabel(key) {
-            return exactLabelMap[key] || capitalizeFirstLetter(key.replace(/_/g, " "));
-          }
-          let tableRows = "";
-          for (let i = 0; i < rowCount; i++) {
-            const startIdx = i * columnCount;
-            const endIdx = startIdx + columnCount;
-            const rowData = itemsValues.slice(startIdx, endIdx);
-            const rowCells = rowData.map(key => `<td style="width: 17.7931%;"><strong>${formatLabel(key)}:</strong></td><td style="width: 33.5161%;"> {{${key}}}</td>`).join("");
-            tableRows += `<tr>${rowCells}</tr>`;
-          }
-          const Table = `
-              <table style="border-collapse: collapse; width: 100%;" border="1">
-                <tbody>
-                  ${tableRows}
-                </tbody>
-              </table>
-            `;
-          setInstitutionDemographics(Table);
+          // const orderedItems = institutionData[0]?.demographicsAttribute[0]
+          //   ?.map((str) => {
+          //     try {
+          //       return JSON.parse(str);
+          //     } catch (e) {
+          //       console.warn("Failed to parse item:", str);
+          //       return null;
+          //     }
+          //   })
+          //   ?.filter(Boolean); // remove any nulls
+          // const itemsValues = orderedItems.map((item) => item.name);
+          // const columnCount = 2;
+
+          // const rowCount = Math.ceil(itemsValues.length / columnCount);
+
+          // function capitalizeFirstLetter(string) {
+          //   return string.replace(/\b\w/g, (match) => match.toUpperCase());
+          // }
+
+          // const exactLabelMap = {
+          //   patient_dob: "DOB",
+          //   patient_id: "Patient ID",
+          //   uid: "UID",
+          //   ref_physician: "Ref. Physician",
+          //   study_tat: "Study TAT",
+          //   accession_number: "Accession No.",
+          //   patient_gender: "SEX",
+          //   patient_modality: "Modality",
+          //   patient_age: "Age",
+          // };
+
+          // function formatLabel(key) {
+          //   return (
+          //     exactLabelMap[key] ||
+          //     capitalizeFirstLetter(key.replace(/_/g, " "))
+          //   );
+          // }
+
+          // let tableRows = "";
+          // for (let i = 0; i < rowCount; i++) {
+          //   const startIdx = i * columnCount;
+          //   const endIdx = startIdx + columnCount;
+          //   const rowData = itemsValues.slice(startIdx, endIdx);
+
+          //   const rowCells = rowData
+          //     .map(
+          //       (key) =>
+          //         `<td style="width: 17.7931%;"><strong>${formatLabel(
+          //           key
+          //         )}:</strong></td><td style="width: 33.5161%;"> {{${key}}}</td>`
+          //     )
+          //     .join("");
+          //   tableRows += `<tr>${rowCells}</tr>`;
+          // }
+
+          // const Table = `
+          //     <table style="border-collapse: collapse; width: 100%;" border="1">
+          //       <tbody>
+          //         ${tableRows}
+          //       </tbody>
+          //     </table>
+          //   `;
+          const cleanedDemographics = institutionData[0]?.customDemographics.replace(/^<figure[^>]*>/, '') // Remove opening <figure> tag
+          .replace(/<\/figure>$/, '');
+          setInstitutionDemographics(cleanedDemographics);
         });
       } else {
         setInstitutionDemographics("");
