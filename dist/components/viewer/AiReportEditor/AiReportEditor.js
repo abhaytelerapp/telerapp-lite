@@ -246,7 +246,7 @@ const AiReportEditor = _ref => {
     const fetchInstitutionDemographics = async () => {
       if (patientData?.institution_name) {
         await (0, _RequestHandler.fetchReportTemplatesWithInstitution)(apiData, patientData?.institution_name).then(institutionData => {
-          if (!institutionData || institutionData.length === 0) {
+          if (!institutionData || institutionData.length === 0 || institutionData[0]?.customDemographics === null) {
             const defaultDemographics = `
               <table style="border-collapse: collapse; width: 100%;" border="1">
                 <tbody>
@@ -324,8 +324,8 @@ const AiReportEditor = _ref => {
           //       </table>
           //     `;
 
-          const cleanedDemographics = institutionData[0]?.customDemographics.replace(/^<figure[^>]*>/, '') // Remove opening <figure> tag
-          .replace(/<\/figure>$/, '');
+          const cleanedDemographics = institutionData[0]?.customDemographics?.replace(/^<figure[^>]*>/, '') // Remove opening <figure> tag
+          ?.replace(/<\/figure>$/, '');
           setInstitutionDemographics(cleanedDemographics);
         });
       } else {
@@ -801,7 +801,10 @@ const AiReportEditor = _ref => {
           const formattedTime = (0, _moment.default)(patientData.report_submit_time).format('MMM-DD-YYYY');
           addReportSubmitTime = formattedHTML.replace(/(<strong>Report Time:<\/strong><\/td><td>)(.*?)(<\/td>)/, `$1${formattedTime}$3`);
         }
-        instance.setData(addReportSubmitTime);
+        const boldUnderline = addReportSubmitTime?.replace(/(CLINICAL HISTORY|FINDINGS|IMPRESSION)(\s*:?)/gi, (match, p1, p2) => {
+          return `<u><strong style="text-transform: uppercase;">${p1}</strong></u>${p2}`;
+        });
+        instance.setData(boldUnderline);
 
         // ✅ Shared function to modify and update data
         const updateEditorState = () => {

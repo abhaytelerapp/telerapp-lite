@@ -547,7 +547,7 @@ const ReportEditor = props => {
     const fetchInstitutionDemographics = async () => {
       if (patientData?.institution_name) {
         await (0, _RequestHandler.fetchReportTemplatesWithInstitution)(apiData, patientData?.institution_name).then(institutionData => {
-          if (!institutionData || institutionData.length === 0) {
+          if (!institutionData || institutionData.length === 0 || institutionData[0]?.customDemographics === null) {
             setInstitutionDemographics("");
             return;
           }
@@ -613,8 +613,8 @@ const ReportEditor = props => {
           //       </tbody>
           //     </table>
           //   `;
-          const cleanedDemographics = institutionData[0]?.customDemographics.replace(/^<figure[^>]*>/, '') // Remove opening <figure> tag
-          .replace(/<\/figure>$/, '');
+          const cleanedDemographics = institutionData[0]?.customDemographics?.replace(/^<figure[^>]*>/, '') // Remove opening <figure> tag
+          ?.replace(/<\/figure>$/, '');
           setInstitutionDemographics(cleanedDemographics);
         });
       } else {
@@ -1471,6 +1471,8 @@ const ReportEditor = props => {
           }
           const updatedTemplateData = addReportSubmitTime.replace(/(<td[^>]*>\s*<strong>\s*Institution Name:\s*<\/strong>\s*<\/td>\s*<td[^>]*>)(\s*<\/td>)/i, (match, prefix, emptyTd) => {
             return `${prefix}${institutionNameFromStorage}</td>`;
+          })?.replace(/(CLINICAL HISTORY|FINDINGS|IMPRESSION)(\s*:?)/gi, (match, p1, p2) => {
+            return `<u><strong style="text-transform: uppercase;">${p1}</strong></u>${p2}`;
           });
           setEditorData(updatedTemplateData);
           setTemplate(updatedTemplateData);
