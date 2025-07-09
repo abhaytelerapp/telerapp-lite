@@ -26,14 +26,16 @@ const getUserInformation = async (fetchReportSetting, institutionName, patientFi
   }
   const firstName = assignUserDataFind ? `${assignUserDataFind?.firstName} ${assignUserDataFind?.lastName}` : '';
   const qualification = assignUserDataFind?.attributes.qualification !== undefined ? assignUserDataFind?.attributes.qualification : '';
+  const title = assignUserDataFind?.attributes.title !== undefined ? assignUserDataFind?.attributes.title : '';
   const registrationNo = assignUserDataFind && assignUserDataFind?.attributes && assignUserDataFind?.attributes.registrationNo ? assignUserDataFind.attributes.registrationNo : '';
   const formattedTimes = formattedTime === undefined ? '' : formattedTime;
   const disclaimerDetails = reportSetting && reportSetting.disclaimer_details ? reportSetting.disclaimer_details : '';
   const displayName = firstName ? `<strong>${firstName}</strong><br/>` : '';
   const qualificationName = qualification ? `<strong>${qualification}</strong><br/>` : '';
   const registrationNoName = registrationNo ? `<strong>Reg.No. :- ${registrationNo}</strong><br/>` : '';
-  const formattedTimesName = formattedTimes ? `<strong>${formattedTimes}</strong><br/>` : '';
+  const formattedTimesName = formattedTimes ? `${formattedTimes}<br/>` : '';
   const disclaimerDetailsName = disclaimerDetails ? `<strong>Disclaimer :-</strong> ${disclaimerDetails}` : '';
+  const userTitle = reportSetting?.consultant ? `<strong>${title}</strong><br/>` : '';
   return {
     doctorInformation: {
       displayName,
@@ -41,7 +43,8 @@ const getUserInformation = async (fetchReportSetting, institutionName, patientFi
       registrationNoName,
       formattedTimesName,
       disclaimerDetailsName,
-      signature
+      signature,
+      userTitle
     },
     assignUserDataFind,
     reportSetting

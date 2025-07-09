@@ -581,6 +581,33 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         modifiedEditorData = doc.body.innerHTML;
       }
 
+      const demographicsTableMatch = modifiedEditorData?.match(/<table[\s\S]*?<\/table>/i);
+      const demographicsTable = demographicsTableMatch ? demographicsTableMatch[0] : '';
+
+      const cleanedEditorData = modifiedEditorData.replace(/<table[\s\S]*?<\/table>/gi, '');
+
+      const sections = cleanedEditorData.split(/(?=<h3[^>]*>)/);
+
+      const contentWithTables = sections.map((section, index) => {
+        const pMatch = section.match(/^<h3[^>]*>.*?<\/h3>/i);
+        const pTag = pMatch ? pMatch[0] : '';
+        const restOfSection = pMatch ? section.replace(pTag, '') : section;
+
+        if (index === 0) {
+          return `${demographicsTable}${pTag}${restOfSection}`; // first title: no page break
+        }
+
+        return `
+          ${reportSetting?.patient_details_in_header
+            ? '<div style="page-break-before: always;">&nbsp;</div>'
+            : '<div style="page-break-before: always;">&nbsp;</div>'
+          }
+          ${demographicsTable}
+          ${pTag}
+          ${restOfSection}
+        `;
+      }).join('');
+
       const headerStyle = `
         width: 98%;
         z-index: 1;
@@ -632,11 +659,12 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
 
       const output = `
       <div style="line-height: 1.2;">
-          ${doctorInformation?.displayName}
-          ${doctorInformation?.qualificationName}
-          ${doctorInformation?.registrationNoName}
-          ${doctorInformation?.formattedTimesName}
-          ${doctorInformation?.disclaimerDetailsName}
+        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;">${doctorInformation?.displayName}</span></strong>
+        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;"> ${doctorInformation?.qualificationName}</span></strong>
+        ${reportSetting?.consultant ? `<strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;">${doctorInformation?.userTitle}</span></strong>` : ''}
+        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;"> ${doctorInformation?.registrationNoName}</span></strong>
+        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;">${doctorInformation?.disclaimerDetailsName}</span></strong><br/>
+        <span> ${doctorInformation?.formattedTimesName}</span>
       </div>
   `;
 
@@ -691,7 +719,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
       let tableCounter = 0;
       let colIndex = 0;
 
-      const updateModifiedEditorData = modifiedEditorData
+      const updateModifiedEditorData = contentWithTables
         .replace(/<figure class="table">/, "")
         .replace(/<\/figure>/, "")
         .replace(
@@ -721,8 +749,10 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
               return `<td>`;
             }
           }
-        )
-        .replace(/<table[^>]*style="([^"]*)"/gi, (match, styles) => {
+        )?.replace(
+          /<table(?![^]*?width="100%")/g, // Matches tables that do NOT have width="100%"
+          `<table  width="100%" style=" border-collapse: collapse; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`
+        ).replace(/<table[^>]*style="([^"]*)"/gi, (match, styles) => {
           tableCounter++;
           // Check if we should apply styles to the first table
           const shouldApplyToFirstTable =
@@ -1010,7 +1040,8 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         apiData,
         modifiedEditor,
         setIsLoading,
-        patientData?.patient_name
+        patientData?.patient_name,
+        reportSetting
       );
     } catch (error) {
       console.error("Error downloading PDF:", error);
@@ -1236,9 +1267,10 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
             const extraDetailsHTML = `
             ${doctorInformation?.displayName}
             ${doctorInformation?.qualificationName}
+            ${doctorInformation?.userTitle}
             ${doctorInformation?.registrationNoName}
-            ${doctorInformation?.formattedTimesName}
             ${doctorInformation?.disclaimerDetailsName}
+            ${doctorInformation?.formattedTimesName}
           `;
 
             const viewFragment =

@@ -995,6 +995,24 @@ const ReportEditor = props => {
         // Serialize the document back to a string
         modifiedEditorData = doc.body.innerHTML;
       }
+      const demographicsTableMatch = modifiedEditorData?.match(/<table[\s\S]*?<\/table>/i);
+      const demographicsTable = demographicsTableMatch ? demographicsTableMatch[0] : '';
+      const cleanedEditorData = modifiedEditorData.replace(/<table[\s\S]*?<\/table>/gi, '');
+      const sections = cleanedEditorData.split(/(?=<h3[^>]*>)/);
+      const contentWithTables = sections.map((section, index) => {
+        const pMatch = section.match(/^<h3[^>]*>.*?<\/h3>/i);
+        const pTag = pMatch ? pMatch[0] : '';
+        const restOfSection = pMatch ? section.replace(pTag, '') : section;
+        if (index === 0) {
+          return `${demographicsTable}${pTag}${restOfSection}`; // first title: no page break
+        }
+        return `
+          ${reportSetting?.patient_details_in_header ? '<div style="page-break-before: always;">&nbsp;</div>' : '<div style="page-break-before: always;">&nbsp;</div>'}
+          ${demographicsTable}
+          ${pTag}
+          ${restOfSection}
+        `;
+      }).join('');
       const headerStyle = `
         width: 98%;
         z-index: 1;
@@ -1042,11 +1060,12 @@ const ReportEditor = props => {
         `;
       const output = `
       <div style="line-height: 1.2;">
-          ${doctorInformation?.displayName}
-          ${doctorInformation?.qualificationName}
-          ${doctorInformation?.registrationNoName}
-          ${doctorInformation?.formattedTimesName}
-          ${doctorInformation?.disclaimerDetailsName}
+        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;">${doctorInformation?.displayName}</span></strong>
+        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;"> ${doctorInformation?.qualificationName}</span></strong>
+        ${reportSetting?.consultant ? `<strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;">${doctorInformation?.userTitle}</span></strong>` : ''}
+        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;"> ${doctorInformation?.registrationNoName}</span></strong>
+        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;">${doctorInformation?.disclaimerDetailsName}</span></strong><br/>
+        <span> ${doctorInformation?.formattedTimesName}</span>
       </div>
   `;
       let pageHeaderSpace;
@@ -1090,7 +1109,7 @@ const ReportEditor = props => {
       let tdCounter = 0;
       let tableCounter = 0;
       let colIndex = 0;
-      const updateModifiedEditorData = modifiedEditorData.replace(/<figure class="table">/, "").replace(/<\/figure>/, "").replace(/<table /, reportSetting?.patient_details_in_header ? "<table " // Leave it unchanged
+      const updateModifiedEditorData = contentWithTables.replace(/<figure class="table">/, "").replace(/<\/figure>/, "").replace(/<table /, reportSetting?.patient_details_in_header ? "<table " // Leave it unchanged
       : `<table style="font-size: ${reportSetting?.font_size}px !important; border-collapse: collapse; width: 100%" `).replace(/<td(\s+style="[^"]*")?>/g,
       // Matches <td> with or without style
       match => {
@@ -1101,7 +1120,9 @@ const ReportEditor = props => {
           // If <td> has no style, determine its width based on position
           return `<td>`;
         }
-      }).replace(/<table[^>]*style="([^"]*)"/gi, (match, styles) => {
+      })?.replace(/<table(?![^]*?width="100%")/g,
+      // Matches tables that do NOT have width="100%"
+      `<table  width="100%" style=" border-collapse: collapse; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`).replace(/<table[^>]*style="([^"]*)"/gi, (match, styles) => {
         tableCounter++;
         // Check if we should apply styles to the first table
         const shouldApplyToFirstTable = reportSetting?.patient_details_in_header;
@@ -1276,7 +1297,7 @@ const ReportEditor = props => {
   `;
       }
       // Generate the PDF with the modified content
-      (0, _RequestHandler.generateReportPdf)(apiData, modifiedEditor, setIsLoading, patientData?.patient_name);
+      (0, _RequestHandler.generateReportPdf)(apiData, modifiedEditor, setIsLoading, patientData?.patient_name, reportSetting);
     } catch (error) {
       console.error("Error downloading PDF:", error);
     }
@@ -1602,9 +1623,10 @@ const ReportEditor = props => {
             const extraDetailsHTML = `
               ${doctorInformation?.displayName}
               ${doctorInformation?.qualificationName}
+              ${doctorInformation?.userTitle}
               ${doctorInformation?.registrationNoName}
-              ${doctorInformation?.formattedTimesName}
               ${doctorInformation?.disclaimerDetailsName}
+              ${doctorInformation?.formattedTimesName}
             `;
             // Insert formatted text below the image
             const viewFragment = instance.data.processor.toView(extraDetailsHTML);

@@ -33,6 +33,10 @@ export const getUserInformation = async (
     assignUserDataFind?.attributes.qualification !== undefined
       ? assignUserDataFind?.attributes.qualification
       : '';
+  const title =
+    assignUserDataFind?.attributes.title !== undefined
+      ? assignUserDataFind?.attributes.title
+      : '';
   const registrationNo =
     assignUserDataFind &&
     assignUserDataFind?.attributes &&
@@ -48,10 +52,11 @@ export const getUserInformation = async (
   const registrationNoName = registrationNo
     ? `<strong>Reg.No. :- ${registrationNo}</strong><br/>`
     : '';
-  const formattedTimesName = formattedTimes ? `<strong>${formattedTimes}</strong><br/>` : '';
+  const formattedTimesName = formattedTimes ? `${formattedTimes}<br/>` : '';
   const disclaimerDetailsName = disclaimerDetails
     ? `<strong>Disclaimer :-</strong> ${disclaimerDetails}`
     : '';
+  const userTitle = reportSetting?.consultant ? `<strong>${title}</strong><br/>` : '';
 
   return {
     doctorInformation: {
@@ -61,6 +66,7 @@ export const getUserInformation = async (
       formattedTimesName,
       disclaimerDetailsName,
       signature,
+      userTitle
     },
     assignUserDataFind,
     reportSetting,

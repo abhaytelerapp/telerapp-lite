@@ -132,7 +132,7 @@ const fetchPatientReportsById = async (id, apiData) => {
   return fetch(`${apiData}/reportsById/${id}`).then(response => response.json());
 };
 exports.fetchPatientReportsById = fetchPatientReportsById;
-const generateReportPdf = (apiData, reportdetails, setIsLoading, patientName, notDownload) => {
+const generateReportPdf = (apiData, reportdetails, setIsLoading, patientName, notDownload, reportSetting) => {
   const currentDate = new Date();
   const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}_${String(currentDate.getDate()).padStart(2, "0")}_${currentDate.getFullYear()}`;
   const fileName = `${patientName}_${formattedDate}.pdf`;
@@ -142,7 +142,8 @@ const generateReportPdf = (apiData, reportdetails, setIsLoading, patientName, no
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      html: reportdetails
+      html: reportdetails,
+      reportSetting
     })
   }).then(response => response.blob()).then(blob => {
     const url = window.URL.createObjectURL(blob);
