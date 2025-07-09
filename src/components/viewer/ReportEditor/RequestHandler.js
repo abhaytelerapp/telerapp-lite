@@ -163,8 +163,8 @@ export const generateReportPdf = (
   reportdetails,
   setIsLoading,
   patientName,
+  reportSetting,
   notDownload,
-  reportSetting
 ) => {
   const currentDate = new Date();
   const formattedDate = `${String(currentDate.getMonth() + 1).padStart(

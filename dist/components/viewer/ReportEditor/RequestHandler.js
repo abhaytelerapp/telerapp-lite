@@ -132,7 +132,7 @@ const fetchPatientReportsById = async (id, apiData) => {
   return fetch(`${apiData}/reportsById/${id}`).then(response => response.json());
 };
 exports.fetchPatientReportsById = fetchPatientReportsById;
-const generateReportPdf = (apiData, reportdetails, setIsLoading, patientName, notDownload, reportSetting) => {
+const generateReportPdf = (apiData, reportdetails, setIsLoading, patientName, reportSetting, notDownload) => {
   const currentDate = new Date();
   const formattedDate = `${String(currentDate.getMonth() + 1).padStart(2, "0")}_${String(currentDate.getDate()).padStart(2, "0")}_${currentDate.getFullYear()}`;
   const fileName = `${patientName}_${formattedDate}.pdf`;
