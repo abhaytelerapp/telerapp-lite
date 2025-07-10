@@ -656,14 +656,14 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
             font-size: ${reportSetting?.font_size}px !important;
             line-height: ${reportSetting?.line_spacing};
         `;
-
+      const reportTime = moment(patientData.report_submit_time).format('MMM-DD-YYYY HH:mm:ss');
       const output = `
-      <div style="line-height: 1.2;">
-        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;">${doctorInformation?.displayName}</span></strong>
-        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;"> ${doctorInformation?.qualificationName}</span></strong>
-        ${reportSetting?.consultant ? `<strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;">${doctorInformation?.userTitle}</span></strong>` : ''}
-        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;"> ${doctorInformation?.registrationNoName}</span></strong>
-        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;">${doctorInformation?.disclaimerDetailsName}</span></strong><br/>
+      <div style="line-height: ${reportSetting?.line_spacing <= 0.9 ? 1.0 : reportSetting?.line_spacing};">
+        <strong><span style="font-size: 12pt; font-weight: 600;">${doctorInformation?.displayName}</span></strong>
+        <strong><span style="font-size: 12pt; font-weight: 600;"> ${doctorInformation?.qualificationName}</span></strong>
+        ${reportSetting?.consultant ? `<strong><span style="font-size: 12pt; font-weight: 600;">${doctorInformation?.userTitle}</span></strong>` : ''}
+        <strong><span style="font-size: 12pt; font-weight: 600;"> ${doctorInformation?.registrationNoName}</span></strong>
+        <strong><span style="font-size: 12pt; font-weight: 600;">${doctorInformation?.disclaimerDetailsName}</span></strong><br/>
         <span> ${doctorInformation?.formattedTimesName}</span>
       </div>
   `;
@@ -752,6 +752,9 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         )?.replace(
           /<table(?![^]*?width="100%")/g, // Matches tables that do NOT have width="100%"
           `<table  width="100%" style=" border-collapse: collapse; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`
+        )?.replace(
+          /(<strong>Report Time:<\/strong><\/td><td>)(.*?)(<\/td>)/,
+          `$1${reportTime}$3`
         ).replace(/<table[^>]*style="([^"]*)"/gi, (match, styles) => {
           tableCounter++;
           // Check if we should apply styles to the first table
@@ -829,6 +832,9 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
                       .replace(
                         /<table /,
                         `<table style="font-size: ${reportSetting?.font_size}px !important;border-collapse:collapse; width:100%" `
+                      )?.replace(
+                        /(<strong>Report Time:<\/strong><\/td><td>)(.*?)(<\/td>)/,
+                        `$1${reportTime}$3`
                       )
                       .replace(
                         /<td(\s+style="[^"]*")?>/g, // Matches <td> with or without style
@@ -944,6 +950,9 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
                     .replace(
                       /<table /,
                       `<table style="font-size: ${reportSetting?.font_size}px !important;border-collapse:collapse;width:100%" `
+                    )?.replace(
+                      /(<strong>Report Time:<\/strong><\/td><td>)(.*?)(<\/td>)/,
+                      `$1${reportTime}$3`
                     )
                     .replace(
                       /<td(\s+style="[^"]*")?>/g, // Matches <td> with or without style

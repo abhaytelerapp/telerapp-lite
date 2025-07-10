@@ -488,13 +488,14 @@ const AiReportEditor = _ref => {
             font-size: ${reportSetting?.font_size}px !important;
             line-height: ${reportSetting?.line_spacing};
         `;
+      const reportTime = (0, _moment.default)(patientData.report_submit_time).format('MMM-DD-YYYY HH:mm:ss');
       const output = `
-      <div style="line-height: 1.2;">
-        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;">${doctorInformation?.displayName}</span></strong>
-        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;"> ${doctorInformation?.qualificationName}</span></strong>
-        ${reportSetting?.consultant ? `<strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;">${doctorInformation?.userTitle}</span></strong>` : ''}
-        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;"> ${doctorInformation?.registrationNoName}</span></strong>
-        <strong><span style="font-size: 12pt; font-weight: 600; line-height:100%;">${doctorInformation?.disclaimerDetailsName}</span></strong><br/>
+      <div style="line-height: ${reportSetting?.line_spacing <= 0.9 ? 1.0 : reportSetting?.line_spacing};">
+        <strong><span style="font-size: 12pt; font-weight: 600;">${doctorInformation?.displayName}</span></strong>
+        <strong><span style="font-size: 12pt; font-weight: 600;"> ${doctorInformation?.qualificationName}</span></strong>
+        ${reportSetting?.consultant ? `<strong><span style="font-size: 12pt; font-weight: 600;">${doctorInformation?.userTitle}</span></strong>` : ''}
+        <strong><span style="font-size: 12pt; font-weight: 600;"> ${doctorInformation?.registrationNoName}</span></strong>
+        <strong><span style="font-size: 12pt; font-weight: 600;">${doctorInformation?.disclaimerDetailsName}</span></strong><br/>
         <span> ${doctorInformation?.formattedTimesName}</span>
       </div>
   `;
@@ -552,7 +553,7 @@ const AiReportEditor = _ref => {
         }
       })?.replace(/<table(?![^]*?width="100%")/g,
       // Matches tables that do NOT have width="100%"
-      `<table  width="100%" style=" border-collapse: collapse; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`).replace(/<table[^>]*style="([^"]*)"/gi, (match, styles) => {
+      `<table  width="100%" style=" border-collapse: collapse; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`)?.replace(/(<strong>Report Time:<\/strong><\/td><td>)(.*?)(<\/td>)/, `$1${reportTime}$3`).replace(/<table[^>]*style="([^"]*)"/gi, (match, styles) => {
         tableCounter++;
         // Check if we should apply styles to the first table
         const shouldApplyToFirstTable = reportSetting?.patient_details_in_header;
@@ -596,7 +597,7 @@ const AiReportEditor = _ref => {
               ${reportSetting?.patient_details_in_header ? `
                   <div style=" margin-left: ${reportSetting?.left}px;
                     margin-right: ${reportSetting?.right}px; font-family: ${reportSetting?.font_style};font-size: ${reportSetting?.font_size}px !important;margin-top:20px">
-                    ${table.replace(/<table /, `<table style="font-size: ${reportSetting?.font_size}px !important;border-collapse:collapse; width:100%" `).replace(/<td(\s+style="[^"]*")?>/g,
+                    ${table.replace(/<table /, `<table style="font-size: ${reportSetting?.font_size}px !important;border-collapse:collapse; width:100%" `)?.replace(/(<strong>Report Time:<\/strong><\/td><td>)(.*?)(<\/td>)/, `$1${reportTime}$3`).replace(/<td(\s+style="[^"]*")?>/g,
         // Matches <td> with or without style
         match => {
           if (match.includes('style="')) {
@@ -668,7 +669,7 @@ const AiReportEditor = _ref => {
                 <div style=" margin-left: ${reportSetting?.left}px;
               margin-right: ${reportSetting?.right}px; font-family: ${reportSetting?.font_style};font-size: ${reportSetting?.font_size}px !important;margin-top:20px">
 
-                  ${table.replace(/<table /, `<table style="font-size: ${reportSetting?.font_size}px !important;border-collapse:collapse;width:100%" `).replace(/<td(\s+style="[^"]*")?>/g,
+                  ${table.replace(/<table /, `<table style="font-size: ${reportSetting?.font_size}px !important;border-collapse:collapse;width:100%" `)?.replace(/(<strong>Report Time:<\/strong><\/td><td>)(.*?)(<\/td>)/, `$1${reportTime}$3`).replace(/<td(\s+style="[^"]*")?>/g,
         // Matches <td> with or without style
         match => {
           if (match.includes('style="')) {
