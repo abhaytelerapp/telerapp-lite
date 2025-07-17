@@ -5,6 +5,14 @@ var ConfigLog = {};
 //代表config檔已經載入完畢 --*
 var configOnload = false;
 
+// Deferred loading globals
+let deferredLoadTasks = new Map();
+let seriesQueue = [];
+let activeSeriesUID = null;
+let sequentialLoadingActive = false;
+let isManualLoading = false;
+let currentSeriesUID = null;
+
 window.onload = function () {
   //執行其他Script提供的高優先度onload函數
   onloadFunction.ExecuteFirst();
@@ -429,14 +437,16 @@ async function getJsonBySeriesRequest(SeriesRequest) {
     // Fetch all metadata requests in parallel
     const responses = await Promise.all(instanceUrls.map(url => fetchInstanceMetadata(url)));
 
-    // Process instance responses
-    responses.forEach((InstanceRequest, index) => {
-      getJsonByInstanceRequest(SeriesResponse, InstanceRequest, index, InstanceRequest[0]['0020000E'].Value[0]);
+    // For each series, load the first instance and set up deferred loading
+    const firstInstancePromises = responses.map((InstanceRequest, index) => {
+      return getJsonByInstanceRequest(SeriesResponse, InstanceRequest, index, InstanceRequest[0]['0020000E'].Value[0]);
     });
-    // Process all series in parallel to load their first instances
-    // await Promise.all(responses.map((InstanceRequest, index) => {
-    //   return getJsonByInstanceRequest(SeriesResponse, InstanceRequest, index, InstanceRequest[0]['0020000E'].Value[0]);
-    // }));
+
+    // Wait for all first-instance loads to finish
+    await Promise.all(firstInstancePromises);
+
+    // Now start loading the remaining instances
+    startSequentialSeriesLoading();
 
   } catch (error) {
     console.error("Error fetching instance metadata:", error);
@@ -492,64 +502,84 @@ async function fetchInstanceMetadata(url) {
 //   await Promise.all(loadTasks);
 // }
 
-// Function to handle double-click and load remaining instances
+// function getJsonBySeriesRequest(SeriesRequest) {
+//   let SeriesResponse = SeriesRequest.response, InstanceUrl = "";
+//   for (let instance = 0; instance < SeriesResponse.length; instance++) {
+//     if (ConfigLog.QIDO.enableRetrieveURI == true) InstanceUrl = SeriesResponse[instance]["00081190"].Value[0] + "/instances";
+//     else InstanceUrl = fitUrl(ConfigLog.QIDO.https + "://" + ConfigLog.QIDO.hostname + ":" + ConfigLog.QIDO.PORT + "/" + ConfigLog.QIDO.service) +
+//       "/studies/" + SeriesResponse[instance]["0020000D"].Value[0] +
+//       "/series/" + SeriesResponse[instance]["0020000E"].Value[0] + "/metadata";
 
-// Store deferred load tasks globally (to be triggered on double-click)
-let deferredLoadTasks = new Map();
-let activeSeriesUID = null; // Tracks the currently active series
-let seriesQueue = [];
-let currentSeriesUID = null;
-let sequentialLoadingActive = false;
-let firstInstancesLoaded = []; // Store first-instance load promises
-let isManualLoading = false; // Flag to track manual loading state
+//     if (ConfigLog.WADO.includefield == true) InstanceUrl += "?includefield=all";
+//     if (ConfigLog.WADO.https == "https") InstanceUrl = InstanceUrl.replace("http:", "https:");
+//     let InstanceRequest = new XMLHttpRequest();
+//     InstanceRequest.open('GET', InstanceUrl);
+//     InstanceRequest.responseType = 'json';
+//     //發送以Instance為單位的請求
+//     var wadoToken = ConfigLog.WADO.token;
+//     for (var to = 0; to < Object.keys(wadoToken).length; to++) {
+//       if (wadoToken[Object.keys(wadoToken)[to]] != "") {
+//         InstanceRequest.setRequestHeader("" + Object.keys(wadoToken)[to], "" + wadoToken[Object.keys(wadoToken)[to]]);
+//       }
+//     }
+//     const instance_ = instance;
+//     InstanceRequest.send();
+//     InstanceRequest.onload = function () {
+//       getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instance_);
+//     }
+//   }
+// }
 
 async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instance, seriesInstanceUid) {
-  const foundItem = InstanceRequest.find(item => item["0020000E"]?.Value?.includes(seriesInstanceUid));
-  let seriesInstanceNumber;
-  if (foundItem) {
-      seriesInstanceNumber = {
-          seriesInstanceUID: seriesInstanceUid,
-          instanceNumberOfSeries: InstanceRequest.length,
-          SeriesResponse: SeriesResponse.length
-      };
-  }
+  return new Promise(async (resolve) => {
+    const foundItem = InstanceRequest.find(item => item["0020000E"]?.Value?.includes(seriesInstanceUid));
+    let seriesInstanceNumber;
+    if (foundItem) {
+        seriesInstanceNumber = {
+            seriesInstanceUID: seriesInstanceUid,
+            instanceNumberOfSeries: InstanceRequest.length,
+            SeriesResponse: SeriesResponse.length
+        };
+    }
 
-  const DicomResponse = InstanceRequest;
-  if (!DicomResponse || DicomResponse.length === 0) return;
+    const DicomResponse = InstanceRequest;
+    if (!DicomResponse || DicomResponse.length === 0) {
+      resolve();
+      return;
+    }
 
-  const minInstance = Math.min(...DicomResponse.map(d => getValue(d["00200013"]) || Infinity));
+    const minInstance = Math.min(...DicomResponse.map(d => getValue(d["00200013"]) || Infinity));
 
-  // Load first instance of each series
-  for (let dicomData of DicomResponse) {
-      let url = buildWADOUrl(dicomData);
-      url = fitUrl(url);
+    // Load first instance of each series
+    for (let dicomData of DicomResponse) {
+        let url = buildWADOUrl(dicomData);
+        url = fitUrl(url);
 
-      if (getValue(dicomData["00200013"]) === minInstance || DicomResponse.length === 1) {
-          ConfigLog.WADO.WADOType === "URI"
-              ? await loadDICOMFromUrl(url)
-              : await wadorsLoader(url, undefined, seriesInstanceNumber);
-          break;
-      }
-  }
+        if (getValue(dicomData["00200013"]) === minInstance || DicomResponse.length === 1) {
+            if (ConfigLog.WADO.WADOType === "URI") {
+                await loadDICOMFromUrl(url);
+            } else {
+                await wadorsLoader(url, undefined, seriesInstanceNumber);
+            }
+            break;
+        }
+    }
 
-  // Store remaining instances for deferred loading
-  const deferred = DicomResponse.filter(
-      d => getValue(d["00200013"]) !== minInstance
-  ).map(dicomData => {
-      const url = fitUrl(buildWADOUrl(dicomData));
-      return () => loadDeferredDicom(url, undefined, seriesInstanceNumber);
+    // Store remaining instances for deferred loading
+    const deferred = DicomResponse.filter(
+        d => getValue(d["00200013"]) !== minInstance
+    ).map(dicomData => {
+        const url = fitUrl(buildWADOUrl(dicomData));
+        return () => loadDeferredDicom(url, undefined, seriesInstanceNumber);
+    });
+
+    if (deferred.length > 0) {
+        deferredLoadTasks.set(seriesInstanceUid, deferred);
+        seriesQueue.push(seriesInstanceUid);
+    }
+
+    resolve(); // <-- resolve after first instance is loaded and deferred tasks are set
   });
-
-  if (deferred.length > 0) {
-      deferredLoadTasks.set(seriesInstanceUid, deferred);
-      seriesQueue.push(seriesInstanceUid);
-  }
-
-  // If this is the last series, start loading remaining instances
-  if (instance === SeriesResponse.length - 1) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      startSequentialSeriesLoading();
-  }
 }
 
 
@@ -570,23 +600,29 @@ async function handleSeriesDoubleClick(seriesInstanceUID, isConcurrent = false) 
   if (!deferredLoadTasks.has(seriesInstanceUID)) return;
 
   if (!isConcurrent) {
-    seriesQueue.some(item => item === seriesInstanceUID) ? null : seriesQueue.push(seriesInstanceUID);
+    if (!seriesQueue.some(item => item === seriesInstanceUID)) seriesQueue.push(seriesInstanceUID);
     activeSeriesUID = seriesInstanceUID;
     isManualLoading = true; // Set manual loading flag
   }
 
   let tasks = deferredLoadTasks.get(seriesInstanceUID);
-  const batchSize = 15; // Load 2 instances at a time
+  const batchSize = 17; // Number of instances to load in parallel
 
   while (tasks.length > 0) {
       if (!isConcurrent && activeSeriesUID !== seriesInstanceUID) return;
 
+      // Take the next batch of up to 17 tasks
       let batch = tasks.splice(0, batchSize);
+      // Optional: log batch start
+      console.log(`Loading batch of ${batch.length} DICOM instances for series ${seriesInstanceUID}...`);
+      // Wait for all 17 to finish before starting the next batch
       await Promise.all(batch.map(task => task()));
+      // Optional: log batch completion
+      console.log(`Batch completed for series ${seriesInstanceUID}. Remaining: ${tasks.length}`);
 
       // Add a small delay between batches to prevent overwhelming the system
       if (tasks.length > 0) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 100));
       }
   }
 
@@ -603,7 +639,6 @@ async function handleSeriesDoubleClick(seriesInstanceUID, isConcurrent = false) 
       }
   }
 }
-
 // async function getJsonByInstanceRequest(SeriesResponse, InstanceRequest, instance, seriesInstanceUid) {
 //   const foundItem = InstanceRequest.find(item => item["0020000E"]?.Value?.includes(seriesInstanceUid));
 //   let seriesInstanceNumber;

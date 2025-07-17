@@ -55,112 +55,112 @@ function wadorsLoader(url, onlyload, seriesInstanceNumber) {
     showLoaderMain(false);
     var data = [];
 
-    function getData() {
-        var headers = {
-            'user-agent': 'Mozilla/5.0 MDN Example',
-            'content-type': 'multipart/related; type=application/dicom;'
-        }
-        var wadoToken = ConfigLog.WADO.token;
-        for (var to = 0; to < Object.keys(wadoToken).length; to++) {
-            if (wadoToken[Object.keys(wadoToken)[to]] != "") {
-                headers[Object.keys(wadoToken)[to]] = wadoToken[Object.keys(wadoToken)[to]];
-                // InstanceRequest.setRequestHeader("" + Object.keys(wadoToken)[to], "" + wadoToken[Object.keys(wadoToken)[to]]);
+    return new Promise((resolve, reject) => {
+        function getData() {
+            var headers = {
+                'user-agent': 'Mozilla/5.0 MDN Example',
+                'content-type': 'multipart/related; type=application/dicom;'
             }
-        }
-        fetch(url, {
-            headers,
-        })
-            .then(async function (res) {
-                let resBlob = await res.arrayBuffer();
-                let intArray = new Uint8Array(resBlob);
-                var string = '';
-                for (let i = 0; i < intArray.length; i++) {
-                    string += String.fromCodePoint(intArray[i]);
+            var wadoToken = ConfigLog.WADO.token;
+            for (var to = 0; to < Object.keys(wadoToken).length; to++) {
+                if (wadoToken[Object.keys(wadoToken)[to]] != "") {
+                    headers[Object.keys(wadoToken)[to]] = wadoToken[Object.keys(wadoToken)[to]];
                 }
-
-                var url = await stowMultipartRelated(string);
-                if (onlyload == true) loadDICOMFromUrl(url, false, seriesInstanceNumber);
-                else loadDICOMFromUrl(url, undefined, seriesInstanceNumber);;
-            })
-            .catch(function (err) { })
-    }
-    async function stowMultipartRelated(iData) {
-        let multipartMessage = iData;
-        let startBoundary = multipartMessage.split("\r\n")[0];
-        let matches = multipartMessage.matchAll(new RegExp(startBoundary, "gi"));
-        let fileEndIndex = [];
-        let fileStartIndex = [];
-        for (let match of matches) {
-            fileEndIndex.push(match.index - 2);
-        }
-        fileEndIndex = fileEndIndex.slice(1);
-        let data = multipartMessage.split("\r\n");
-        let filename = [];
-        let files = [];
-        //let contentDispositionList = [];
-        //let contentTypeList = [];
-        for (let i in data) {
-            let text = data[i];
-            if (text.includes("Content-Disposition")) {
-                //contentDispositionList.push(text);
-                let textSplitFileName = text.split("filename=")
-                filename.push(textSplitFileName[textSplitFileName.length - 1].replace(/"/gm, ""));
-            } else if (text.includes("Content-Type")) {
-                //contentTypeList.push(text);
             }
-        }
-        //contentDispositionList = _.uniq(contentDispositionList);
-        //contentTypeList = _.uniq(contentTypeList);
-        let teststring = ["Content-Type", "Content-Length", "MIME-Version"]
-        let matchesIndex = []
-        for (let type of teststring) {
-            let contentTypeMatches = multipartMessage.matchAll(new RegExp(`${type}.*[\r\n|\r|\n]$`, "gim"));
-            for (let match of contentTypeMatches) {
-                matchesIndex.push({
-                    index: match.index,
-                    length: match['0'].length
+            fetch(url, { headers })
+                .then(async function (res) {
+                    let resBlob = await res.arrayBuffer();
+                    let intArray = new Uint8Array(resBlob);
+                    var string = '';
+                    for (let i = 0; i < intArray.length; i++) {
+                        string += String.fromCodePoint(intArray[i]);
+                    }
+
+                    var url = await stowMultipartRelated(string);
+                    if (onlyload == true) loadDICOMFromUrl(url, false, seriesInstanceNumber);
+                    else loadDICOMFromUrl(url, undefined, seriesInstanceNumber);
+                    resolve(); // <-- resolve when done
                 })
-            }
+                .catch(function (err) { reject(err); })
         }
+        async function stowMultipartRelated(iData) {
+            let multipartMessage = iData;
+            let startBoundary = multipartMessage.split("\r\n")[0];
+            let matches = multipartMessage.matchAll(new RegExp(startBoundary, "gi"));
+            let fileEndIndex = [];
+            let fileStartIndex = [];
+            for (let match of matches) {
+                fileEndIndex.push(match.index - 2);
+            }
+            fileEndIndex = fileEndIndex.slice(1);
+            let data = multipartMessage.split("\r\n");
+            let filename = [];
+            let files = [];
+            //let contentDispositionList = [];
+            //let contentTypeList = [];
+            for (let i in data) {
+                let text = data[i];
+                if (text.includes("Content-Disposition")) {
+                    //contentDispositionList.push(text);
+                    let textSplitFileName = text.split("filename=")
+                    filename.push(textSplitFileName[textSplitFileName.length - 1].replace(/"/gm, ""));
+                } else if (text.includes("Content-Type")) {
+                    //contentTypeList.push(text);
+                }
+            }
+            //contentDispositionList = _.uniq(contentDispositionList);
+            //contentTypeList = _.uniq(contentTypeList);
+            let teststring = ["Content-Type", "Content-Length", "MIME-Version"]
+            let matchesIndex = []
+            for (let type of teststring) {
+                let contentTypeMatches = multipartMessage.matchAll(new RegExp(`${type}.*[\r\n|\r|\n]$`, "gim"));
+                for (let match of contentTypeMatches) {
+                    matchesIndex.push({
+                        index: match.index,
+                        length: match['0'].length
+                    })
+                }
+            }
 
-        function maxBy(array, n) {
-            let result;
-            if (!array) return result;
-            var tempN = Number.MIN_VALUE;
-            for (const obj of array) {
-                if (obj && obj[n]) {
-                    var value = obj[n];
-                    if (!isNaN(value) && value > tempN) {
-                        tempN = value;
-                        result = obj;
+            function maxBy(array, n) {
+                let result;
+                if (!array) return result;
+                var tempN = Number.MIN_VALUE;
+                for (const obj of array) {
+                    if (obj && obj[n]) {
+                        var value = obj[n];
+                        if (!isNaN(value) && value > tempN) {
+                            tempN = value;
+                            result = obj;
+                        }
                     }
                 }
+                return result;
             }
-            return result;
-        }
 
-        let maxIndex = maxBy(matchesIndex, "index");
-        fileStartIndex.push(maxIndex.index + maxIndex.length + 3);
-        for (let i in fileEndIndex) {
-            let fileData = multipartMessage.substring(fileStartIndex[i], fileEndIndex[i]);
-            files.push(fileData);
-        }
-
-        function str2ab(str) {
-            var buf = new ArrayBuffer(str.length); // 2 bytes for each char
-            var bufView = new Uint8Array(buf);
-            for (var i = 0, strLen = str.length; i < strLen; i++) {
-                bufView[i] = str.charCodeAt(i);
+            let maxIndex = maxBy(matchesIndex, "index");
+            fileStartIndex.push(maxIndex.index + maxIndex.length + 3);
+            for (let i in fileEndIndex) {
+                let fileData = multipartMessage.substring(fileStartIndex[i], fileEndIndex[i]);
+                files.push(fileData);
             }
-            return buf;
+
+            function str2ab(str) {
+                var buf = new ArrayBuffer(str.length); // 2 bytes for each char
+                var bufView = new Uint8Array(buf);
+                for (var i = 0, strLen = str.length; i < strLen; i++) {
+                    bufView[i] = str.charCodeAt(i);
+                }
+                return buf;
+            }
+            let buf = str2ab(files[0]);
+
+            var url = URL.createObjectURL(new Blob([buf], { type: "application/dicom" }));
+            return url;
+
         }
-        let buf = str2ab(files[0]);
-
-        var url = URL.createObjectURL(new Blob([buf], { type: "application/dicom" }));
-        return url;
-
-    }
-    return getData();
+        getData();
+    });
 }
 
 function PdfLoader(pdf, Sop) {
