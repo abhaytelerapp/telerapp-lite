@@ -1461,7 +1461,7 @@ const ReportEditor = (props) => {
         width: 98%;
         z-index: 1;
         padding-right: 10px;
-        height: ${reportSetting?.header_height}px;
+        height: ${reportSetting?.include_header ? reportSetting?.header_height : 50}px;
         `;
 
       const footerStyle = `
@@ -1497,7 +1497,7 @@ const ReportEditor = (props) => {
 
       // report template style
       const reportDataStyle = `
-             margin-top: ${reportSetting?.top}px;
+             margin-top: ${(reportSetting?.multiple_header_and_footer || reportSetting?.patient_details_in_header) ? '5px' :reportSetting?.top}px;
              margin-left: ${reportSetting?.left}px;
              margin-right: ${reportSetting?.right}px;
              margin-bottom: ${reportSetting?.bottom}px;
@@ -1599,7 +1599,7 @@ const ReportEditor = (props) => {
           }
         )?.replace(
           /<table(?![^]*?width="100%")/g, // Matches tables that do NOT have width="100%"
-          `<table  width="100%" style=" border-collapse: collapse; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`
+          `<table  width="100%" style=" border-collapse: collapse; margin-top: ${reportSetting?.top}px; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`
         )?.replace(
           /(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/i,
           (match, p1, p2, p3) => {
@@ -2185,15 +2185,8 @@ const ReportEditor = (props) => {
           }
         };
 
-        // Apply replacement to all templates if needed
-        const updatedTemplates = templates?.map((template) =>
-          replaceDemographicsTable(template, institutionDemographics)
-        );
-
         // Ensure templates is an array before calling Object.values
-        const data = updatedTemplates?.length
-          ? Object.values(updatedTemplates)?.join("<p></p>")
-          : "";
+        const data = templates.length ? Object.values(templates).join("<p></p>") : "";
 
         const notApproved =
           (patientReportDetail?.document_status === "Approved" ||
@@ -2210,6 +2203,9 @@ const ReportEditor = (props) => {
             return matchCount > 1 ? "" : match; // Remove only the second occurrence of the table
           }
         );
+
+        const updatedTemplatesTable = replaceDemographicsTable(templateData1, institutionDemographics)
+
 
         const institutionNameFromStorage =
           viewerStudy[0]?.MainDicomTags?.InstitutionName;
@@ -2230,7 +2226,7 @@ const ReportEditor = (props) => {
 
         if (typeof Handlebars !== "undefined") {
           const compiledTemplate = Handlebars.compile(
-            patientReportDetail?.reportdetails ? patientTemaplateDataReport : templateData1
+            patientReportDetail?.reportdetails ? patientTemaplateDataReport : updatedTemplatesTable
           );
           const templateData = compiledTemplate(patientData);
           const cleanedTemplateData = templateData.replace(

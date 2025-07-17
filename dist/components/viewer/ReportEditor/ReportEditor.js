@@ -1017,7 +1017,7 @@ const ReportEditor = props => {
         width: 98%;
         z-index: 1;
         padding-right: 10px;
-        height: ${reportSetting?.header_height}px;
+        height: ${reportSetting?.include_header ? reportSetting?.header_height : 50}px;
         `;
       const footerStyle = `
         width: 98%;
@@ -1050,7 +1050,7 @@ const ReportEditor = props => {
 
       // report template style
       const reportDataStyle = `
-             margin-top: ${reportSetting?.top}px;
+             margin-top: ${reportSetting?.multiple_header_and_footer || reportSetting?.patient_details_in_header ? '5px' : reportSetting?.top}px;
              margin-left: ${reportSetting?.left}px;
              margin-right: ${reportSetting?.right}px;
              margin-bottom: ${reportSetting?.bottom}px;
@@ -1123,7 +1123,7 @@ const ReportEditor = props => {
         }
       })?.replace(/<table(?![^]*?width="100%")/g,
       // Matches tables that do NOT have width="100%"
-      `<table  width="100%" style=" border-collapse: collapse; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`)?.replace(/(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/i, (match, p1, p2, p3) => {
+      `<table  width="100%" style=" border-collapse: collapse; margin-top: ${reportSetting?.top}px; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`)?.replace(/(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/i, (match, p1, p2, p3) => {
         const plainText = p2.replace(/<[^>]*>/g, '').trim().toLowerCase();
         if (!plainText || plainText === 'none') {
           // Extract wrapping tags (e.g., <i>, <strong>, etc.)
@@ -1491,16 +1491,14 @@ const ReportEditor = props => {
           }
         };
 
-        // Apply replacement to all templates if needed
-        const updatedTemplates = templates?.map(template => replaceDemographicsTable(template, institutionDemographics));
-
         // Ensure templates is an array before calling Object.values
-        const data = updatedTemplates?.length ? Object.values(updatedTemplates)?.join("<p></p>") : "";
+        const data = templates.length ? Object.values(templates).join("<p></p>") : "";
         const notApproved = (patientReportDetail?.document_status === "Approved" || patientReportDetail?.document_status === "Addendum" || patientReportDetail?.document_status === "Final") && data.length !== 0 ? "" : data;
         const templateData1 = data.replace(/<table style="border-collapse: collapse; width: 100%;" border="1"[\s\S]*?<\/table>/g, match => {
           matchCount++;
           return matchCount > 1 ? "" : match; // Remove only the second occurrence of the table
         });
+        const updatedTemplatesTable = replaceDemographicsTable(templateData1, institutionDemographics);
         const institutionNameFromStorage = viewerStudy[0]?.MainDicomTags?.InstitutionName;
         const patientReportDetail1 = patientReportDetail?.reportdetails ? Object.values(patientReportDetail?.reportdetails).join("") : "";
         const temaplateDataReport = patientReportDetail1 + notApproved;
@@ -1509,7 +1507,7 @@ const ReportEditor = props => {
           return matchCount > 1 ? "" : match;
         });
         if (typeof _handlebars.default !== "undefined") {
-          const compiledTemplate = _handlebars.default.compile(patientReportDetail?.reportdetails ? patientTemaplateDataReport : templateData1);
+          const compiledTemplate = _handlebars.default.compile(patientReportDetail?.reportdetails ? patientTemaplateDataReport : updatedTemplatesTable);
           const templateData = compiledTemplate(patientData);
           const cleanedTemplateData = templateData.replace(/Default Template/g, "");
           let addReportSubmitTime = cleanedTemplateData;

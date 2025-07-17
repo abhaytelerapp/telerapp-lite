@@ -447,7 +447,7 @@ const AiReportEditor = _ref => {
         width: 98%;
         z-index: 1;
         padding-right: 10px;
-        height: ${reportSetting?.header_height}px;
+        height: ${reportSetting?.include_header ? reportSetting?.header_height : 50}px;
         `;
       const footerStyle = `
         width: 98%;
@@ -480,7 +480,7 @@ const AiReportEditor = _ref => {
 
       // report template style
       const reportDataStyle = `
-             margin-top: ${reportSetting?.top}px;
+             margin-top: ${reportSetting?.multiple_header_and_footer || reportSetting?.patient_details_in_header ? '5px' : reportSetting?.top}px;
              margin-left: ${reportSetting?.left}px;
              margin-right: ${reportSetting?.right}px;
              margin-bottom: ${reportSetting?.bottom}px;
@@ -553,7 +553,7 @@ const AiReportEditor = _ref => {
         }
       })?.replace(/<table(?![^]*?width="100%")/g,
       // Matches tables that do NOT have width="100%"
-      `<table  width="100%" style=" border-collapse: collapse; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`)?.replace(/(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/i, (match, p1, p2, p3) => {
+      `<table  width="100%" style=" border-collapse: collapse; margin-top: ${reportSetting?.top}px; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`)?.replace(/(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/i, (match, p1, p2, p3) => {
         const plainText = p2.replace(/<[^>]*>/g, '').trim().toLowerCase();
         if (!plainText || plainText === 'none') {
           // Extract wrapping tags (e.g., <i>, <strong>, etc.)

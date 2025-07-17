@@ -612,7 +612,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         width: 98%;
         z-index: 1;
         padding-right: 10px;
-        height: ${reportSetting?.header_height}px;
+        height: ${reportSetting?.include_header ? reportSetting?.header_height : 50}px;
         `;
 
       const footerStyle = `
@@ -648,7 +648,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
 
       // report template style
       const reportDataStyle = `
-             margin-top: ${reportSetting?.top}px;
+             margin-top: ${(reportSetting?.multiple_header_and_footer || reportSetting?.patient_details_in_header) ? '5px' :reportSetting?.top}px;
              margin-left: ${reportSetting?.left}px;
              margin-right: ${reportSetting?.right}px;
              margin-bottom: ${reportSetting?.bottom}px;
@@ -751,7 +751,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
           }
         )?.replace(
           /<table(?![^]*?width="100%")/g, // Matches tables that do NOT have width="100%"
-          `<table  width="100%" style=" border-collapse: collapse; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`
+          `<table  width="100%" style=" border-collapse: collapse; margin-top: ${reportSetting?.top}px; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`
         )?.replace(
           /(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/i,
           (match, p1, p2, p3) => {
