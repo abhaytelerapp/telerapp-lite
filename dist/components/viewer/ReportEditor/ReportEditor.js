@@ -1060,12 +1060,12 @@ const ReportEditor = props => {
         `;
       const reportTime = (0, _moment.default)(patientData.report_submit_time).format('MMM-DD-YYYY HH:mm:ss');
       const output = `
-      <div style="line-height: ${reportSetting?.line_spacing <= 0.9 ? 1.0 : reportSetting?.line_spacing};">
+      <div>
         <strong><span style="font-size: 12pt; font-weight: 600;">${doctorInformation?.displayName}</span></strong>
         <strong><span style="font-size: 12pt; font-weight: 600;"> ${doctorInformation?.qualificationName}</span></strong>
         ${reportSetting?.consultant ? `<strong><span style="font-size: 12pt; font-weight: 600;">${doctorInformation?.userTitle}</span></strong>` : ''}
         <strong><span style="font-size: 12pt; font-weight: 600;"> ${doctorInformation?.registrationNoName}</span></strong>
-        <strong><span style="font-size: 12pt; font-weight: 600;">${doctorInformation?.disclaimerDetailsName}</span></strong><br/>
+        <strong><span style="font-size: 12pt; font-weight: 600;">${doctorInformation?.disclaimerDetailsName}</span></strong>
         <span> ${doctorInformation?.formattedTimesName}</span>
       </div>
   `;
@@ -1164,7 +1164,18 @@ const ReportEditor = props => {
           }
         }
         return match; // Leave other columns unchanged
-      }).replace(/<p>\s*<\/p>/g, '<p><br></p>');
+      }).replace(/<p>\s*<\/p>/g, '<p><br></p>').replace(/<(p|li|h[1-4])(\s+[^>]*)?>/gi, function (match, tag) {
+        let attrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+        if (attrs.includes('style=')) {
+          return match.replace(/style="([^"]*)"/i, (m, styleContent) => {
+            // Preserve existing styles and add font-size if not present
+            const updatedStyle = styleContent.includes('font-size') ? styleContent : `${styleContent}; font-size: ${reportSetting?.font_size}px`;
+            return `style="${updatedStyle}"`;
+          });
+        } else {
+          return `<${tag} style="font-size: ${reportSetting?.font_size}px"${attrs || ''}>`;
+        }
+      });
 
       // Construct modified editor content
       if (reportSetting?.multiple_header_and_footer === true) {
@@ -1621,7 +1632,7 @@ const ReportEditor = props => {
         // Set line height & font size
         instance.editing.view.change(writer => {
           const editableRoot = instance.editing.view.document.getRoot();
-          writer.setStyle("line-height", lineHeightEditor, editableRoot);
+          writer.setStyle("line-height", reportSetting?.line_spacing, editableRoot);
           writer.setStyle("font-size", "12px", editableRoot);
         });
 
@@ -1705,7 +1716,7 @@ const ReportEditor = props => {
     };
   }, [selectedTemplateOptions, template,
   // imageDataUrl,
-  patientReportDetail, saveReports, assignUserDataFind
+  patientReportDetail, saveReports, assignUserDataFind, reportSetting
   // editorData1,
   ]);
   (0, _react.useEffect)(() => {

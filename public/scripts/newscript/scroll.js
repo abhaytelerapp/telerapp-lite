@@ -137,7 +137,7 @@ class ScrollBar {
         else {
             // this.innerDIV.style.height = this.total >= 100 ? "1%" : parseFloat(100 / this.total) + "%";
             // this.innerDIV.style.top = ((((this.index) / this.total) * 100)) + "%";
-            const heightPercent = Math.max(1, 100 / this.total);
+            const heightPercent = Math.max(5, 100 / this.total);
             this.innerDIV.style.height = heightPercent + "%";
             this.innerDIV.style.top = (this.index / this.total) * 100 + "%";
         }

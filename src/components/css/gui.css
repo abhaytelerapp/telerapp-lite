@@ -435,3 +435,11 @@ body.dark #templateSelect-ts-control{
   color: #ffffff;
   height: 25px;
 }
+
+.ScrollBar:last-child:hover {
+  cursor: grab;
+}
+
+.ScrollBar:last-child:active {
+  cursor: grabbing;
+}
