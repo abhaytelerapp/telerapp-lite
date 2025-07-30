@@ -654,7 +654,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
              margin-bottom: ${reportSetting?.bottom}px;
             font-family: ${reportSetting?.font_style};
             font-size: ${reportSetting?.font_size}px !important;
-            line-height: ${reportSetting?.line_spacing};
+            line-height: ${reportSetting?.line_spacing || 0.8};
         `;
       const reportTime = moment(patientData.report_submit_time).format('MMM-DD-YYYY HH:mm:ss');
       const output = `
