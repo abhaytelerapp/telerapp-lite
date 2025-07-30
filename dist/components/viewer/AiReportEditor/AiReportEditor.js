@@ -846,7 +846,7 @@ const AiReportEditor = _ref => {
         // Set default styles
         instance.editing.view.change(writer => {
           const editableRoot = instance.editing.view.document.getRoot();
-          writer.setStyle('line-height', reportSetting?.line_spacing, editableRoot);
+          writer.setStyle('line-height', (parseFloat(reportSetting?.line_spacing) + 0.8 || 1.5).toString(), editableRoot);
           writer.setStyle("font-size", "12px", editableRoot);
         });
 
