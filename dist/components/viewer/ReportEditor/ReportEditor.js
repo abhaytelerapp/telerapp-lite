@@ -986,18 +986,18 @@ const ReportEditor = props => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(modifiedEditorData, "text/html");
 
-        // Remove the patient details table
-        const table = doc.querySelector("table");
-        if (table) {
-          table.remove();
-        }
+        // // Remove the patient details table
+        // const table = doc.querySelector("table");
+        // if (table) {
+        //   table.remove();
+        // }
 
         // Serialize the document back to a string
-        modifiedEditorData = doc.body.innerHTML;
+        modifiedEditorData = modifiedEditorData.replace(/<table[\s\S]*?>[\s\S]*?Patient Name:[\s\S]*?<\/table>/i, '');
       }
-      const demographicsTableMatch = modifiedEditorData?.match(/<table[\s\S]*?<\/table>/i);
+      const demographicsTableMatch = modifiedEditorData?.match(/<table[\s\S]*?>[\s\S]*?Patient Name:[\s\S]*?<\/table>/i);
       const demographicsTable = demographicsTableMatch ? demographicsTableMatch[0] : '';
-      const cleanedEditorData = modifiedEditorData.replace(/<table[\s\S]*?<\/table>/gi, '');
+      const cleanedEditorData = modifiedEditorData.replace(/<table[\s\S]*?>[\s\S]*?Patient Name:[\s\S]*?<\/table>/i, '');
       const sections = cleanedEditorData.split(/(?=<h3[^>]*>)/);
       const contentWithTables = sections.map((section, index) => {
         const pMatch = section.match(/^<h3[^>]*>.*?<\/h3>/i);
@@ -1017,13 +1017,13 @@ const ReportEditor = props => {
         width: 98%;
         z-index: 1;
         padding-right: 10px;
-        height: ${reportSetting?.include_header ? reportSetting?.header_height : 50}px;
+        height: ${reportSetting?.include_header ? reportSetting?.header_height || 50 : 50}px;
         `;
       const footerStyle = `
         width: 98%;
         z-index: 1;
         padding-right: 10px;
-        height: ${reportSetting?.footer_height}px;
+        height: ${reportSetting?.footer_height || 50}px;
         `;
       const watermarkStyle = `
             position: fixed;
@@ -1056,7 +1056,7 @@ const ReportEditor = props => {
              margin-bottom: ${reportSetting?.bottom}px;
             font-family: ${reportSetting?.font_style};
             font-size: ${reportSetting?.font_size}px !important;
-            line-height: ${reportSetting?.line_spacing || 0.8};
+            line-height: ${reportSetting?.line_spacing || 1.2};
         `;
       const reportTime = (0, _moment.default)(patientData.report_submit_time).format('MMM-DD-YYYY HH:mm:ss');
       const output = `
@@ -1071,16 +1071,17 @@ const ReportEditor = props => {
   `;
       let pageHeaderSpace;
       if (reportSetting?.patient_details_in_header) {
+        const headerHeight = reportSetting?.header_height ? Number(reportSetting.header_height) : 50;
         pageHeaderSpace = `
-            height: ${Number(reportSetting?.header_height) + (reportSetting?.font_style === "Lucida Sans Unicode" ? 150 : 130)}px;
+            height: ${headerHeight + (reportSetting?.font_style === "Lucida Sans Unicode" ? 150 : 130)}px;
           `;
       } else {
         pageHeaderSpace = `
-            height: ${reportSetting?.header_height}px;
+            height: ${reportSetting?.header_height || 50}px;
           `;
       }
       const pageFooterSpace = `
-      height: ${reportSetting?.footer_height}px;
+      height: ${reportSetting?.footer_height || 50}px;
       `;
       const pageFooter = `
         position: fixed;
@@ -1121,9 +1122,16 @@ const ReportEditor = props => {
           // If <td> has no style, determine its width based on position
           return `<td>`;
         }
-      })?.replace(/<table(?![^]*?width="100%")/g,
-      // Matches tables that do NOT have width="100%"
-      `<table  width="100%" style=" border-collapse: collapse; margin-top: ${reportSetting?.top}px; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`)?.replace(/(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/i, (match, p1, p2, p3) => {
+      })?.replace(/<table\b[^>]*>[\s\S]*?<\/table>/gi,
+      // Match full table blocks
+      match => {
+        if (/Patient Name/i.test(match) && !/width="100%"/i.test(match)) {
+          // Modify only the opening <table> tag
+          return match.replace(/<table(?![^]*?width="100%")/g, `<table  width="100%" style=" border-collapse: collapse; margin-bottom: 10px; margin-top: ${reportSetting?.top}px; font-size: ${reportSetting?.font_size}px !important; width: 100%;"`);
+        } else {
+          return match.replace(/<table(?![^]*?width="100%")/g, `<table style=" border-collapse: collapse; text-align: center; margin: 0 auto;"`);
+        }
+      })?.replace(/(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/i, (match, p1, p2, p3) => {
         const plainText = p2.replace(/<[^>]*>/g, '').trim().toLowerCase();
         if (!plainText || plainText === 'none') {
           // Extract wrapping tags (e.g., <i>, <strong>, etc.)
@@ -1164,16 +1172,16 @@ const ReportEditor = props => {
           }
         }
         return match; // Leave other columns unchanged
-      }).replace(/<p>\s*<\/p>/g, '<p><br></p>').replace(/<(p|li|h[1-4])(\s+[^>]*)?>/gi, function (match, tag) {
+      }).replace(/<p>\s*<\/p>/g, '<p style="margin: 0; padding: 0;"><br></p>').replace(/<(p|li|h[1-4])(\s+[^>]*)?>/gi, function (match, tag) {
         let attrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
         if (attrs.includes('style=')) {
           return match.replace(/style="([^"]*)"/i, (m, styleContent) => {
             // Preserve existing styles and add font-size if not present
-            const updatedStyle = styleContent.includes('font-size') ? styleContent : `${styleContent}; font-size: ${reportSetting?.font_size}px`;
-            return `style="${updatedStyle}"`;
+            const updatedStyle = styleContent.includes('font-size') ? styleContent : `${styleContent} font-size: ${reportSetting?.font_size}px;`;
+            return `style="${updatedStyle} margin: 0; padding: 0;"`;
           });
         } else {
-          return `<${tag} style="font-size: ${reportSetting?.font_size}px"${attrs || ''}>`;
+          return `<${tag} style="font-size: ${reportSetting?.font_size}px; margin: 0; padding: 0;"${attrs || ''}>`;
         }
       });
 
@@ -1186,7 +1194,7 @@ const ReportEditor = props => {
 
       ${reportSetting?.patient_details_in_header ? `
           <div style=" margin-left: ${reportSetting?.left}px;
-             margin-right: ${reportSetting?.right}px; font-family: ${reportSetting?.font_style};font-size: ${reportSetting?.font_size}px !important;margin-top:20px">
+             margin-right: ${reportSetting?.right}px; font-family: ${reportSetting?.font_style};font-size: ${reportSetting?.font_size}px !important; margin-top:20px; margin-bottom: 10px;">
              ${table.replace(/<table /, `<table style="font-size: ${reportSetting?.font_size}px !important;border-collapse:collapse;width:100%" `)?.replace(/(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/i, (match, p1, p2, p3) => {
           const plainText = p2.replace(/<[^>]*>/g, '').trim().toLowerCase();
           if (!plainText || plainText === 'none') {
@@ -1266,7 +1274,7 @@ const ReportEditor = props => {
           <div style="${headerStyle}" ></div>
            ${reportSetting?.patient_details_in_header ? `
                <div style=" margin-left: ${reportSetting?.left}px;
-             margin-right: ${reportSetting?.right}px; font-family: ${reportSetting?.font_style};font-size: ${reportSetting?.font_size}px !important;margin-top:20px">
+             margin-right: ${reportSetting?.right}px; font-family: ${reportSetting?.font_style};font-size: ${reportSetting?.font_size}px !important; margin-top:20px; margin-bottom: 10px;">
 
                  ${table.replace(/<table /, `<table style="font-size: ${reportSetting?.font_size}px !important;border-collapse:collapse;width:100%" `)?.replace(/(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/i, (match, p1, p2, p3) => {
           const plainText = p2.replace(/<[^>]*>/g, '').trim().toLowerCase();
@@ -1632,7 +1640,7 @@ const ReportEditor = props => {
         // Set line height & font size
         instance.editing.view.change(writer => {
           const editableRoot = instance.editing.view.document.getRoot();
-          writer.setStyle("line-height", (parseFloat(reportSetting?.line_spacing) + 0.8 || 1.5).toString(), editableRoot);
+          writer.setStyle("line-height", (parseFloat(reportSetting?.line_spacing) + 0.2 || 1.5).toString(), editableRoot);
           writer.setStyle("font-size", "12px", editableRoot);
         });
 
