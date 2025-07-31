@@ -140,3 +140,7 @@ body.dark #ai-textarea::placeholder {
 body.dark .listening_popup{
   background-color: #d4d4d4;
 }
+
+.ck-content .table table {
+  line-height: 1.5 !important;
+}
