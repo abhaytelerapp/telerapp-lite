@@ -491,12 +491,12 @@ const AiReportEditor = _ref => {
       const reportTime = (0, _moment.default)(patientData.report_submit_time).format('MMM-DD-YYYY HH:mm:ss');
       const output = `
       <div>
-        <strong><span style="font-size: 12pt; font-weight: 600;">${doctorInformation?.displayName}</span></strong>
-        <strong><span style="font-size: 12pt; font-weight: 600;"> ${doctorInformation?.qualificationName}</span></strong>
-        ${reportSetting?.consultant ? `<strong><span style="font-size: 12pt; font-weight: 600;">${doctorInformation?.userTitle}</span></strong>` : ''}
-        <strong><span style="font-size: 12pt; font-weight: 600;"> ${doctorInformation?.registrationNoName}</span></strong>
-        <strong><span style="font-size: 12pt; font-weight: 600;">${doctorInformation?.disclaimerDetailsName}</span></strong>
-        <span> ${doctorInformation?.formattedTimesName}</span>
+        <strong><span style="font-size: 12pt; font-weight: 600; font-family: Arial;">${doctorInformation?.displayName}</span></strong>
+        <strong><span style="font-size: 12pt; font-weight: 600; font-family: Arial;"> ${doctorInformation?.qualificationName}</span></strong>
+        ${reportSetting?.consultant ? `<strong><span style="font-size: 12pt; font-weight: 600; font-family: Arial;">${doctorInformation?.userTitle}</span></strong>` : ''}
+        <strong><span style="font-size: 12pt; font-weight: 600; font-family: Arial;"> ${doctorInformation?.registrationNoName}</span></strong>
+        <strong><span style="font-size: 12pt; font-weight: 600; font-family: Arial;">${doctorInformation?.disclaimerDetailsName}</span></strong>
+        <span style="font-size: 10pt; font-family: Arial;"> ${doctorInformation?.formattedTimesName}</span>
       </div>
   `;
       let pageHeaderSpace;
@@ -929,12 +929,12 @@ const AiReportEditor = _ref => {
             const endPosition = writer.createPositionAt(root, "end");
             instance.model.insertContent(imageElement, endPosition);
             const extraDetailsHTML = `
-              <span style="font-size: 12pt !important; font-weight: 600;">${doctorInformation?.displayName}</span>
-              <span style="font-size: 12pt !important; font-weight: 600;"> ${doctorInformation?.qualificationName}</span>
-              <span style="font-size: 12pt !important; font-weight: 600;">${doctorInformation?.userTitle}</span>
-              <span style="font-size: 12pt !important; font-weight: 600;"> ${doctorInformation?.registrationNoName}</span>
-              <span style="font-size: 12pt !important; font-weight: 600;">${doctorInformation?.disclaimerDetailsName}</span>
-              <span style="font-size: 12px !important;">${doctorInformation?.formattedTimesName}</span>
+              <span style="font-size: 12pt !important; font-weight: 600; font-family: Arial;">${doctorInformation?.displayName}</span>
+              <span style="font-size: 12pt !important; font-weight: 600; font-family: Arial;"> ${doctorInformation?.qualificationName}</span>
+              <span style="font-size: 12pt !important; font-weight: 600; font-family: Arial;">${doctorInformation?.userTitle}</span>
+              <span style="font-size: 12pt !important; font-weight: 600; font-family: Arial;"> ${doctorInformation?.registrationNoName}</span>
+              <span style="font-size: 12pt !important; font-weight: 600; font-family: Arial;">${doctorInformation?.disclaimerDetailsName}</span>
+              <span style="font-size: 10pt !important; font-family: Arial;">${doctorInformation?.formattedTimesName}</span>
             `;
             const viewFragment = instance.data.processor.toView(extraDetailsHTML);
             const modelFragment = instance.data.toModel(viewFragment);
