@@ -613,6 +613,9 @@ const AiReportEditor = _ref => {
         } else {
           return `<${tag} style="font-size: ${reportSetting?.font_size}px; margin: 0; padding: 0;"${attrs || ''}>`;
         }
+      }).replace(/<h3 style="([^"]*text-align:\s*center;[^"]*)">/g, (match, styleContent) => {
+        const newStyle = styleContent.includes('margin-bottom') ? styleContent : `${styleContent} margin-bottom:10px;`;
+        return `<h3 style="${newStyle}">`;
       });
 
       // Construct modified editor content
@@ -791,7 +794,7 @@ const AiReportEditor = _ref => {
     const generateFormattedHTML = (aiReportRaw, clinicalHistory) => {
       const aiReportFormatted = aiReportRaw?.replace(/\\n/g, "<br>").replace(/\n\n/g, "<br>").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>").replace(/<br><br>/g, "<br><br>");
       const includesDemographicsTable = /<table[\s\S]*?>[\s\S]*?<\/table>/.test(aiReportFormatted);
-      return includesDemographicsTable ? aiReportFormatted : `${demographicsHTMLTable}<p><strong>CLINICAL HISTORY:</strong> ${clinicalHistory}</p>${aiReportFormatted}`;
+      return includesDemographicsTable ? aiReportFormatted : `${demographicsHTMLTable}<p><strong>CLINICAL HISTORY:</strong> ${clinicalHistory}</p>${aiReportFormatted}<p></p>`;
     };
     if (patientData && demographicsHTMLTable) {
       const clinicalHistory = patientData?.clinical_history || "None";
@@ -855,7 +858,7 @@ const AiReportEditor = _ref => {
         instance.editing.view.change(writer => {
           const editableRoot = instance.editing.view.document.getRoot();
           writer.setStyle('line-height', (parseFloat(reportSetting?.line_spacing) + 0.2 || 1.5).toString(), editableRoot);
-          writer.setStyle("font-size", "12px", editableRoot);
+          writer.setStyle("font-size", `${reportSetting?.font_size}px`, editableRoot);
         });
 
         // Set initial formatted HTML data
@@ -887,7 +890,14 @@ const AiReportEditor = _ref => {
         // ✅ Shared function to modify and update data
         const updateEditorState = () => {
           const newData = instance.getData();
-          const modifyData = newData.replace(/class="text-tiny"(.*?)>/g, 'style="font-size:.7em;"$1>').replace(/class="text-small"(.*?)>/g, 'style="font-size:.85em;"$1>').replace(/class="text-big"(.*?)>/g, 'style="font-size:1.4em;"$1>').replace(/class="text-huge"(.*?)>/g, 'style="font-size:1.8em;"$1>').replace(/<table>/g, '<table border="1px;" style="border-collapse: collapse;">').replace(/<img style="height:200px;"/g, '<img style="height:400px;"').replace(/figure"/g, "").replace(/&nbsp;/g, "").replace(/<figure class="table">/g, "").replace(/<\/figure>/g, "");
+          const modifyData = newData.replace(/class="text-tiny"(.*?)>/g, 'style="font-size:.7em;"$1>').replace(/class="text-small"(.*?)>/g, 'style="font-size:.85em;"$1>').replace(/class="text-big"(.*?)>/g, 'style="font-size:1.4em;"$1>').replace(/class="text-huge"(.*?)>/g, 'style="font-size:1.8em;"$1>').replace(/<table>/g, '<table border="1px;" style="border-collapse: collapse;">').replace(/<img style="height:200px;"/g, '<img style="height:400px;"').replace(/figure"/g, "").replace(/&nbsp;/g, "").replace(/<figure class="table">/g, "").replace(/<\/figure>/g, "").replace(/<p([^>]*)>\s*<\/p>/g, (match, attrs) => {
+            // Skip if already contains <br>
+            if (/>[\s]*<br\s*\/?>[\s]*<\/p>/.test(match)) {
+              return match;
+            }
+            // Ensure attributes are preserved, and reinsert <br> inside
+            return `<p${attrs}><br></p>`;
+          });
           setEditorData(modifyData);
         };
 
@@ -919,13 +929,13 @@ const AiReportEditor = _ref => {
             const endPosition = writer.createPositionAt(root, "end");
             instance.model.insertContent(imageElement, endPosition);
             const extraDetailsHTML = `
-            ${doctorInformation?.displayName}
-            ${doctorInformation?.qualificationName}
-            ${doctorInformation?.userTitle}
-            ${doctorInformation?.registrationNoName}
-            ${doctorInformation?.disclaimerDetailsName}
-            ${doctorInformation?.formattedTimesName}
-          `;
+              <span style="font-size: 12pt !important; font-weight: 600;">${doctorInformation?.displayName}</span>
+              <span style="font-size: 12pt !important; font-weight: 600;"> ${doctorInformation?.qualificationName}</span>
+              <span style="font-size: 12pt !important; font-weight: 600;">${doctorInformation?.userTitle}</span>
+              <span style="font-size: 12pt !important; font-weight: 600;"> ${doctorInformation?.registrationNoName}</span>
+              <span style="font-size: 12pt !important; font-weight: 600;">${doctorInformation?.disclaimerDetailsName}</span>
+              <span style="font-size: 12px !important;">${doctorInformation?.formattedTimesName}</span>
+            `;
             const viewFragment = instance.data.processor.toView(extraDetailsHTML);
             const modelFragment = instance.data.toModel(viewFragment);
             writer.insert(modelFragment, instance.model.createPositionAt(root, "end"));

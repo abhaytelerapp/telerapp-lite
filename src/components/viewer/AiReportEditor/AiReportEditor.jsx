@@ -845,7 +845,16 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
           } else {
             return `<${tag} style="font-size: ${reportSetting?.font_size}px; margin: 0; padding: 0;"${attrs || ''}>`;
           }
-        });
+        })
+        .replace(
+          /<h3 style="([^"]*text-align:\s*center;[^"]*)">/g,
+          (match, styleContent) => {
+            const newStyle = styleContent.includes('margin-bottom')
+              ? styleContent
+              : `${styleContent} margin-bottom:10px;`;
+            return `<h3 style="${newStyle}">`;
+          }
+        );
 
       // Construct modified editor content
       if (reportSetting?.multiple_header_and_footer === true) {
@@ -1144,7 +1153,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
 
       return includesDemographicsTable
         ? aiReportFormatted
-        : `${demographicsHTMLTable}<p><strong>CLINICAL HISTORY:</strong> ${clinicalHistory}</p>${aiReportFormatted}`;
+        : `${demographicsHTMLTable}<p><strong>CLINICAL HISTORY:</strong> ${clinicalHistory}</p>${aiReportFormatted}<p></p>`;
     };
 
     if (patientData && demographicsHTMLTable) {
@@ -1240,7 +1249,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         instance.editing.view.change((writer) => {
           const editableRoot = instance.editing.view.document.getRoot();
           writer.setStyle('line-height', ((parseFloat(reportSetting?.line_spacing) + 0.2) || 1.5).toString(), editableRoot);
-          writer.setStyle("font-size", "12px", editableRoot);
+          writer.setStyle("font-size", `${reportSetting?.font_size}px`, editableRoot);
         });
 
         // Set initial formatted HTML data
@@ -1298,7 +1307,18 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
             .replace(/figure"/g, "")
             .replace(/&nbsp;/g, "")
             .replace(/<figure class="table">/g, "")
-            .replace(/<\/figure>/g, "");
+            .replace(/<\/figure>/g, "")
+            .replace(
+              /<p([^>]*)>\s*<\/p>/g,
+              (match, attrs) => {
+                // Skip if already contains <br>
+                if (/>[\s]*<br\s*\/?>[\s]*<\/p>/.test(match)) {
+                  return match;
+                }
+                // Ensure attributes are preserved, and reinsert <br> inside
+                return `<p${attrs}><br></p>`;
+              }
+            );
 
           setEditorData(modifyData);
         };
@@ -1350,13 +1370,13 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
             instance.model.insertContent(imageElement, endPosition);
 
             const extraDetailsHTML = `
-            ${doctorInformation?.displayName}
-            ${doctorInformation?.qualificationName}
-            ${doctorInformation?.userTitle}
-            ${doctorInformation?.registrationNoName}
-            ${doctorInformation?.disclaimerDetailsName}
-            ${doctorInformation?.formattedTimesName}
-          `;
+              <span style="font-size: 12pt !important; font-weight: 600;">${doctorInformation?.displayName}</span>
+              <span style="font-size: 12pt !important; font-weight: 600;"> ${doctorInformation?.qualificationName}</span>
+              <span style="font-size: 12pt !important; font-weight: 600;">${doctorInformation?.userTitle}</span>
+              <span style="font-size: 12pt !important; font-weight: 600;"> ${doctorInformation?.registrationNoName}</span>
+              <span style="font-size: 12pt !important; font-weight: 600;">${doctorInformation?.disclaimerDetailsName}</span>
+              <span style="font-size: 12px !important;">${doctorInformation?.formattedTimesName}</span>
+            `;
 
             const viewFragment =
               instance.data.processor.toView(extraDetailsHTML);
