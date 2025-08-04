@@ -854,6 +854,9 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
               : `${styleContent} margin-bottom:10px;`;
             return `<h3 style="${newStyle}">`;
           }
+        ).replace(
+          /<p style="margin-left:0cm; font-size: 13px; margin: 0; padding: 0;"><br><\/p>\s*(<div[^>]*page-break-before:[^>]*?>)/g,
+          '$1'
         );
 
       // Construct modified editor content
