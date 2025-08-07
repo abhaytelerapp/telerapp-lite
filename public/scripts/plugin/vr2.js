@@ -31,7 +31,7 @@ function loadVR2() {
 
         var label = document.createElement("LABEL");
         label.id = "VR2_TestLabel"
-        label.innerText = "This is a test version.";
+        // label.innerText = "This is a test version.";
 
         DIV.appendChild(label);
     }

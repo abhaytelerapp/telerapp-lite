@@ -606,23 +606,19 @@ async function handleSeriesDoubleClick(seriesInstanceUID, isConcurrent = false) 
   }
 
   let tasks = deferredLoadTasks.get(seriesInstanceUID);
-  const batchSize = 17; // Number of instances to load in parallel
+  const batchSize = 20; // Number of instances to load in parallel
 
   while (tasks.length > 0) {
       if (!isConcurrent && activeSeriesUID !== seriesInstanceUID) return;
 
       // Take the next batch of up to 17 tasks
       let batch = tasks.splice(0, batchSize);
-      // Optional: log batch start
-      console.log(`Loading batch of ${batch.length} DICOM instances for series ${seriesInstanceUID}...`);
       // Wait for all 17 to finish before starting the next batch
       await Promise.all(batch.map(task => task()));
-      // Optional: log batch completion
-      console.log(`Batch completed for series ${seriesInstanceUID}. Remaining: ${tasks.length}`);
 
       // Add a small delay between batches to prevent overwhelming the system
       if (tasks.length > 0) {
-          await new Promise(resolve => setTimeout(resolve, 100));
+          await new Promise(resolve => setTimeout(resolve, 800));
       }
   }
 

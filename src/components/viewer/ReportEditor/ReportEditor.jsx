@@ -1402,6 +1402,49 @@ const ReportEditor = (props) => {
     );
   };
 
+  function formatCustomDateTime(input, format = 'dd-MMM-yyyy') {
+    let date;
+    let gmtPart = '';
+
+    // Case: input is Date or string
+    if (input instanceof Date) {
+      date = input;
+    } else if (typeof input === 'string') {
+      const match = input.match(/GMT[+-].*$/);
+      gmtPart = match ? match[0] : '';
+      const cleanStr = input.replace(gmtPart, '').trim();
+      date = new Date(cleanStr);
+    } else {
+      return 'Invalid input';
+    }
+
+    if (isNaN(date)) return 'Invalid Date';
+
+    const dd = String(date.getDate()).padStart(2, '0');
+    const MMM = date.toLocaleString('en-US', { month: 'short' });
+    const yyyy = date.getFullYear();
+    const HH = String(date.getHours()).padStart(2, '0');
+    const mm = String(date.getMinutes()).padStart(2, '0');
+    const ss = String(date.getSeconds()).padStart(2, '0');
+
+    // Use format string to build date
+    let formattedDate = format
+      .replace(/dd/i, dd)
+      .replace(/mmm/i, MMM)
+      .replace(/yyyy/i, yyyy);
+
+    // Handle GMT offset
+    if (!gmtPart) {
+      const offset = -date.getTimezoneOffset(); // in minutes
+      const sign = offset >= 0 ? '+' : '-';
+      const offsetHours = String(Math.floor(Math.abs(offset) / 60)).padStart(2, '0');
+      const offsetMinutes = String(Math.abs(offset) % 60).padStart(2, '0');
+      gmtPart = `GMT${sign}${offsetHours}:${offsetMinutes}`;
+    }
+
+    return `${formattedDate} ${HH}:${mm}:${ss} ${gmtPart}`;
+  }
+
   const handleDownloadPdf = async () => {
     try {
       setIsLoading(true);
@@ -1505,7 +1548,7 @@ const ReportEditor = (props) => {
             font-size: ${reportSetting?.font_size}px !important;
             line-height: ${reportSetting?.line_spacing || 1.2};
         `;
-      const reportTime = moment(patientData.report_submit_time).format('MMM-DD-YYYY HH:mm:ss');
+      const reportTime = moment(patientData.report_submit_time).format(`${reportSetting?.date_format} HH:mm:ss`);
       const output = `
       <div>
         <strong><span style="font-size: 12pt; font-weight: 600; font-family: Arial;">${doctorInformation?.displayName}</span></strong>
@@ -1513,7 +1556,7 @@ const ReportEditor = (props) => {
         ${reportSetting?.consultant ? `<strong><span style="font-size: 12pt; font-weight: 600; font-family: Arial;">${doctorInformation?.userTitle}</span></strong>` : ''}
         <strong><span style="font-size: 12pt; font-weight: 600; font-family: Arial;"> ${doctorInformation?.registrationNoName}</span></strong>
         <strong><span style="font-size: 12pt; font-weight: 600; font-family: Arial;">${doctorInformation?.disclaimerDetailsName}</span></strong>
-        <span style="font-size: 10pt; font-family: Arial;"> ${doctorInformation?.formattedTimesName}</span>
+        <span style="font-size: 10pt; font-family: Arial;"> ${formatCustomDateTime(doctorInformation?.formattedTimesName, reportSetting?.date_format)}</span>
       </div>
   `;
 
@@ -1615,19 +1658,13 @@ const ReportEditor = (props) => {
             }
           }
         )?.replace(
-          /(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/i,
+          /(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/g,
           (match, p1, p2, p3) => {
-            const plainText = p2.replace(/<[^>]*>/g, '').trim().toLowerCase();
+            // Extract wrapping tags (e.g., <i>, <strong>, etc.)
+            const openingTags = (p2.match(/^(<[^>]+>)+/) || [''])[0];
+            const closingTags = (p2.match(/(<\/[^>]+>)+$/) || [''])[0];
 
-            if (!plainText || plainText === 'none') {
-              // Extract wrapping tags (e.g., <i>, <strong>, etc.)
-              const openingTags = (p2.match(/^(<[^>]+>)+/) || [''])[0];
-              const closingTags = (p2.match(/(<\/[^>]+>)+$/) || [''])[0];
-
-              return `${p1}${openingTags}${reportTime}${closingTags}${p3}`;
-            }
-
-            return match; // Keep original if value is valid
+            return `${p1}${openingTags}${reportTime}${closingTags}${p3}`;
           }
         ).replace(/<table[^>]*style="([^"]*)"/gi, (match, styles) => {
           tableCounter++;
@@ -1732,19 +1769,13 @@ const ReportEditor = (props) => {
                  /<table /,
                  `<table style="font-size: ${reportSetting?.font_size}px !important;border-collapse:collapse;width:100%" `
                )?.replace(
-                /(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/i,
+                /(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/g,
                 (match, p1, p2, p3) => {
-                  const plainText = p2.replace(/<[^>]*>/g, '').trim().toLowerCase();
+                  // Extract wrapping tags (e.g., <i>, <strong>, etc.)
+                  const openingTags = (p2.match(/^(<[^>]+>)+/) || [''])[0];
+                  const closingTags = (p2.match(/(<\/[^>]+>)+$/) || [''])[0];
 
-                  if (!plainText || plainText === 'none') {
-                    // Extract wrapping tags (e.g., <i>, <strong>, etc.)
-                    const openingTags = (p2.match(/^(<[^>]+>)+/) || [''])[0];
-                    const closingTags = (p2.match(/(<\/[^>]+>)+$/) || [''])[0];
-
-                    return `${p1}${openingTags}${reportTime}${closingTags}${p3}`;
-                  }
-
-                  return match; // Keep original if value is valid
+                  return `${p1}${openingTags}${reportTime}${closingTags}${p3}`;
                 }
               )
                .replace(
@@ -1861,19 +1892,13 @@ const ReportEditor = (props) => {
                      /<table /,
                      `<table style="font-size: ${reportSetting?.font_size}px !important;border-collapse:collapse;width:100%" `
                    )?.replace(
-                    /(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/i,
+                    /(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/g,
                     (match, p1, p2, p3) => {
-                      const plainText = p2.replace(/<[^>]*>/g, '').trim().toLowerCase();
+                      // Extract wrapping tags (e.g., <i>, <strong>, etc.)
+                      const openingTags = (p2.match(/^(<[^>]+>)+/) || [''])[0];
+                      const closingTags = (p2.match(/(<\/[^>]+>)+$/) || [''])[0];
 
-                      if (!plainText || plainText === 'none') {
-                        // Extract wrapping tags (e.g., <i>, <strong>, etc.)
-                        const openingTags = (p2.match(/^(<[^>]+>)+/) || [''])[0];
-                        const closingTags = (p2.match(/(<\/[^>]+>)+$/) || [''])[0];
-
-                        return `${p1}${openingTags}${reportTime}${closingTags}${p3}`;
-                      }
-
-                      return match; // Keep original if value is valid
+                      return `${p1}${openingTags}${reportTime}${closingTags}${p3}`;
                     }
                   )
                    .replace(
@@ -2276,24 +2301,16 @@ const ReportEditor = (props) => {
           let addReportSubmitTime = cleanedTemplateData;
           // Replace "Report Time: None" or "Report Time:" (if empty) with actual time if available
           if (patientData?.report_submit_time) {
-            const formattedTime = moment(patientData.report_submit_time).format(
-              "MMM-DD-YYYY HH:mm:ss"
-            );
+            const formattedTime = moment(patientData.report_submit_time).format(`${reportSetting?.date_format} HH:mm:ss`)
 
             addReportSubmitTime = cleanedTemplateData.replace(
-              /(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/i,
+              /(<td[^>]*?>.*?Report Time:.*?<\/td>\s*<td[^>]*?>)(.*?)(<\/td>)/g,
               (match, p1, p2, p3) => {
-                const plainText = p2.replace(/<[^>]*>/g, '').trim().toLowerCase();
+                // Extract wrapping tags (e.g., <i>, <strong>, etc.)
+                const openingTags = (p2.match(/^(<[^>]+>)+/) || [''])[0];
+                const closingTags = (p2.match(/(<\/[^>]+>)+$/) || [''])[0];
 
-                if (!plainText || plainText === 'none') {
-                  // Extract wrapping tags (e.g., <i>, <strong>, etc.)
-                  const openingTags = (p2.match(/^(<[^>]+>)+/) || [''])[0];
-                  const closingTags = (p2.match(/(<\/[^>]+>)+$/) || [''])[0];
-
-                  return `${p1}${openingTags}${formattedTime}${closingTags}${p3}`;
-                }
-
-                return match; // Keep original if value is valid
+                return `${p1}${openingTags}${formattedTime}${closingTags}${p3}`;
               }
             );
           }
@@ -2483,7 +2500,7 @@ const ReportEditor = (props) => {
               <span style="font-size: 12pt !important; font-weight: 600; font-family: Arial;">${doctorInformation?.userTitle}</span>
               <span style="font-size: 12pt !important; font-weight: 600; font-family: Arial;"> ${doctorInformation?.registrationNoName}</span>
               <span style="font-size: 12pt !important; font-weight: 600; font-family: Arial;">${doctorInformation?.disclaimerDetailsName}</span>
-              <span style="font-size: 10pt !important; font-family: Arial;">${doctorInformation?.formattedTimesName}</span>
+              <span style="font-size: 10pt !important; font-family: Arial;">${formatCustomDateTime(doctorInformation?.formattedTimesName, reportSetting?.date_format)}</span>
             `;
             // Insert formatted text below the image
             const viewFragment =

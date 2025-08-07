@@ -30,7 +30,7 @@ function EcgLoader(Sop) {
         EcgLabel.style.fontSize = "48px";
         EcgLabel.style.zIndex = "10";
         EcgLabel.style.backgroundColor = "white";
-        EcgLabel.innerText = "This is a test version.";
+        // EcgLabel.innerText = "This is a test version.";
         getByid("EcgPage").appendChild(EcgLabel);
     }
     if (!getByid("EcgCanvas")) {
