@@ -905,7 +905,7 @@ const AiReportEditor = _ref => {
             return `${p1}${openingTags}${formattedTime}${closingTags}${p3}`;
           });
         }
-        const boldUnderline = addReportSubmitTime?.replace(/(CLINICAL HISTORY|FINDINGS|IMPRESSION)(\s*:?)/gi, (match, p1, p2) => {
+        const boldUnderline = addReportSubmitTime?.replace(/(CLINICAL HISTORY)(\s*:?)/gi, (match, p1, p2) => {
           return `<u><strong style="text-transform: uppercase;">${p1}</strong></u>${p2}`;
         });
         instance.setData(boldUnderline);
