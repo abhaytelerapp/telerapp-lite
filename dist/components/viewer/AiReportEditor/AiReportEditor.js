@@ -907,6 +907,16 @@ const AiReportEditor = _ref => {
         }
         const boldUnderline = addReportSubmitTime?.replace(/(CLINICAL HISTORY)(\s*:?)/gi, (match, p1, p2) => {
           return `<u><strong style="text-transform: uppercase;">${p1}</strong></u>${p2}`;
+        })?.replace(/(<td[^>]*?>\s*(?:<[^>]+>)*\s*Study Date:\s*(?:<\/[^>]+>)*\s*<\/td>\s*<td[^>]*?>)([\s\S]*?)(<\/td>)/i, (match, p1, dateHtml, p3) => {
+          // Extract plain date text from the HTML inside the cell
+          const dateText = dateHtml.replace(/<[^>]*>/g, "").trim();
+          const parsedDate = (0, _moment.default)(new Date(dateText));
+          if (parsedDate.isValid()) {
+            // Replace only the date text inside the original HTML tags
+            const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting.date_format));
+            return `${p1}${newDateHtml}${p3}`;
+          }
+          return match;
         });
         instance.setData(boldUnderline);
 
