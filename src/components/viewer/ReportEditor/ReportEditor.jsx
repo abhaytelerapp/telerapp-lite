@@ -1422,6 +1422,7 @@ const ReportEditor = (props) => {
 
     const dd = String(date.getDate()).padStart(2, '0');
     const MMM = date.toLocaleString('en-US', { month: 'short' });
+    const MM = String(date.getMonth() + 1).padStart(2, '0');
     const yyyy = date.getFullYear();
     const HH = String(date.getHours()).padStart(2, '0');
     const mm = String(date.getMinutes()).padStart(2, '0');
@@ -1431,6 +1432,7 @@ const ReportEditor = (props) => {
     let formattedDate = format
       .replace(/dd/i, dd)
       .replace(/mmm/i, MMM)
+      .replace(/mm/i, MM)
       .replace(/yyyy/i, yyyy);
 
     // Handle GMT offset
@@ -1717,6 +1719,20 @@ const ReportEditor = (props) => {
 
           return match; // Leave other columns unchanged
         })
+        .replace(
+          /(<td[^>]*?>\s*(?:<[^>]+>)*\s*Study Date:\s*(?:<\/[^>]+>)*\s*<\/td>\s*<td[^>]*?>)([\s\S]*?)(<\/td>)/i,
+          (match, p1, dateHtml, p3) => {
+            // Extract plain date text from the HTML inside the cell
+            const dateText = dateHtml.replace(/<[^>]*>/g, "").trim();
+            const parsedDate = moment(new Date(dateText));
+            if (parsedDate.isValid()) {
+              // Replace only the date text inside the original HTML tags
+              const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting.date_format));
+              return `${p1}${newDateHtml}${p3}`;
+            }
+            return match;
+          }
+        )
         .replace(/<p>\s*<\/p>/g, '<p style="margin: 0; padding: 0;"><br></p>')
         .replace(/<(p|li|h[1-4])(\s+[^>]*)?>/gi, (match, tag, attrs = '') => {
           if (attrs.includes('style=')) {
@@ -1778,7 +1794,20 @@ const ReportEditor = (props) => {
                   return `${p1}${openingTags}${reportTime}${closingTags}${p3}`;
                 }
               )
-               .replace(
+              .replace(
+                /(<td[^>]*?>\s*(?:<[^>]+>)*\s*Study Date:\s*(?:<\/[^>]+>)*\s*<\/td>\s*<td[^>]*?>)([\s\S]*?)(<\/td>)/i,
+                (match, p1, dateHtml, p3) => {
+                  // Extract plain date text from the HTML inside the cell
+                  const dateText = dateHtml.replace(/<[^>]*>/g, "").trim();
+                  const parsedDate = moment(new Date(dateText));
+                  if (parsedDate.isValid()) {
+                    // Replace only the date text inside the original HTML tags
+                    const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting.date_format));
+                    return `${p1}${newDateHtml}${p3}`;
+                  }
+                  return match;
+                }
+              ).replace(
                  /<td(\s+style="[^"]*")?>/g, // Matches <td> with or without style
                  (match) => {
                    if (match.includes('style="')) {
@@ -1901,7 +1930,20 @@ const ReportEditor = (props) => {
                       return `${p1}${openingTags}${reportTime}${closingTags}${p3}`;
                     }
                   )
-                   .replace(
+                  .replace(
+                    /(<td[^>]*?>\s*(?:<[^>]+>)*\s*Study Date:\s*(?:<\/[^>]+>)*\s*<\/td>\s*<td[^>]*?>)([\s\S]*?)(<\/td>)/i,
+                    (match, p1, dateHtml, p3) => {
+                      // Extract plain date text from the HTML inside the cell
+                      const dateText = dateHtml.replace(/<[^>]*>/g, "").trim();
+                      const parsedDate = moment(new Date(dateText));
+                      if (parsedDate.isValid()) {
+                        // Replace only the date text inside the original HTML tags
+                        const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting.date_format));
+                        return `${p1}${newDateHtml}${p3}`;
+                      }
+                      return match;
+                    }
+                  ).replace(
                      /<td(\s+style="[^"]*")?>/g, // Matches <td> with or without style
                      (match) => {
                        if (match.includes('style="')) {

@@ -416,13 +416,14 @@ const AiReportEditor = _ref => {
     const MMM = date.toLocaleString('en-US', {
       month: 'short'
     });
+    const MM = String(date.getMonth() + 1).padStart(2, '0');
     const yyyy = date.getFullYear();
     const HH = String(date.getHours()).padStart(2, '0');
     const mm = String(date.getMinutes()).padStart(2, '0');
     const ss = String(date.getSeconds()).padStart(2, '0');
 
     // Use format string to build date
-    let formattedDate = format.replace(/dd/i, dd).replace(/mmm/i, MMM).replace(/yyyy/i, yyyy);
+    let formattedDate = format.replace(/dd/i, dd).replace(/mmm/i, MMM).replace(/mm/i, MM).replace(/yyyy/i, yyyy);
 
     // Handle GMT offset
     if (!gmtPart) {
@@ -637,6 +638,16 @@ const AiReportEditor = _ref => {
           }
         }
         return match; // Leave other columns unchanged
+      }).replace(/(<td[^>]*?>\s*(?:<[^>]+>)*\s*Study Date:\s*(?:<\/[^>]+>)*\s*<\/td>\s*<td[^>]*?>)([\s\S]*?)(<\/td>)/i, (match, p1, dateHtml, p3) => {
+        // Extract plain date text from the HTML inside the cell
+        const dateText = dateHtml.replace(/<[^>]*>/g, "").trim();
+        const parsedDate = (0, _moment.default)(new Date(dateText));
+        if (parsedDate.isValid()) {
+          // Replace only the date text inside the original HTML tags
+          const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting.date_format));
+          return `${p1}${newDateHtml}${p3}`;
+        }
+        return match;
       }).replace(/<p>\s*<\/p>/g, '<p style="margin: 0; padding: 0;"><br></p>').replace(/<(p|li|h[1-4])(\s+[^>]*)?>/gi, function (match, tag) {
         let attrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
         if (attrs.includes('style=')) {
@@ -668,6 +679,16 @@ const AiReportEditor = _ref => {
           const openingTags = (p2.match(/^(<[^>]+>)+/) || [''])[0];
           const closingTags = (p2.match(/(<\/[^>]+>)+$/) || [''])[0];
           return `${p1}${openingTags}${reportTime}${closingTags}${p3}`;
+        }).replace(/(<td[^>]*?>\s*(?:<[^>]+>)*\s*Study Date:\s*(?:<\/[^>]+>)*\s*<\/td>\s*<td[^>]*?>)([\s\S]*?)(<\/td>)/i, (match, p1, dateHtml, p3) => {
+          // Extract plain date text from the HTML inside the cell
+          const dateText = dateHtml.replace(/<[^>]*>/g, "").trim();
+          const parsedDate = (0, _moment.default)(new Date(dateText));
+          if (parsedDate.isValid()) {
+            // Replace only the date text inside the original HTML tags
+            const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting.date_format));
+            return `${p1}${newDateHtml}${p3}`;
+          }
+          return match;
         }).replace(/<td(\s+style="[^"]*")?>/g,
         // Matches <td> with or without style
         match => {
@@ -745,6 +766,16 @@ const AiReportEditor = _ref => {
           const openingTags = (p2.match(/^(<[^>]+>)+/) || [''])[0];
           const closingTags = (p2.match(/(<\/[^>]+>)+$/) || [''])[0];
           return `${p1}${openingTags}${reportTime}${closingTags}${p3}`;
+        }).replace(/(<td[^>]*?>\s*(?:<[^>]+>)*\s*Study Date:\s*(?:<\/[^>]+>)*\s*<\/td>\s*<td[^>]*?>)([\s\S]*?)(<\/td>)/i, (match, p1, dateHtml, p3) => {
+          // Extract plain date text from the HTML inside the cell
+          const dateText = dateHtml.replace(/<[^>]*>/g, "").trim();
+          const parsedDate = (0, _moment.default)(new Date(dateText));
+          if (parsedDate.isValid()) {
+            // Replace only the date text inside the original HTML tags
+            const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting.date_format));
+            return `${p1}${newDateHtml}${p3}`;
+          }
+          return match;
         }).replace(/<td(\s+style="[^"]*")?>/g,
         // Matches <td> with or without style
         match => {
