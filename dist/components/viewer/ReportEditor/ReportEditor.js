@@ -463,7 +463,7 @@ const ReportEditor = props => {
           study: patientReportData.studydescription,
           study_date: studyDate,
           study_time: studyTime,
-          ref_physician: patientReportData.studydescription,
+          ref_physician: patientReportData.referringphysicianname,
           ref_doctor: patientReportData.referringphysicianname,
           accession_number: studyList?.MainDicomTags.AccessionNumber || patientReportData.accessionnumber || 'Undefined',
           uid: patientReportData.studyInstanceUid,
