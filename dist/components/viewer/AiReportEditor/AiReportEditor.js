@@ -531,11 +531,11 @@ const AiReportEditor = _ref => {
       const reportTime = (0, _moment.default)(patientData.report_submit_time).format(`${reportSetting?.date_format} HH:mm:ss`);
       const output = `
       <div>
-        <strong><span style="font-size: 12pt; font-weight: 600; font-family: Arial;">${doctorInformation?.displayName}</span></strong>
-        <strong><span style="font-size: 12pt; font-weight: 600; font-family: Arial;"> ${doctorInformation?.qualificationName}</span></strong>
-        ${reportSetting?.consultant ? `<strong><span style="font-size: 12pt; font-weight: 600; font-family: Arial;">${doctorInformation?.userTitle}</span></strong>` : ''}
-        <strong><span style="font-size: 12pt; font-weight: 600; font-family: Arial;"> ${doctorInformation?.registrationNoName}</span></strong>
-        <strong><span style="font-size: 12pt; font-weight: 600; font-family: Arial;">${doctorInformation?.disclaimerDetailsName}</span></strong>
+        <strong><span style="font-size: 11pt; font-weight: 600; font-family: Arial;">${doctorInformation?.displayName}</span></strong>
+        <strong><span style="font-size: 11pt; font-weight: 600; font-family: Arial;"> ${doctorInformation?.qualificationName}</span></strong>
+        ${reportSetting?.consultant ? `<strong><span style="font-size: 11pt; font-weight: 600; font-family: Arial;">${doctorInformation?.userTitle}</span></strong>` : ''}
+        <strong><span style="font-size: 11pt; font-weight: 600; font-family: Arial;"> ${doctorInformation?.registrationNoName}</span></strong>
+        <strong><span style="font-size: 11pt; font-weight: 600; font-family: Arial;">${doctorInformation?.disclaimerDetailsName}</span></strong>
         <span style="font-size: 10pt; font-family: Arial;"> ${formatCustomDateTime(doctorInformation?.formattedTimesName, reportSetting?.date_format)}</span>
       </div>
   `;
@@ -993,11 +993,11 @@ const AiReportEditor = _ref => {
             const endPosition = writer.createPositionAt(root, "end");
             instance.model.insertContent(imageElement, endPosition);
             const extraDetailsHTML = `
-              <span style="font-size: 12pt !important; font-weight: 600; font-family: Arial;">${doctorInformation?.displayName}</span>
-              <span style="font-size: 12pt !important; font-weight: 600; font-family: Arial;"> ${doctorInformation?.qualificationName}</span>
-              <span style="font-size: 12pt !important; font-weight: 600; font-family: Arial;">${doctorInformation?.userTitle}</span>
-              <span style="font-size: 12pt !important; font-weight: 600; font-family: Arial;"> ${doctorInformation?.registrationNoName}</span>
-              <span style="font-size: 12pt !important; font-weight: 600; font-family: Arial;">${doctorInformation?.disclaimerDetailsName}</span>
+              <span style="font-size: 11pt !important; font-weight: 600; font-family: Arial;">${doctorInformation?.displayName}</span>
+              <span style="font-size: 11pt !important; font-weight: 600; font-family: Arial;"> ${doctorInformation?.qualificationName}</span>
+              <span style="font-size: 11pt !important; font-weight: 600; font-family: Arial;">${doctorInformation?.userTitle}</span>
+              <span style="font-size: 11pt !important; font-weight: 600; font-family: Arial;"> ${doctorInformation?.registrationNoName}</span>
+              <span style="font-size: 11pt !important; font-weight: 600; font-family: Arial;">${doctorInformation?.disclaimerDetailsName}</span>
               <span style="font-size: 10pt !important; font-family: Arial;">${formatCustomDateTime(doctorInformation?.formattedTimesName, reportSetting?.date_format)}</span>
             `;
             const viewFragment = instance.data.processor.toView(extraDetailsHTML);
