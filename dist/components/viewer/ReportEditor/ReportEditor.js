@@ -788,14 +788,16 @@ const ReportEditor = props => {
         study_UIDs: studyInstanceUid,
         radiologyGroup: user?.profile?.radiologyGroup,
         patient_id: patientId,
-        patient_accession: accession
+        patient_accession: accession,
+        clinical_history_timestamp: (0, _moment.default)().format('DD-MMM-YYYY HH:mm:ss')
       };
       await (0, _RequestHandler.createPatientReports)(apiData, newData, setReportData, username, actionlog, institutionName);
     } else {
       const resData = {
         ...data,
         clinical_history: clinicalData,
-        radiologyGroup: user?.profile?.radiologyGroup
+        radiologyGroup: user?.profile?.radiologyGroup,
+        clinical_history_timestamp: (0, _moment.default)().format('DD-MMM-YYYY HH:mm:ss')
       };
       await (0, _RequestHandler.updatePatientReports)(apiData, data.id, resData, setReportData, username, actionlog, institutionName);
     }

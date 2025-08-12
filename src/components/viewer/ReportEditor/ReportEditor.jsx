@@ -1108,6 +1108,7 @@ const ReportEditor = (props) => {
         radiologyGroup: user?.profile?.radiologyGroup,
         patient_id: patientId,
         patient_accession: accession,
+        clinical_history_timestamp: moment().format('DD-MMM-YYYY HH:mm:ss')
       };
       await createPatientReports(
         apiData,
@@ -1122,6 +1123,7 @@ const ReportEditor = (props) => {
         ...data,
         clinical_history: clinicalData,
         radiologyGroup: user?.profile?.radiologyGroup,
+        clinical_history_timestamp: moment().format('DD-MMM-YYYY HH:mm:ss')
       };
       await updatePatientReports(
         apiData,
