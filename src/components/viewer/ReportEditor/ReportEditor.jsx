@@ -2418,6 +2418,24 @@ const ReportEditor = (props) => {
     });
   }
 
+  function cleanNode(node, editor) {
+    const writer = editor.editing.view;
+
+    if (node.is('element')) {
+      // Remove style & class attributes
+      node._removeAttribute('style');
+      node._removeAttribute('class');
+
+      // Apply only default font size
+      // node._setAttribute('style', `font-size: ${reportSetting?.font_size}px;`);
+      node
+      // Recursively clean children
+      for (const child of node.getChildren()) {
+          cleanNode(child, editor);
+      }
+    }
+  }
+
   const editorRef = useRef(null); // CKEditor instance
   useEffect(() => {
     let instance;
@@ -2497,11 +2515,23 @@ const ReportEditor = (props) => {
           toolbarContainer.appendChild(instance.ui.view.toolbar.element);
         }
 
+        instance.plugins.get('ClipboardPipeline').on('inputTransformation', (evt, data) => {
+          if (!data.content) return;
+
+          const viewFragment = data.content;
+
+          // Traverse through all nodes and remove style/class attributes
+          for (const child of viewFragment.getChildren()) {
+              cleanNode(child, instance);
+          }
+        });
+
         // Set line height & font size
         instance.editing.view.change((writer) => {
           const editableRoot = instance.editing.view.document.getRoot();
           writer.setStyle("line-height",  ((parseFloat(reportSetting?.line_spacing) + 0.2) || 1.5).toString(), editableRoot);
           writer.setStyle("font-size", `${reportSetting?.font_size}px`, editableRoot);
+          writer.setStyle('font-family', `${reportSetting?.font_style}`, editableRoot);
         });
 
         // Set initial data
