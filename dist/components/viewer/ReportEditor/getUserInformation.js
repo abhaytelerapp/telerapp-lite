@@ -34,7 +34,7 @@ const getUserInformation = async (fetchReportSetting, institutionName, patientFi
   const qualificationName = qualification ? `<strong>${qualification}</strong><br/>` : '';
   const registrationNoName = registrationNo ? `<strong>Reg.No. :- ${registrationNo}</strong><br/>` : '';
   const formattedTimesName = formattedTimes ? `${formattedTimes}<br/>` : '';
-  const disclaimerDetailsName = disclaimerDetails ? `<strong>Disclaimer :-</strong> ${disclaimerDetails}<br/>` : '';
+  const disclaimerDetailsName = disclaimerDetails ? `Disclaimer :- ${disclaimerDetails}<br/>` : '';
   const userTitle = reportSetting?.consultant ? `<strong>${title}</strong><br/>` : '';
   return {
     doctorInformation: {

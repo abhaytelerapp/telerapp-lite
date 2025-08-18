@@ -535,8 +535,8 @@ const AiReportEditor = _ref => {
         <strong><span style="font-size: 11pt; font-weight: 600; font-family: Arial;"> ${doctorInformation?.qualificationName}</span></strong>
         ${reportSetting?.consultant ? `<strong><span style="font-size: 11pt; font-weight: 600; font-family: Arial;">${doctorInformation?.userTitle}</span></strong>` : ''}
         <strong><span style="font-size: 11pt; font-weight: 600; font-family: Arial;"> ${doctorInformation?.registrationNoName}</span></strong>
-        <strong><span style="font-size: 11pt; font-weight: 600; font-family: Arial;">${doctorInformation?.disclaimerDetailsName}</span></strong>
-        <span style="font-size: 10pt; font-family: Arial;"> ${formatCustomDateTime(doctorInformation?.formattedTimesName, reportSetting?.date_format)}</span>
+        <strong><span style="font-size: 11pt; font-family: Arial;">${doctorInformation?.disclaimerDetailsName}</span></strong>
+        <span style="font-size: 10pt; font-family: Arial;">Electronically signed on :- ${formatCustomDateTime(doctorInformation?.formattedTimesName, reportSetting?.date_format)}</span>
       </div>
   `;
       let pageHeaderSpace;
@@ -964,7 +964,7 @@ const AiReportEditor = _ref => {
         }
         const boldUnderline = addReportSubmitTime?.replace(/(CLINICAL HISTORY)(\s*:?)/gi, (match, p1, p2) => {
           return `<u><strong style="text-transform: uppercase;">${p1}</strong></u>${p2}`;
-        })?.replace(/(<td[^>]*?>\s*(?:<[^>]+>)*\s*Study Date:\s*(?:<\/[^>]+>)*\s*<\/td>\s*<td[^>]*?>)([\s\S]*?)(<\/td>)/i, (match, p1, dateHtml, p3) => {
+        })?.replace(/(<td[^>]*>[\s\S]*?Age[\s\S]*?<\/td>\s*<td[^>]*>[\s\S]*?)(\d+)(?!Y)([\s\S]*?<\/td>)/gi, (match, p1, ageValue, p3) => `${p1}${ageValue}Y${p3}`)?.replace(/(<td[^>]*?>\s*(?:<[^>]+>)*\s*Study Date:\s*(?:<\/[^>]+>)*\s*<\/td>\s*<td[^>]*?>)([\s\S]*?)(<\/td>)/i, (match, p1, dateHtml, p3) => {
           // Extract plain date text from the HTML inside the cell
           const dateText = dateHtml.replace(/<[^>]*>/g, "").trim();
           const parsedDate = (0, _moment.default)(new Date(dateText));
@@ -1023,8 +1023,8 @@ const AiReportEditor = _ref => {
               <span style="font-size: 11pt !important; font-weight: 600; font-family: Arial;"> ${doctorInformation?.qualificationName}</span>
               <span style="font-size: 11pt !important; font-weight: 600; font-family: Arial;">${doctorInformation?.userTitle}</span>
               <span style="font-size: 11pt !important; font-weight: 600; font-family: Arial;"> ${doctorInformation?.registrationNoName}</span>
-              <span style="font-size: 11pt !important; font-weight: 600; font-family: Arial;">${doctorInformation?.disclaimerDetailsName}</span>
-              <span style="font-size: 10pt !important; font-family: Arial;">${formatCustomDateTime(doctorInformation?.formattedTimesName, reportSetting?.date_format)}</span>
+              <span style="font-size: 11pt !important; font-family: Arial;">${doctorInformation?.disclaimerDetailsName}</span>
+              <span style="font-size: 10pt !important; font-family: Arial;">Electronically signed on :- ${formatCustomDateTime(doctorInformation?.formattedTimesName, reportSetting?.date_format)}</span>
             `;
             const viewFragment = instance.data.processor.toView(extraDetailsHTML);
             const modelFragment = instance.data.toModel(viewFragment);

@@ -54,7 +54,7 @@ export const getUserInformation = async (
     : '';
   const formattedTimesName = formattedTimes ? `${formattedTimes}<br/>` : '';
   const disclaimerDetailsName = disclaimerDetails
-    ? `<strong>Disclaimer :-</strong> ${disclaimerDetails}<br/>`
+    ? `Disclaimer :- ${disclaimerDetails}<br/>`
     : '';
   const userTitle = reportSetting?.consultant ? `<strong>${title}</strong><br/>` : '';
 
