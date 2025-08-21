@@ -1729,7 +1729,7 @@ const ReportEditor = (props) => {
             const parsedDate = moment(new Date(dateText));
             if (parsedDate.isValid()) {
               // Replace only the date text inside the original HTML tags
-              const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting.date_format));
+              const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting?.date_format));
               return `${p1}${newDateHtml}${p3}`;
             }
             return match;
@@ -1804,7 +1804,7 @@ const ReportEditor = (props) => {
                   const parsedDate = moment(new Date(dateText));
                   if (parsedDate.isValid()) {
                     // Replace only the date text inside the original HTML tags
-                    const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting.date_format));
+                    const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting?.date_format));
                     return `${p1}${newDateHtml}${p3}`;
                   }
                   return match;
@@ -1940,7 +1940,7 @@ const ReportEditor = (props) => {
                       const parsedDate = moment(new Date(dateText));
                       if (parsedDate.isValid()) {
                         // Replace only the date text inside the original HTML tags
-                        const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting.date_format));
+                        const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting?.date_format));
                         return `${p1}${newDateHtml}${p3}`;
                       }
                       return match;
@@ -2376,7 +2376,7 @@ const ReportEditor = (props) => {
               const parsedDate = moment(new Date(dateText));
               if (parsedDate.isValid()) {
                 // Replace only the date text inside the original HTML tags
-                const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting.date_format));
+                const newDateHtml = dateHtml.replace(dateText, parsedDate.format(reportSetting?.date_format));
                 return `${p1}${newDateHtml}${p3}`;
               }
               return match;
