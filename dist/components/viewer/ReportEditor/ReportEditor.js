@@ -455,7 +455,7 @@ const ReportEditor = props => {
         setPatientData({
           patient_name: name === 'U' ? 'Unknown' : name,
           // patient_age: age || parseInt(studyList?.RequestedTags?.PatientAge.replace(/\D/g, ''), 10) || 'Null',
-          patient_age: age !== undefined ? age : patientReportData.patientage ? parseInt(patientReportData.patientage.replace(/\D/g, ""), 10) : 0,
+          patient_age: age !== undefined ? age && age !== '0' && age !== '0Y' ? age.replace(/(\d+)\s*(years?|y)/gi, '$1Y').replace(/(\d+)\s*(months?|m)/gi, '$1M').replace(/(\d+)\s*(days?|d)/gi, '$1D').replace(/\s+/g, ' ').trim().replace(/^(\d+)$/, '$1Y') : '0' : patientReportData?.patientage && patientReportData.patientage !== '0' && patientReportData.patientage !== '0Y' ? patientReportData.patientage.replace(/(\d+)\s*(years?|y)/gi, '$1Y').replace(/(\d+)\s*(months?|m)/gi, '$1M').replace(/(\d+)\s*(days?|d)/gi, '$1D').replace(/\s+/g, ' ').trim().replace(/^(\d+)$/, '$1Y') : '0',
           patient_gender: sex,
           patient_accession: patientReportData.accessionnumber,
           patient_id: patientReportData.patientid || 'Undefined',
@@ -1607,7 +1607,16 @@ const ReportEditor = props => {
             return `${prefix}${institutionNameFromStorage}</td>`;
           })?.replace(/(CLINICAL HISTORY)(\s*:?)/gi, (match, p1, p2) => {
             return `<u><strong style="text-transform: uppercase;">${p1}</strong></u>${p2}`;
-          })?.replace(/(<td[^>]*>[\s\S]*?Age[\s\S]*?<\/td>\s*<td[^>]*>[\s\S]*?)(\d+)(?!Y)([\s\S]*?<\/td>)/gi, (match, p1, ageValue, p3) => `${p1}${ageValue}Y${p3}`)?.replace(/(<td[^>]*?>\s*(?:<[^>]+>)*\s*Study Date:\s*(?:<\/[^>]+>)*\s*<\/td>\s*<td[^>]*?>)([\s\S]*?)(<\/td>)/i, (match, p1, dateHtml, p3) => {
+          })?.replace(/(<td[^>]*>[\s\S]*?Age[\s\S]*?<\/td>\s*<td[^>]*>)([\s\S]*?)(<\/td>)/gi, (match, p1, ageValue, p3) => {
+            // console.log('Raw ageValue:', ageValue); // Debug log
+
+            // Apply the same formatting logic as your study.patientAge
+            const formattedAge = ageValue && ageValue.trim() !== '0' && ageValue.trim() !== '0Y' ? ageValue.replace(/(\d+)\s*(years?|y)/gi, '$1Y').replace(/(\d+)\s*(months?|m)/gi, '$1M').replace(/(\d+)\s*(days?|d)/gi, '$1D').replace(/\s+/g, ' ').trim().replace(/^(\d+)$/, '$1Y') : '0';
+
+            // console.log('Formatted age:', formattedAge); // Debug log
+
+            return `${p1}${formattedAge}${p3}`;
+          })?.replace(/(<td[^>]*?>\s*(?:<[^>]+>)*\s*Study Date:\s*(?:<\/[^>]+>)*\s*<\/td>\s*<td[^>]*?>)([\s\S]*?)(<\/td>)/i, (match, p1, dateHtml, p3) => {
             // Extract plain date text from the HTML inside the cell
             const dateText = dateHtml.replace(/<[^>]*>/g, "").trim();
             const parsedDate = (0, _moment.default)(new Date(dateText));
