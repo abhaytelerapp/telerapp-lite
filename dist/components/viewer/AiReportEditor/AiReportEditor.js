@@ -1435,7 +1435,7 @@ const AiReportEditor = _ref => {
     onClick: handleSeePreviousReport,
     className: "text-primary-main rounded p-[6px] hover:bg-[#dedede]"
   }, /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
-    content: 'See Previous Reports',
+    text: "See Previous Reports",
     position: "bottom",
     style: {
       padding: '8px',
@@ -1447,7 +1447,7 @@ const AiReportEditor = _ref => {
     onClick: isAttachment ? () => handleAttachment(studyInstanceUid, patientData?.patient_name) : undefined,
     className: " flex items-center text-primary-main p-[6px] hover:bg-[#dedede] rounded"
   }, /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
-    content: 'See Attachments',
+    text: "See Attachments",
     position: "left",
     style: {
       padding: '8px',
@@ -1457,7 +1457,7 @@ const AiReportEditor = _ref => {
     className: `text-2xl`
   }))), /*#__PURE__*/_react.default.createElement("div", {
     onClick: () => handleClinicalHistory(studyInstanceUid, patientData?.patientId, patientData?.accession, patientData?.patientName, patientData?.institution_name),
-    className: "text-primary-main p-[6px] hover:bg-[#dedede] rounded"
+    className: "text-primary-main p-[6px] pt-[12px] hover:bg-[#dedede] rounded"
   }, patientFind?.clinical_history ?
   /*#__PURE__*/
   // <BsFileMedicalFill
@@ -1469,8 +1469,7 @@ const AiReportEditor = _ref => {
     position: "left",
     style: {
       padding: '8px',
-      fontWeight: 'normal',
-      display: "block"
+      fontWeight: 'normal'
     }
   }, /*#__PURE__*/_react.default.createElement(_bs.BsFileMedicalFill, {
     className: " text-2xl"
@@ -1479,8 +1478,7 @@ const AiReportEditor = _ref => {
     position: "left",
     style: {
       padding: '8px',
-      fontWeight: 'normal',
-      display: "block"
+      fontWeight: 'normal'
     }
   }, /*#__PURE__*/_react.default.createElement(_fa.FaNotesMedical, {
     className: " text-2xl"

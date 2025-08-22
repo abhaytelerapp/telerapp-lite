@@ -2197,7 +2197,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
               className="text-primary-main rounded p-[6px] hover:bg-[#dedede]"
             >
               <Tooltip
-                content={'See Previous Reports'}
+                text='See Previous Reports'
                 position="bottom"
                 style={{ padding: '8px', fontWeight: 'normal' }}
               >
@@ -2210,7 +2210,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
             className=' flex items-center text-primary-main p-[6px] hover:bg-[#dedede] rounded'
           >
             <Tooltip
-              content={'See Attachments'}
+              text='See Attachments'
               position="left"
               style={{ padding: '8px', fontWeight: 'normal' }}
             >
@@ -2218,7 +2218,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
             </Tooltip>
           </div>
 
-          <div onClick={() => handleClinicalHistory(studyInstanceUid, patientData?.patientId, patientData?.accession, patientData?.patientName, patientData?.institution_name)} className='text-primary-main p-[6px] hover:bg-[#dedede] rounded'>
+          <div onClick={() => handleClinicalHistory(studyInstanceUid, patientData?.patientId, patientData?.accession, patientData?.patientName, patientData?.institution_name)} className='text-primary-main p-[6px] pt-[12px] hover:bg-[#dedede] rounded'>
 
             {patientFind?.clinical_history ? (
               // <BsFileMedicalFill
@@ -2228,7 +2228,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
               <Tooltip
                 text='Clinical History'
                 position="left"
-                style={{ padding: '8px', fontWeight: 'normal', display: "block" }}
+                style={{ padding: '8px', fontWeight: 'normal' }}
               >
                 <BsFileMedicalFill className=" text-2xl" />
               </Tooltip>
@@ -2236,7 +2236,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
               <Tooltip
                 text='Clinical History'
                 position="left"
-                style={{ padding: '8px', fontWeight: 'normal', display: "block" }}
+                style={{ padding: '8px', fontWeight: 'normal' }}
               >
                 <FaNotesMedical className=" text-2xl" />
               </Tooltip>
