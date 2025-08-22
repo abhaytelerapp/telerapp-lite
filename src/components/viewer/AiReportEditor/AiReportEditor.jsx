@@ -2162,7 +2162,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
   };
 
   return (
-    <div className="h-full w-full py-2 bg-[#fff] flex flex-col justify-between">
+    <div className="h-full w-full bg-[#fff] flex flex-col justify-between">
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -2226,17 +2226,17 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
               //   title="Clinical History"
               // />
               <Tooltip
-                content={'Clinical History'}
+                text='Clinical History'
                 position="left"
-                style={{ padding: '8px', fontWeight: 'normal' }}
+                style={{ padding: '8px', fontWeight: 'normal', display: "block" }}
               >
                 <BsFileMedicalFill className=" text-2xl" />
               </Tooltip>
             ) : (
               <Tooltip
-                content={'Clinical History'}
+                text='Clinical History'
                 position="left"
-                style={{ padding: '8px', fontWeight: 'normal' }}
+                style={{ padding: '8px', fontWeight: 'normal', display: "block" }}
               >
                 <FaNotesMedical className=" text-2xl" />
               </Tooltip>

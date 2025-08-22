@@ -1402,7 +1402,7 @@ const AiReportEditor = _ref => {
     });
   };
   return /*#__PURE__*/_react.default.createElement("div", {
-    className: "h-full w-full py-2 bg-[#fff] flex flex-col justify-between"
+    className: "h-full w-full bg-[#fff] flex flex-col justify-between"
   }, /*#__PURE__*/_react.default.createElement(_reactToastify.ToastContainer, {
     position: "top-right",
     autoClose: 5000,
@@ -1465,20 +1465,22 @@ const AiReportEditor = _ref => {
   //   title="Clinical History"
   // />
   _react.default.createElement(_Tooltip.default, {
-    content: 'Clinical History',
+    text: "Clinical History",
     position: "left",
     style: {
       padding: '8px',
-      fontWeight: 'normal'
+      fontWeight: 'normal',
+      display: "block"
     }
   }, /*#__PURE__*/_react.default.createElement(_bs.BsFileMedicalFill, {
     className: " text-2xl"
   })) : /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
-    content: 'Clinical History',
+    text: "Clinical History",
     position: "left",
     style: {
       padding: '8px',
-      fontWeight: 'normal'
+      fontWeight: 'normal',
+      display: "block"
     }
   }, /*#__PURE__*/_react.default.createElement(_fa.FaNotesMedical, {
     className: " text-2xl"
