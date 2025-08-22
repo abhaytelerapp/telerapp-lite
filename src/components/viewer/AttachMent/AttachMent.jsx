@@ -13,7 +13,8 @@ const AddAttachmentModel = ({
   documentData,
   patientName,
   modelOpen,
-  toggleDisplayReportEditor
+  toggleDisplayReportEditor,
+  toggleDisplayAiReportEditor
 }) => {
   const initialValue = data => {
     return {
@@ -27,8 +28,8 @@ const AddAttachmentModel = ({
     remove: 'Remove',
   };
 
-  const keys = toggleDisplayReportEditor ? Object.keys(tableHeaders).filter((key) => key !== 'remove') : Object.keys(tableHeaders)
-  const values = toggleDisplayReportEditor ? Object.values(tableHeaders).filter((key) => key !== 'Remove') : Object.values(tableHeaders)
+  const keys = (toggleDisplayReportEditor || toggleDisplayAiReportEditor) ? Object.keys(tableHeaders).filter((key) => key !== 'remove') : Object.keys(tableHeaders)
+  const values = (toggleDisplayReportEditor || toggleDisplayAiReportEditor) ? Object.values(tableHeaders).filter((key) => key !== 'Remove') : Object.values(tableHeaders)
   const [document, setDocument] = useState(null);
 
   let findHistory = [];
@@ -105,7 +106,7 @@ const AddAttachmentModel = ({
                 {patientName && (
                   <p>Patient: {patientName.replace(/,/g, '')}</p>
                 )}
-                {!toggleDisplayReportEditor && <div className=' flex items-center gap-3 mt-1'>
+                {!(toggleDisplayReportEditor || toggleDisplayAiReportEditor) && <div className=' flex items-center gap-3 mt-1'>
                   <input
                     type="file"
                     onChange={handlerDocumentUpload}

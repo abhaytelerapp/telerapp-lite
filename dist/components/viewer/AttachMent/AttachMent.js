@@ -23,7 +23,8 @@ const AddAttachmentModel = _ref => {
     documentData,
     patientName,
     modelOpen,
-    toggleDisplayReportEditor
+    toggleDisplayReportEditor,
+    toggleDisplayAiReportEditor
   } = _ref;
   const initialValue = data => {
     return {
@@ -36,8 +37,8 @@ const AddAttachmentModel = _ref => {
     preview: 'Preview',
     remove: 'Remove'
   };
-  const keys = toggleDisplayReportEditor ? Object.keys(tableHeaders).filter(key => key !== 'remove') : Object.keys(tableHeaders);
-  const values = toggleDisplayReportEditor ? Object.values(tableHeaders).filter(key => key !== 'Remove') : Object.values(tableHeaders);
+  const keys = toggleDisplayReportEditor || toggleDisplayAiReportEditor ? Object.keys(tableHeaders).filter(key => key !== 'remove') : Object.keys(tableHeaders);
+  const values = toggleDisplayReportEditor || toggleDisplayAiReportEditor ? Object.values(tableHeaders).filter(key => key !== 'Remove') : Object.values(tableHeaders);
   const [document, setDocument] = (0, _react.useState)(null);
   let findHistory = [];
   findHistory = documentData?.document_url || [];
@@ -103,7 +104,7 @@ const AddAttachmentModel = _ref => {
       className: " flex items-center gap-5"
     }, /*#__PURE__*/_react.default.createElement("div", {
       className: " w-full"
-    }, patientName && /*#__PURE__*/_react.default.createElement("p", null, "Patient: ", patientName.replace(/,/g, '')), !toggleDisplayReportEditor && /*#__PURE__*/_react.default.createElement("div", {
+    }, patientName && /*#__PURE__*/_react.default.createElement("p", null, "Patient: ", patientName.replace(/,/g, '')), !(toggleDisplayReportEditor || toggleDisplayAiReportEditor) && /*#__PURE__*/_react.default.createElement("div", {
       className: " flex items-center gap-3 mt-1"
     }, /*#__PURE__*/_react.default.createElement("input", {
       type: "file",

@@ -101,6 +101,7 @@ const ReportEditor = (props) => {
     apiData,
     keycloak_url,
     user,
+    toggleDisplayAiReportEditor,
   } = props;
 
   const customStyles = {
@@ -1098,6 +1099,7 @@ const ReportEditor = (props) => {
         patientName,
         modelOpen: show,
         toggleDisplayReportEditor,
+        toggleDisplayAiReportEditor,
       },
     });
   };

@@ -88,7 +88,8 @@ const ReportEditor = props => {
     isModelOpen,
     apiData,
     keycloak_url,
-    user
+    user,
+    toggleDisplayAiReportEditor
   } = props;
   const customStyles = {
     control: provided => ({
@@ -772,7 +773,8 @@ const ReportEditor = props => {
         documentData,
         patientName,
         modelOpen: show,
-        toggleDisplayReportEditor
+        toggleDisplayReportEditor,
+        toggleDisplayAiReportEditor
       }
     });
   };

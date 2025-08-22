@@ -35,7 +35,8 @@ const AiReportEditor = _ref => {
     apiData,
     user,
     keycloak_url,
-    toggleDisplayReportEditor
+    toggleDisplayReportEditor,
+    toggleDisplayAiReportEditor
   } = _ref;
   const params = (0, _reactRouter.useLocation)();
   const {
@@ -1340,7 +1341,8 @@ const AiReportEditor = _ref => {
         documentData,
         patientName,
         modelOpen: show,
-        toggleDisplayReportEditor
+        toggleDisplayReportEditor,
+        toggleDisplayAiReportEditor
       }
     });
   };

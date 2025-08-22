@@ -1251,7 +1251,8 @@ const Viewer = props => {
     user: data?.user,
     isModelOpen: isModelOpen,
     setToggleDisplayReportEditor: setToggleDisplayReportEditor,
-    toggleDisplayReportEditor: toggleDisplayReportEditor
+    toggleDisplayReportEditor: toggleDisplayReportEditor,
+    toggleDisplayAiReportEditor: toggleDisplayAiReportEditor
   }))), toggleDisplayAiReportEditor && hasAIEditorPermission && /*#__PURE__*/_react.default.createElement(_reactResizable.Resizable, {
     width: editorWidth,
     height: 0,
@@ -1278,7 +1279,8 @@ const Viewer = props => {
     apiData: data?.data,
     user: data?.user,
     keycloak_url: data?.keycloak_url,
-    toggleDisplayReportEditor: toggleDisplayReportEditor
+    toggleDisplayReportEditor: toggleDisplayReportEditor,
+    toggleDisplayAiReportEditor: toggleDisplayAiReportEditor
   }))))), /*#__PURE__*/_react.default.createElement("div", {
     id: "magnifierDiv",
     style: {

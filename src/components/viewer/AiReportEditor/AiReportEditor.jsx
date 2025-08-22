@@ -49,7 +49,7 @@ import AddAttachmentModel from "../AttachMent";
 import AddClinicalHistoryModel from "../AddClinicalHistoryModel";
 import { BsFileMedicalFill } from "react-icons/bs";
 
-const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor }) => {
+const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor,toggleDisplayAiReportEditor }) => {
   const params = useLocation();
   const { t } = useTranslation();
   const { show, hide } = useModal();
@@ -2066,6 +2066,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
         patientName,
         modelOpen: show,
         toggleDisplayReportEditor,
+        toggleDisplayAiReportEditor,
       },
     });
   };

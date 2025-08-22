@@ -1251,6 +1251,7 @@ const Viewer = (props) => {
                   isModelOpen={isModelOpen}
                   setToggleDisplayReportEditor={setToggleDisplayReportEditor}
                   toggleDisplayReportEditor={toggleDisplayReportEditor}
+                  toggleDisplayAiReportEditor={toggleDisplayAiReportEditor}
                 />
               </div>
             </Resizable>
@@ -1275,6 +1276,7 @@ const Viewer = (props) => {
                   user={data?.user}
                   keycloak_url={data?.keycloak_url}
                   toggleDisplayReportEditor={toggleDisplayReportEditor}
+                  toggleDisplayAiReportEditor={toggleDisplayAiReportEditor}
                 />
               </div>
             </Resizable>
