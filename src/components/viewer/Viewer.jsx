@@ -1274,6 +1274,7 @@ const Viewer = (props) => {
                   apiData={data?.data}
                   user={data?.user}
                   keycloak_url={data?.keycloak_url}
+                  toggleDisplayReportEditor={toggleDisplayReportEditor}
                 />
               </div>
             </Resizable>

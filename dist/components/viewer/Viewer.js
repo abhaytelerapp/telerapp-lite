@@ -1277,7 +1277,8 @@ const Viewer = props => {
   }, /*#__PURE__*/_react.default.createElement(_AiReportEditor.default, {
     apiData: data?.data,
     user: data?.user,
-    keycloak_url: data?.keycloak_url
+    keycloak_url: data?.keycloak_url,
+    toggleDisplayReportEditor: toggleDisplayReportEditor
   }))))), /*#__PURE__*/_react.default.createElement("div", {
     id: "magnifierDiv",
     style: {

@@ -2,11 +2,12 @@ import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
-import { IoSend } from "react-icons/io5";
+import { IoDocumentAttachSharp, IoSend } from "react-icons/io5";
 import {
   FaFileDownload,
   FaMicrophone,
   FaMicrophoneSlash,
+  FaNotesMedical,
 } from "react-icons/fa";
 import SpeechRecognition, {
   useSpeechRecognition,
@@ -18,7 +19,12 @@ import { useNavigate } from "react-router-dom";
 import Tooltip from "../Tooltip";
 import ReactSelect, { components, MultiValueGenericProps } from "react-select";
 import {
+  createDocument,
   createPatientReports,
+  deleteDocumentUrl,
+  fetchDefaultReportTemplates,
+  fetchDocumentUpload,
+  fetchDocumentUploadForStudy,
   fetchEditorPatientReportData,
   fetchInstitutionPromptAccess,
   fetchPatientReportByStudy,
@@ -28,6 +34,7 @@ import {
   fetchViewerStudy,
   genAiRadiologyReporter,
   generateReportPdf,
+  updateDocument,
   updateOrthancStudy,
   updatePatientReports,
   userToken,
@@ -35,10 +42,17 @@ import {
 import "./AIReportEditor.css";
 import { getUserInformation } from "../ReportEditor/getUserInformation";
 import Handlebars from "handlebars";
+import { useModal } from "../contextProviders";
+import PreviousReport from "../PreviousReport/PreviousReport";
+import { HiClipboardDocumentCheck } from "react-icons/hi2";
+import AddAttachmentModel from "../AttachMent";
+import AddClinicalHistoryModel from "../AddClinicalHistoryModel";
+import { BsFileMedicalFill } from "react-icons/bs";
 
-const AiReportEditor = ({ apiData, user, keycloak_url }) => {
+const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor }) => {
   const params = useLocation();
   const { t } = useTranslation();
+  const { show, hide } = useModal();
   const navigate = useNavigate();
 
   const {
@@ -80,19 +94,26 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
   const [institutionDemographics, setInstitutionDemographics] = useState("");
   const [formattedHTML, setFormattedHTML] = useState("");
   const [demographicsHTMLTable, setDemographicsHTMLTable] = useState("");
+  const [previouPatientReports, setPreviouPatientReports] = useState([]);
+  const [patientAllReport, setPatientAllReport] = useState([]);
+  const hasFetchedReportsRef = useRef(false);
+  const [usersList, setUsersList] = useState([]);
+  const [availableReportTemplates, setAvailableReportTemplates] = useState("");
+  const [documentUploadDetails, setDocumentUploadDetails] = useState("");
+
+  const getToken = async () => {
+    try {
+      const data = {
+        token: user.access_token,
+      };
+      const response = await userToken(data, apiData);
+      setToken(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    const getToken = async () => {
-      try {
-        const data = {
-          token: user.access_token,
-        };
-        const response = await userToken(data, apiData);
-        setToken(response);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     getToken();
   }, []);
 
@@ -104,6 +125,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
     }, 1000);
   }, []);
 
+  const isNewTab = params.pathname.includes('report-editor');
   const studyInstanceUid = params.pathname.includes("report-editor")
     ? params.pathname?.split("report-editor/:")[1]
     : params?.search
@@ -114,6 +136,19 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         ?.split("&")[0]
         ?.split(",")[0]
         ?.replace(/^=/, "");
+
+  useEffect(() => {
+    const query = params?.search;
+    const uids = query
+      ?.slice(query.indexOf("StudyInstanceUID=") + "StudyInstanceUID=".length)
+      ?.split("&")[0]
+      ?.split(",")
+      ?.map((uid) => ({ studyInstanceUid: uid.trim() })); // store objects
+
+    if (uids?.length) {
+      setPatientAllReport(uids);
+    }
+  }, [params?.search]);
 
   const getReportDetails = async () => {
     const patient = await fetchPatientReportByStudy(studyInstanceUid, apiData);
@@ -382,6 +417,34 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
   }, [viewerStudy, apiData]);
 
   useEffect(() => {
+    if (!apiData || !keycloak_url) return;
+    fetchUsers(user.access_token, keycloak_url)
+      .then((data) => {
+        setRadiologistUserList(data);
+        setUsersList(data);
+      })
+      .catch((error) => console.error("Error fetching users:", error));
+  }, [user.access_token, apiData, keycloak_url]);
+
+  useEffect(() => {
+    if (!apiData) return; // <-- inside the useEffect now
+
+    getToken();
+
+    fetchDefaultReportTemplates(apiData)
+      .then((data) => setAvailableReportTemplates(data))
+      .catch((error) =>
+        console.error("Error fetching default templates:", error)
+      );
+
+    fetchDocumentUpload(apiData)
+      .then((data) => setDocumentUploadDetails(data))
+      .catch((error) =>
+        console.error("Error fetching document upload details:", error)
+      );
+  }, [apiData]);
+
+  useEffect(() => {
     const fetchInstitutionDemographics = async () => {
       if (patientData?.institution_name) {
         await fetchReportTemplatesWithInstitution(
@@ -493,6 +556,35 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
     }
   }, [patientData?.institution_name]);
 
+  const loginUserData = usersList?.filter(
+    (data) => data.id === user.profile.sub
+  );
+
+  const loginUseremplateName = [
+    ...(loginUserData?.map((data) => data?.attributes?.templates).flat() || []),
+    user?.profile?.preferred_username,
+  ].filter(Boolean);
+
+  const templategroupFiltered =
+    Array.isArray(availableReportTemplates) &&
+    Array.isArray(loginUseremplateName)
+      ? availableReportTemplates.filter((data) =>
+          loginUseremplateName.some((dat) => dat === data.templategroup)
+        )
+      : [];
+
+  // Then, add additional matches for 'name' if they aren't already included
+  const loginUserTemplateOption = [
+    ...(templategroupFiltered?.length > 0 ? templategroupFiltered : []),
+    ...(availableReportTemplates?.length > 0
+      ? availableReportTemplates?.filter(
+          (data) =>
+            !templategroupFiltered?.includes(data) &&
+            loginUseremplateName.some((dat) => dat === data.name)
+        )
+      : []),
+  ];
+
   const assignUserFind = patientFind?.assign?.map((item) => JSON.parse(item));
 
   const assignUserDetail =
@@ -512,6 +604,22 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
     token?.realm_access?.roles.includes("deputy-admin");
 
   const isApproved = patientReportDetail?.document_status === "Approved";
+
+  const allTemaplateAccess =
+    token?.realm_access?.roles?.includes("super-admin") ||
+    token?.realm_access?.roles?.includes("deputy-admin");
+
+  // filterData = priorityStudiesFilter.length > 0 ? priorityStudiesFilter : filterStudies;
+  const templateOptions =
+    loginUseremplateName.includes("Select All") || allTemaplateAccess
+      ? availableReportTemplates
+      : loginUserTemplateOption;
+
+  const isAttachment =
+    user?.profile?.roleType?.includes("Radiologist") ||
+    user?.profile?.roleType?.includes("QaUsers") ||
+    token?.realm_access?.roles?.includes("super-admin") ||
+    token?.realm_access?.roles?.includes("deputy-admin");
 
   const handleMessageType = (e) => {
     const value = e.target.value;
@@ -557,6 +665,84 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
       }
     }
   };
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      if (hasFetchedReportsRef.current || patientAllReport.length === 0) return;
+      hasFetchedReportsRef.current = true;
+
+      if (!studyInstanceUid) {
+        console.warn("studyInstanceUid missing");
+        return;
+      }
+
+      const filtered = patientAllReport.filter(
+        (study) => study.studyInstanceUid !== studyInstanceUid
+      );
+
+      if (filtered.length === 0) {
+        setPreviouPatientReports([]);
+        return;
+      }
+
+      const updatedStudies = await Promise.all(
+        filtered.map(async (study) => {
+          const reportDetails = await fetchPatientReportByStudy(
+            study.studyInstanceUid,
+            apiData
+          );
+          const viewerStudy = await fetchViewerStudy(
+            reportDetails?.study_UIDs,
+            apiData
+          );
+
+          let fetchUserInformation = null;
+          if (
+            fetchReportSetting &&
+            viewerStudy?.length > 0 &&
+            viewerStudy[0]?.MainDicomTags?.InstitutionName &&
+            patientFind &&
+            radiologistUserList?.length > 0
+          ) {
+            fetchUserInformation = await getUserInformation(
+              fetchReportSetting,
+              viewerStudy?.[0]?.MainDicomTags?.InstitutionName,
+              reportDetails,
+              radiologistUserList,
+              apiData
+            );
+          }
+
+          return {
+            studyData: viewerStudy?.[0]?.MainDicomTags?.StudyDate,
+            modality: viewerStudy?.[0]?.RequestedTags?.ModalitiesInStudy,
+            instances:
+              viewerStudy?.[0]?.RequestedTags?.NumberOfStudyRelatedInstances,
+            template: reportDetails?.reportdetails || null,
+            document_status: reportDetails?.document_status || null,
+            displayName: fetchUserInformation?.doctorInformation?.displayName,
+            qualificationName:
+              fetchUserInformation?.doctorInformation?.qualificationName,
+            registrationNoName:
+              fetchUserInformation?.doctorInformation?.registrationNoName,
+            formattedTimesName:
+              fetchUserInformation?.doctorInformation?.formattedTimesName,
+            disclaimerDetailsName:
+              fetchUserInformation?.doctorInformation?.disclaimerDetailsName,
+            signature: fetchUserInformation?.doctorInformation?.signature,
+          };
+        })
+      );
+      setPreviouPatientReports(updatedStudies);
+    };
+
+    fetchReports();
+  }, [
+    fetchReportSetting,
+    radiologistUserList?.length > 0,
+    studyInstanceUid,
+    apiData,
+  ]);
 
   function formatCustomDateTime(input, format = 'dd-MMM-yyyy') {
     let date;
@@ -1798,6 +1984,183 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
     }
   };
 
+  // attachment
+  const handleAttachmentChange = async (studyInstanceUid, attachmentData) => {
+    // const data = documentUploadDetails?.find(
+    //   (item) => item.study_UIDs === studyInstanceUid
+    // );
+    const documentData = await fetchDocumentUploadForStudy(
+      apiData,
+      studyInstanceUid
+    );
+    if (documentData.length === 0) {
+      await createDocument(
+        apiData,
+        studyInstanceUid,
+        attachmentData,
+        setDocumentUploadDetails,
+        documentUploadDetails
+      );
+    } else {
+      await updateDocument(
+        apiData,
+        documentData.id,
+        attachmentData,
+        setDocumentUploadDetails,
+        documentUploadDetails
+      );
+    }
+  };
+
+  const handleAttachmentRemove = async (
+    attachment,
+    instance,
+    studyInstanceUid
+  ) => {
+    const updateDocumnet = attachment?.filter(
+      (item) => item.attachment !== instance
+    );
+    // const data = documentUploadDetails?.find(
+    //   (item) => item.study_UIDs === studyInstanceUid
+    // );
+    const documentData = await fetchDocumentUploadForStudy(
+      apiData,
+      studyInstanceUid
+    );
+
+    const pattern = /\d+-([^/]+)$/;
+    // const pattern = /\/(\d+-([\w-]+\.pdf))$/;
+
+    const removeDocumentName = instance.match(pattern);
+
+    const resData = {
+      ...documentData,
+      updateData:
+        updateDocumnet && updateDocumnet?.length > 0 ? updateDocumnet : null,
+      removeDocument: removeDocumentName[0].replaceAll("/", ""),
+    };
+
+    await deleteDocumentUrl(
+      apiData,
+      documentData.id,
+      resData,
+      setDocumentUploadDetails,
+      documentUploadDetails
+    );
+  };
+
+  const handleAttachment = async (studyInstanceUid, patientName) => {
+    const documentData = await fetchDocumentUploadForStudy(
+      apiData,
+      studyInstanceUid
+    );
+    show({
+      content: AddAttachmentModel,
+      title: t("Attachment"),
+      contentProps: {
+        hide,
+        studyInstanceUid,
+        handleAttachmentChange,
+        handleAttachmentRemove,
+        documentData,
+        patientName,
+        modelOpen: show,
+        toggleDisplayReportEditor,
+      },
+    });
+  };
+
+  
+  // Clinical History
+  const handleClinicalHistoryChange = async (
+    studyInstanceUid,
+    clinicalData,
+    patientId,
+    accession,
+    institutionName
+  ) => {
+    // const data = patientReportsDetails?.find(item => item.study_UIDs === studyInstanceUid);
+    const data = await fetchPatientReportByStudy(studyInstanceUid, apiData);
+
+    const actionlog = "HistoryLogs";
+
+    if (!data) {
+      const newData = {
+        clinical_history: clinicalData,
+        study_UIDs: studyInstanceUid,
+        radiologyGroup: user?.profile?.radiologyGroup,
+        patient_id: patientId,
+        patient_accession: accession,
+        clinical_history_timestamp: moment().format('DD-MMM-YYYY HH:mm:ss')
+      };
+      await createPatientReports(
+        apiData,
+        newData,
+        setReportData,
+        username,
+        actionlog,
+        institutionName
+      );
+    } else {
+      const resData = {
+        ...data,
+        clinical_history: clinicalData,
+        radiologyGroup: user?.profile?.radiologyGroup,
+        clinical_history_timestamp: moment().format('DD-MMM-YYYY HH:mm:ss')
+      };
+      await updatePatientReports(
+        apiData,
+        data.id,
+        resData,
+        setReportData,
+        username,
+        actionlog,
+        institutionName
+      );
+    }
+  };
+
+  const handleClinicalHistory = async (
+    studyInstanceUid,
+    patientId,
+    accession,
+    patientName,
+    institutionName
+  ) => {
+    const findHistory = await fetchPatientReportByStudy(
+      studyInstanceUid,
+      apiData
+    );
+    show({
+      content: AddClinicalHistoryModel,
+      title: t("Clinical History"),
+      contentProps: {
+        hide,
+        studyInstanceUid,
+        handleClinicalHistoryChange,
+        findHistory,
+        patientId,
+        accession,
+        patientName,
+        institutionName,
+      },
+    });
+  };
+  
+  // see previous report
+  const handleSeePreviousReport = () => {
+    // setToggleDisplayReportEditor((show: boolean) => !show);
+    show({
+      content: PreviousReport,
+      title: t("Previous Reports"),
+      contentProps: {
+        show,
+        hide,
+        previouPatientReports,
+      },
+    });
+  };
+
   return (
     <div className="h-full w-full py-2 bg-[#fff] flex flex-col justify-between">
       <ToastContainer
@@ -1812,19 +2175,84 @@ const AiReportEditor = ({ apiData, user, keycloak_url }) => {
         pauseOnHover
         theme="light"
       />
-      <div className="p-2">
-        <ReactSelect
-          id={"promptStyle"}
-          classNamePrefix="customSelect"
-          className="text-white telerapp-select customSelect__wrapper select-css flex flex-1 flex-col css-b62m3t-container"
-          isClearable={false}
-          onChange={(selected) => {
-            setSelectedPrompt(selected);
-          }}
-          options={promptOptions}
-          value={selectedPrompt}
-          placeholder="Select prompt style"
-        />
+      <div className="flex items-center justify-between gap-3">
+        <div className={`pl-2 pb-2 pt-2 ${isNewTab ? '' : 'pr-2'} w-full`}>
+          <ReactSelect
+            id={"promptStyle"}
+            classNamePrefix="customSelect"
+            className="text-white telerapp-select customSelect__wrapper select-css flex flex-1 flex-col css-b62m3t-container"
+            isClearable={false}
+            onChange={(selected) => {
+              setSelectedPrompt(selected);
+            }}
+            options={promptOptions}
+            value={selectedPrompt}
+            placeholder="Select prompt style"
+          />
+        </div>
+        <div className="flex items-center">
+          {previouPatientReports?.length > 0 && previouPatientReports?.some(report => report?.document_status === 'Approved') && (
+            <div
+              onClick={handleSeePreviousReport}
+              className="text-primary-main rounded p-[6px] hover:bg-[#dedede]"
+            >
+              <Tooltip
+                content={'See Previous Reports'}
+                position="bottom"
+                style={{ padding: '8px', fontWeight: 'normal' }}
+              >
+                <HiClipboardDocumentCheck className={`text-2xl`} />
+              </Tooltip>
+            </div>
+          )}
+          <div
+            onClick={isAttachment ? () => handleAttachment(studyInstanceUid, patientData?.patient_name) : undefined}
+            className=' flex items-center text-primary-main p-[6px] hover:bg-[#dedede] rounded'
+          >
+            <Tooltip
+              content={'See Attachments'}
+              position="left"
+              style={{ padding: '8px', fontWeight: 'normal' }}
+            >
+              <IoDocumentAttachSharp className={`text-2xl`} />
+            </Tooltip>
+          </div>
+
+          <div onClick={() => handleClinicalHistory(studyInstanceUid, patientData?.patientId, patientData?.accession, patientData?.patientName, patientData?.institution_name)} className='text-primary-main p-[6px] hover:bg-[#dedede] rounded'>
+
+            {patientFind?.clinical_history ? (
+              // <BsFileMedicalFill
+              //   className={`${findData[0]?.clinical_history ? 'border-0 text-primary-dark dark:text-primary-light transition-all hover:opacity-70' : ''} text-2xl`}
+              //   title="Clinical History"
+              // />
+              <Tooltip
+                content={'Clinical History'}
+                position="left"
+                style={{ padding: '8px', fontWeight: 'normal' }}
+              >
+                <BsFileMedicalFill className=" text-2xl" />
+              </Tooltip>
+            ) : (
+              <Tooltip
+                content={'Clinical History'}
+                position="left"
+                style={{ padding: '8px', fontWeight: 'normal' }}
+              >
+                <FaNotesMedical className=" text-2xl" />
+              </Tooltip>
+              // <FaNotesMedical className=" text-2xl transition-all hover:opacity-70" title="Add Clinical History" />
+            )}
+          </div>
+
+          {/* {params.pathname.includes('report-editor') ? null : (
+            <div
+              onClick={handleNewWindowOpen}
+              className='text-primary-main p-[6px] hover:bg-[#dedede] rounded'
+            >
+              <FaArrowRight className=" text-xl" />
+            </div>
+          )} */}
+        </div>
       </div>
       {/* Report Content */}
       {patientData?.patient_name ? (
