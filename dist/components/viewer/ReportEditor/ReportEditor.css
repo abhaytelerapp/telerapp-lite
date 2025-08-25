@@ -110,6 +110,7 @@
 
 .ck-content .table table td {
   padding: 0em !important;
+  text-wrap: nowrap;
 }
 
 .mic-container {
