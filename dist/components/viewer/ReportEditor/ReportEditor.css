@@ -218,6 +218,7 @@ figure.image {
 
 .ck-content .table table {
   line-height: 1.5 !important;
+  font-size: 12px !important;
 }
 
 h3[style*="text-align:center"] {
