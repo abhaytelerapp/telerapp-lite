@@ -15,6 +15,7 @@ function App(props) {
   const providers = [[_contextProviders.SnackbarProvider], [_contextProviders.ModalProvider, {
     modal: _Modal.default
   }]];
+  console.log(props, 'propsappjs');
   const CombinedProviders = _ref => {
     let {
       children

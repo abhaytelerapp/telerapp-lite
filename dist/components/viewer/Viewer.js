@@ -65,6 +65,7 @@ const Viewer = props => {
   const [token, setToken] = (0, _react.useState)("");
   (0, _react.useEffect)(() => {
     if (props) {
+      console.log(props, 'propsviewer');
       setData(props?.props);
     }
   }, [props]);

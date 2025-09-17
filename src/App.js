@@ -10,7 +10,7 @@ import { BrowserRouter } from "react-router-dom";
 
 function App(props) {
   const providers = [[SnackbarProvider], [ModalProvider, { modal: Modal }]];
-
+console.log(props,'propsappjs')
   const CombinedProviders = ({ children }) =>
     Compose({ components: providers, children });
   return (

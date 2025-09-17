@@ -58,6 +58,7 @@ const Viewer = (props) => {
 
   useEffect(() => {
     if (props) {
+      console.log(props,'propsviewer')
       setData(props?.props);
     }
   }, [props]);
