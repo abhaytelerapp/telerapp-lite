@@ -401,14 +401,14 @@ const AiReportEditor = _ref => {
   const permissions = user?.profile?.permission;
   const isPhysicianOrTechnologist = user?.profile?.roleType === "Physician" || user?.profile?.roleType === "Technologist";
   const canEditReport = permissions?.includes("Edit Report");
-  const isQaUser = token?.realm_access?.roles.includes("qa-user");
-  const isSuperAndDeputyAdmin = token?.realm_access?.roles.includes("super-admin") || token?.realm_access?.roles.includes("deputy-admin");
+  const isQaUser = user?.profile?.roleType.includes("qa-user");
+  const isSuperAndDeputyAdmin = user?.profile?.roleType.includes("super-admin") || user?.profile?.roleType.includes("deputy-admin");
   const isApproved = patientReportDetail?.document_status === "Approved";
-  const allTemaplateAccess = token?.realm_access?.roles?.includes("super-admin") || token?.realm_access?.roles?.includes("deputy-admin");
+  const allTemaplateAccess = user?.profile?.roleType.includes("super-admin") || user?.profile?.roleType.includes("deputy-admin");
 
   // filterData = priorityStudiesFilter.length > 0 ? priorityStudiesFilter : filterStudies;
   const templateOptions = loginUseremplateName.includes("Select All") || allTemaplateAccess ? availableReportTemplates : loginUserTemplateOption;
-  const isAttachment = user?.profile?.roleType?.includes("Radiologist") || user?.profile?.roleType?.includes("QaUsers") || token?.realm_access?.roles?.includes("super-admin") || token?.realm_access?.roles?.includes("deputy-admin");
+  const isAttachment = user?.profile?.roleType?.includes("Radiologist") || user?.profile?.roleType?.includes("QaUsers") || user?.profile?.roleType?.includes("super-admin") || user?.profile?.roleType?.includes("deputy-admin");
   const handleMessageType = e => {
     const value = e.target.value;
     setInputValue(value);

@@ -758,12 +758,12 @@ const ReportEditor = (props) => {
   const isAttachment =
     user?.profile?.roleType?.includes("Radiologist") ||
     user?.profile?.roleType?.includes("QaUsers") ||
-    token?.realm_access?.roles?.includes("super-admin") ||
-    token?.realm_access?.roles?.includes("deputy-admin");
+    user?.profile?.roleType?.includes("super-admin") ||
+    user?.profile?.roleType?.includes("deputy-admin");
 
   const allTemaplateAccess =
-    token?.realm_access?.roles?.includes("super-admin") ||
-    token?.realm_access?.roles?.includes("deputy-admin");
+    user?.profile?.roleType?.includes("super-admin") ||
+    user?.profile?.roleType?.includes("deputy-admin");
 
   // filterData = priorityStudiesFilter.length > 0 ? priorityStudiesFilter : filterStudies;
   const templateOptions =
@@ -1011,10 +1011,10 @@ const ReportEditor = (props) => {
     user?.profile?.roleType === "Physician" ||
     user?.profile?.roleType === "Technologist";
   const canEditReport = permissions?.includes("Edit Report");
-  const isQaUser = token?.realm_access?.roles.includes("qa-user");
+  const isQaUser = user?.profile?.roleType.includes("qa-user");
   const isSuperAndDeputyAdmin =
-    token?.realm_access?.roles.includes("super-admin") ||
-    token?.realm_access?.roles.includes("deputy-admin");
+    user?.profile?.roleType.includes("super-admin") ||
+    user?.profile?.roleType.includes("deputy-admin");
   const isApproved = patientReportDetail?.document_status === "Approved";
 
   // attachment
