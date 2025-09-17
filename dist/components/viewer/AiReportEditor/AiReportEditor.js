@@ -88,6 +88,20 @@ const AiReportEditor = _ref => {
   const [usersList, setUsersList] = (0, _react.useState)([]);
   const [availableReportTemplates, setAvailableReportTemplates] = (0, _react.useState)("");
   const [documentUploadDetails, setDocumentUploadDetails] = (0, _react.useState)("");
+  const getToken = async () => {
+    try {
+      const data = {
+        token: user.access_token
+      };
+      const response = await (0, _RequestHandler.userToken)(data, apiData);
+      setToken(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  (0, _react.useEffect)(() => {
+    getToken();
+  }, []);
   (0, _react.useEffect)(() => {
     setTimeout(() => {
       if (textareaRef.current) {
@@ -116,11 +130,11 @@ const AiReportEditor = _ref => {
     getReportDetails();
   }, [studyInstanceUid, patientCritical]);
   (0, _react.useEffect)(() => {
-    if (!apiData) return;
-    (0, _RequestHandler.fetchUsers)(apiData).then(data => {
+    if (!apiData || !keycloak_url) return;
+    (0, _RequestHandler.fetchUsers)(user?.access_token, keycloak_url).then(data => {
       setRadiologistUserList(data);
     }).catch(error => console.error("Error fetching users:", error));
-  }, [apiData]);
+  }, [user?.access_token, apiData, keycloak_url]);
   const fetchViewerStudys2 = async () => {
     const response = await (0, _RequestHandler.fetchViewerStudy)(studyInstanceUid, apiData);
     setViewerStudy(response);
@@ -258,15 +272,16 @@ const AiReportEditor = _ref => {
     fetchPatientData();
   }, [viewerStudy, apiData]);
   (0, _react.useEffect)(() => {
-    if (!apiData) return;
-    (0, _RequestHandler.fetchUsers)(apiData).then(data => {
+    if (!apiData || !keycloak_url) return;
+    (0, _RequestHandler.fetchUsers)(user.access_token, keycloak_url).then(data => {
       setRadiologistUserList(data);
       setUsersList(data);
     }).catch(error => console.error("Error fetching users:", error));
-  }, [apiData]);
+  }, [user.access_token, apiData, keycloak_url]);
   (0, _react.useEffect)(() => {
     if (!apiData) return; // <-- inside the useEffect now
 
+    getToken();
     (0, _RequestHandler.fetchDefaultReportTemplates)(apiData).then(data => setAvailableReportTemplates(data)).catch(error => console.error("Error fetching default templates:", error));
     (0, _RequestHandler.fetchDocumentUpload)(apiData).then(data => setDocumentUploadDetails(data)).catch(error => console.error("Error fetching document upload details:", error));
   }, [apiData]);
@@ -386,10 +401,10 @@ const AiReportEditor = _ref => {
   const permissions = user?.profile?.permission;
   const isPhysicianOrTechnologist = user?.profile?.roleType === "Physician" || user?.profile?.roleType === "Technologist";
   const canEditReport = permissions?.includes("Edit Report");
-  const isQaUser = user?.profile?.roleType?.includes("qa-user");
-  const isSuperAndDeputyAdmin = user?.profile?.roleType?.includes("super-admin") || user?.profile?.roleType?.includes("deputy-admin");
+  const isQaUser = token?.realm_access?.roles.includes("qa-user");
+  const isSuperAndDeputyAdmin = token?.realm_access?.roles.includes("super-admin") || token?.realm_access?.roles.includes("deputy-admin");
   const isApproved = patientReportDetail?.document_status === "Approved";
-  const allTemaplateAccess = user?.profile?.roleType?.includes("super-admin") || user?.profile?.roleType?.includes("deputy-admin");
+  const allTemaplateAccess = token?.realm_access?.roles?.includes("super-admin") || token?.realm_access?.roles?.includes("deputy-admin");
 
   // filterData = priorityStudiesFilter.length > 0 ? priorityStudiesFilter : filterStudies;
   const templateOptions = loginUseremplateName.includes("Select All") || allTemaplateAccess ? availableReportTemplates : loginUserTemplateOption;

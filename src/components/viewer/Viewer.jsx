@@ -113,27 +113,27 @@ const Viewer = (props) => {
     pages.style.width = toggleDisplayReportEditor ? "75%" : "100%";
   };
 
-  // const getToken = async () => {
-  //   try {
-  //     const aToken = {
-  //       token: data?.user.access_token,
-  //     };
-  //     const response = await userToken(aToken, data?.data);
-  //     setToken(response);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const getToken = async () => {
+    try {
+      const aToken = {
+        token: data?.user.access_token,
+      };
+      const response = await userToken(aToken, data?.data);
+      setToken(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  // useEffect(() => {
-  //   if (!data?.data) return; // <-- inside the useEffect now
+  useEffect(() => {
+    if (!data?.data) return; // <-- inside the useEffect now
 
-  //   getToken();
-  // }, [data?.data]);
+    getToken();
+  }, [data?.data]);
 
   const hasAIEditorPermission =
     data?.user?.profile?.permission?.includes("AI Editor") ||
-    data?.user?.profile?.roleType?.includes("super-admin");
+    token?.realm_access?.roles?.includes("super-admin");
 
   return (
     <div style={{ backgroundColor: "#000000" }} onWheel={() => {}}>
