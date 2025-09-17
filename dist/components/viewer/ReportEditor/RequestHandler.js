@@ -153,9 +153,12 @@ const generateReportPdf = (apiData, reportdetails, setIsLoading, patientName, re
     a.href = url;
     // a.download = `${patientName}.pdf`;
     a.download = fileName;
-    !notDownload ? document.body.appendChild(a) : null;
-    !notDownload ? a.click() : null;
-    notDownload ? window.open(url, "_blank") : null;
+    if (!notDownload) {
+      document.body.appendChild(a);
+      a.click();
+    } else {
+      window.open(url, "_blank");
+    }
     window.URL.revokeObjectURL(url);
   }).catch(error => console.error("Error:", error)).finally(() => {
     setIsLoading(false);

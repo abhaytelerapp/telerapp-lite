@@ -187,8 +187,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
         fetchReportSetting &&
         viewerStudy?.length > 0 &&
         viewerStudy[0]?.MainDicomTags?.InstitutionName &&
-        patientFind &&
-        radiologistUserList?.length > 0
+        patientFind
       ) {
         const fetchUserInformation = await getUserInformation(
           fetchReportSetting,
@@ -701,8 +700,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
             fetchReportSetting &&
             viewerStudy?.length > 0 &&
             viewerStudy[0]?.MainDicomTags?.InstitutionName &&
-            patientFind &&
-            radiologistUserList?.length > 0
+            patientFind
           ) {
             fetchUserInformation = await getUserInformation(
               fetchReportSetting,
@@ -1447,7 +1445,6 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
 
       // Apply only default font size
       // node._setAttribute('style', `font-size: ${reportSetting?.font_size}px;`);
-      node
       // Recursively clean children
       for (const child of node.getChildren()) {
           cleanNode(child, editor);
@@ -1465,7 +1462,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
       if (!editorElement || !patientData) return;
 
       try {
-        instance = await DecoupledEditor.create(editorElement, {
+        instance = await window.DecoupledEditor.create(editorElement, {
           fontSize: {
             options: [9, 11, 12, 13, "default", 15, 17, 19, 21],
             supportAllValues: true,

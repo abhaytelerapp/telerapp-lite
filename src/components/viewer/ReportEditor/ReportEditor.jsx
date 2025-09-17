@@ -308,9 +308,7 @@ const ReportEditor = (props) => {
     }
   }, [listening, enableListening]);
 
-  if (!browserSupportsSpeechRecognition) {
-    return <span>Browser doesn't support speech recognition.</span>;
-  }
+  // Removed early return to keep hooks order consistent across renders
 
   const startListening = () => {
     resetTranscript();
@@ -483,8 +481,7 @@ const ReportEditor = (props) => {
             fetchReportSetting &&
             viewerStudy?.length > 0 &&
             viewerStudy[0]?.MainDicomTags?.InstitutionName &&
-            patientFind &&
-            radiologistUserList?.length > 0
+            patientFind
           ) {
             fetchUserInformation = await getUserInformation(
               fetchReportSetting,
@@ -548,8 +545,7 @@ const ReportEditor = (props) => {
         fetchReportSetting &&
         viewerStudy?.length > 0 &&
         viewerStudy[0]?.MainDicomTags?.InstitutionName &&
-        patientFind &&
-        radiologistUserList?.length > 0
+        patientFind
       ) {
         const fetchUserInformation = await getUserInformation(
           fetchReportSetting,
@@ -774,7 +770,7 @@ console.log(apiData,'apiData')
   // filterData = priorityStudiesFilter.length > 0 ? priorityStudiesFilter : filterStudies;
   const templateOptions =
     loginUseremplateName.includes("Select All") || allTemaplateAccess
-      ? availableReportTemplates
+      ? availableReportTemplates || []
       : loginUserTemplateOption;
 
   const [displayTemplateOptions, setDisplayTemplateOptions] = useState(() => {
@@ -2470,7 +2466,6 @@ console.log(apiData,'apiData')
 
       // Apply only default font size
       // node._setAttribute('style', `font-size: ${reportSetting?.font_size}px;`);
-      node
       // Recursively clean children
       for (const child of node.getChildren()) {
           cleanNode(child, editor);
@@ -2490,7 +2485,7 @@ console.log(apiData,'apiData')
       if (!editorElement || !selectedTemplateOptions || !template) return;
 
       try {
-        instance = await DecoupledEditor.create(editorElement, {
+        instance = await window.DecoupledEditor.create(editorElement, {
           fontSize: {
             options: [9, 11, 12, 13, "default", 15, 17, 19, 21],
             supportAllValues: true,
@@ -2781,6 +2776,11 @@ console.log(apiData,'apiData')
       className={` report_ckeditor z-10 h-full overflow-y-auto md:h-[96%] h-[83%]`}
       // style={{ height: isNewTab ? '95vh' : '100%' }}
     >
+      {!browserSupportsSpeechRecognition && (
+        <div className="p-2 text-red-600">
+          Browser doesn't support speech recognition.
+        </div>
+      )}
       <ToastContainer
         position="top-right"
         autoClose={5000}

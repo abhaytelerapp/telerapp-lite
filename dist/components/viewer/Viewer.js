@@ -65,7 +65,6 @@ const Viewer = props => {
   const [token, setToken] = (0, _react.useState)("");
   (0, _react.useEffect)(() => {
     if (props) {
-      console.log(props, 'propsviewer');
       setData(props?.props);
     }
   }, [props]);
@@ -128,8 +127,7 @@ const Viewer = props => {
 
     getToken();
   }, [data?.data]);
-  console.log(data, 'dataedge');
-  const hasAIEditorPermission = data?.user?.profile?.permission?.includes("AI Editor") || data?.user?.profile?.permission?.includes("super-admin");
+  const hasAIEditorPermission = data?.user?.profile?.permission?.includes("AI Editor") || data?.user?.profile?.roleType?.includes("super-admin");
   return /*#__PURE__*/_react.default.createElement("div", {
     style: {
       backgroundColor: "#000000"

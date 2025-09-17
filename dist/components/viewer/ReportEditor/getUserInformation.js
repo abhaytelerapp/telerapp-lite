@@ -8,7 +8,6 @@ const getUserInformation = async (fetchReportSetting, institutionName, patientFi
   // const data = await fetchReportSetting(institutionName);
   // const report = data?.length > 0 ? data.group_name : 'Default';
   const reportSetting = await fetchReportSetting(apiData, institutionName);
-  console.log(reportSetting, 'reportSetting');
   const findAssignUserName = [patientFind?.firstSubmitUser];
   const assignUserDataFind = radiologistUserList?.find(item => {
     return findAssignUserName?.includes(item.username);

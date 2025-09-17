@@ -269,9 +269,9 @@ const ReportEditor = props => {
       setEnableListening("listening");
     }
   }, [listening, enableListening]);
-  if (!browserSupportsSpeechRecognition) {
-    return /*#__PURE__*/_react.default.createElement("span", null, "Browser doesn't support speech recognition.");
-  }
+
+  // Removed early return to keep hooks order consistent across renders
+
   const startListening = () => {
     resetTranscript();
     setEnableListening("");
@@ -384,7 +384,7 @@ const ReportEditor = props => {
         const reportDetails = await (0, _RequestHandler.fetchPatientReportByStudy)(study.studyInstanceUid, apiData);
         const viewerStudy = await (0, _RequestHandler.fetchViewerStudy)(reportDetails?.study_UIDs, apiData);
         let fetchUserInformation = null;
-        if (_RequestHandler.fetchReportSetting && viewerStudy?.length > 0 && viewerStudy[0]?.MainDicomTags?.InstitutionName && patientFind && radiologistUserList?.length > 0) {
+        if (_RequestHandler.fetchReportSetting && viewerStudy?.length > 0 && viewerStudy[0]?.MainDicomTags?.InstitutionName && patientFind) {
           fetchUserInformation = await (0, _getUserInformation.getUserInformation)(_RequestHandler.fetchReportSetting, viewerStudy?.[0]?.MainDicomTags?.InstitutionName, reportDetails, radiologistUserList, apiData);
         }
         return {
@@ -412,6 +412,7 @@ const ReportEditor = props => {
     setViewerStudy(response);
     return response;
   };
+  console.log(studyInstanceUid, 'studyInstanceUid01');
   (0, _react.useEffect)(() => {
     if (studyInstanceUid) {
       console.log(studyInstanceUid, 'studyInstanceUid');
@@ -420,7 +421,7 @@ const ReportEditor = props => {
   }, [studyInstanceUid]);
   (0, _react.useEffect)(() => {
     const fetchReportSettings = async () => {
-      if (_RequestHandler.fetchReportSetting && viewerStudy?.length > 0 && viewerStudy[0]?.MainDicomTags?.InstitutionName && patientFind && radiologistUserList?.length > 0) {
+      if (_RequestHandler.fetchReportSetting && viewerStudy?.length > 0 && viewerStudy[0]?.MainDicomTags?.InstitutionName && patientFind) {
         const fetchUserInformation = await (0, _getUserInformation.getUserInformation)(_RequestHandler.fetchReportSetting, viewerStudy[0].MainDicomTags.InstitutionName, patientFind, radiologistUserList, apiData);
         console.log(fetchUserInformation, "fetchUserInformation");
         setReportSetting(fetchUserInformation?.reportSetting);
@@ -527,7 +528,7 @@ const ReportEditor = props => {
   const allTemaplateAccess = user?.profile?.roleType?.includes("super-admin") || user?.profile?.roleType?.includes("deputy-admin");
 
   // filterData = priorityStudiesFilter.length > 0 ? priorityStudiesFilter : filterStudies;
-  const templateOptions = loginUseremplateName.includes("Select All") || allTemaplateAccess ? availableReportTemplates : loginUserTemplateOption;
+  const templateOptions = loginUseremplateName.includes("Select All") || allTemaplateAccess ? availableReportTemplates || [] : loginUserTemplateOption;
   const [displayTemplateOptions, setDisplayTemplateOptions] = (0, _react.useState)(() => {
     return templateOptions?.map(_ref => {
       let {
@@ -1679,7 +1680,6 @@ const ReportEditor = props => {
 
       // Apply only default font size
       // node._setAttribute('style', `font-size: ${reportSetting?.font_size}px;`);
-      node;
       // Recursively clean children
       for (const child of node.getChildren()) {
         cleanNode(child, editor);
@@ -1696,7 +1696,7 @@ const ReportEditor = props => {
       let editorData01 = null;
       if (!editorElement || !selectedTemplateOptions || !template) return;
       try {
-        instance = await DecoupledEditor.create(editorElement, {
+        instance = await window.DecoupledEditor.create(editorElement, {
           fontSize: {
             options: [9, 11, 12, 13, "default", 15, 17, 19, 21],
             supportAllValues: true
@@ -1899,7 +1899,9 @@ const ReportEditor = props => {
   return /*#__PURE__*/_react.default.createElement("div", {
     className: ` report_ckeditor z-10 h-full overflow-y-auto md:h-[96%] h-[83%]`
     // style={{ height: isNewTab ? '95vh' : '100%' }}
-  }, /*#__PURE__*/_react.default.createElement(_reactToastify.ToastContainer, {
+  }, !browserSupportsSpeechRecognition && /*#__PURE__*/_react.default.createElement("div", {
+    className: "p-2 text-red-600"
+  }, "Browser doesn't support speech recognition."), /*#__PURE__*/_react.default.createElement(_reactToastify.ToastContainer, {
     position: "top-right",
     autoClose: 5000,
     hideProgressBar: false,

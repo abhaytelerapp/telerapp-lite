@@ -149,7 +149,7 @@ const AiReportEditor = _ref => {
   }, [studyInstanceUid, apiData]);
   (0, _react.useEffect)(() => {
     const fetchReportSettings = async () => {
-      if (_RequestHandler.fetchReportSetting && viewerStudy?.length > 0 && viewerStudy[0]?.MainDicomTags?.InstitutionName && patientFind && radiologistUserList?.length > 0) {
+      if (_RequestHandler.fetchReportSetting && viewerStudy?.length > 0 && viewerStudy[0]?.MainDicomTags?.InstitutionName && patientFind) {
         const fetchUserInformation = await (0, _getUserInformation.getUserInformation)(_RequestHandler.fetchReportSetting, viewerStudy[0].MainDicomTags.InstitutionName, patientFind, radiologistUserList, apiData);
         console.log(fetchUserInformation, "fetchUserInformation");
         setReportSetting(fetchUserInformation?.reportSetting);
@@ -469,7 +469,7 @@ const AiReportEditor = _ref => {
         const reportDetails = await (0, _RequestHandler.fetchPatientReportByStudy)(study.studyInstanceUid, apiData);
         const viewerStudy = await (0, _RequestHandler.fetchViewerStudy)(reportDetails?.study_UIDs, apiData);
         let fetchUserInformation = null;
-        if (_RequestHandler.fetchReportSetting && viewerStudy?.length > 0 && viewerStudy[0]?.MainDicomTags?.InstitutionName && patientFind && radiologistUserList?.length > 0) {
+        if (_RequestHandler.fetchReportSetting && viewerStudy?.length > 0 && viewerStudy[0]?.MainDicomTags?.InstitutionName && patientFind) {
           fetchUserInformation = await (0, _getUserInformation.getUserInformation)(_RequestHandler.fetchReportSetting, viewerStudy?.[0]?.MainDicomTags?.InstitutionName, reportDetails, radiologistUserList, apiData);
         }
         return {
@@ -965,7 +965,6 @@ const AiReportEditor = _ref => {
 
       // Apply only default font size
       // node._setAttribute('style', `font-size: ${reportSetting?.font_size}px;`);
-      node;
       // Recursively clean children
       for (const child of node.getChildren()) {
         cleanNode(child, editor);
@@ -979,7 +978,7 @@ const AiReportEditor = _ref => {
       const toolbarContainer = document.querySelector("#ai-toolbar-container");
       if (!editorElement || !patientData) return;
       try {
-        instance = await DecoupledEditor.create(editorElement, {
+        instance = await window.DecoupledEditor.create(editorElement, {
           fontSize: {
             options: [9, 11, 12, 13, "default", 15, 17, 19, 21],
             supportAllValues: true
