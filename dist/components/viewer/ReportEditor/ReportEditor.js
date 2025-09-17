@@ -405,6 +405,19 @@ const ReportEditor = props => {
     };
     fetchReports();
   }, [_RequestHandler.fetchReportSetting, radiologistUserList?.length > 0, studyInstanceUid, apiData]);
+  const fetchViewerStudys2 = async () => {
+    if (!apiData) return;
+    const response = await (0, _RequestHandler.fetchViewerStudy)(studyInstanceUid, apiData);
+    console.log(response, 'response');
+    setViewerStudy(response);
+    return response;
+  };
+  (0, _react.useEffect)(() => {
+    if (studyInstanceUid) {
+      console.log(studyInstanceUid, 'studyInstanceUid');
+      fetchViewerStudys2();
+    }
+  }, [studyInstanceUid]);
   (0, _react.useEffect)(() => {
     const fetchReportSettings = async () => {
       if (_RequestHandler.fetchReportSetting && viewerStudy?.length > 0 && viewerStudy[0]?.MainDicomTags?.InstitutionName && patientFind && radiologistUserList?.length > 0) {
@@ -420,17 +433,6 @@ const ReportEditor = props => {
   console.log(viewerStudy, 'viewerStudy');
   console.log(reportSetting, 'reportSetting');
   console.log(apiData, 'apiData');
-  const fetchViewerStudys2 = async () => {
-    if (!apiData) return;
-    const response = await (0, _RequestHandler.fetchViewerStudy)(studyInstanceUid, apiData);
-    setViewerStudy(response);
-    return response;
-  };
-  (0, _react.useEffect)(() => {
-    if (studyInstanceUid) {
-      fetchViewerStudys2();
-    }
-  }, [studyInstanceUid]);
   const isNewTab = params.pathname.includes("report-editor");
   const fetchPatientData = async () => {
     if (!apiData) return;

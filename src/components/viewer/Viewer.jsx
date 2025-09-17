@@ -130,7 +130,7 @@ const Viewer = (props) => {
 
     getToken();
   }, [data?.data]);
-
+console.log(data,'dataedge')
   const hasAIEditorPermission =
     data?.user?.profile?.permission?.includes("AI Editor") ||
     data?.user?.profile?.permission?.includes("super-admin");

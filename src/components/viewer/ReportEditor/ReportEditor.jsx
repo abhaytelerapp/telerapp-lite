@@ -526,6 +526,21 @@ const ReportEditor = (props) => {
     apiData,
   ]);
 
+  const fetchViewerStudys2 = async () => {
+    if (!apiData) return;
+    const response = await fetchViewerStudy(studyInstanceUid, apiData);
+    console.log(response,'response')
+    setViewerStudy(response);
+    return response;
+  };
+
+  useEffect(() => {
+    if (studyInstanceUid) {
+      console.log(studyInstanceUid,'studyInstanceUid')
+      fetchViewerStudys2();
+    }
+  }, [studyInstanceUid]);
+
   useEffect(() => {
     const fetchReportSettings = async () => {
       if (
@@ -561,18 +576,6 @@ const ReportEditor = (props) => {
 console.log(viewerStudy,'viewerStudy')
 console.log(reportSetting,'reportSetting')
 console.log(apiData,'apiData')
-  const fetchViewerStudys2 = async () => {
-    if (!apiData) return;
-    const response = await fetchViewerStudy(studyInstanceUid, apiData);
-    setViewerStudy(response);
-    return response;
-  };
-
-  useEffect(() => {
-    if (studyInstanceUid) {
-      fetchViewerStudys2();
-    }
-  }, [studyInstanceUid]);
 
   const isNewTab = params.pathname.includes("report-editor");
 
