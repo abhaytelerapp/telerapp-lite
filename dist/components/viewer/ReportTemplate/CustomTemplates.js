@@ -22,7 +22,7 @@ const CustomTemplates = _ref => {
   (0, _react.useEffect)(() => {
     const editorElement = document.querySelector('#editor1');
     if (!editorElement || !templates) return;
-    console.log(DecoupledEditor, 'DecoupledEditor');
+    console.log(window.DecoupledEditor, 'DecoupledEditor');
     window.DecoupledEditor.create(editorElement, {
       toolbar: {
         items: ['heading', '|', 'alignment', 'bold', 'italic', 'underline', 'fontFamily', 'fontSize', 'fontColor', 'fontBackgroundColor', '|', 'bulletedList', 'numberedList', 'insertTable', '|', 'undo', 'redo']

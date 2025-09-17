@@ -101,22 +101,6 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
   const [availableReportTemplates, setAvailableReportTemplates] = useState("");
   const [documentUploadDetails, setDocumentUploadDetails] = useState("");
 
-  // const getToken = async () => {
-  //   try {
-  //     const data = {
-  //       token: user.access_token,
-  //     };
-  //     const response = await userToken(data, apiData);
-  //     setToken(response);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getToken();
-  // }, []);
-
   useEffect(() => {
     setTimeout(() => {
       if (textareaRef.current) {
@@ -429,8 +413,6 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
   useEffect(() => {
     if (!apiData) return; // <-- inside the useEffect now
 
-    getToken();
-
     fetchDefaultReportTemplates(apiData)
       .then((data) => setAvailableReportTemplates(data))
       .catch((error) =>
@@ -598,7 +580,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
     user?.profile?.roleType === "Technologist";
 
   const canEditReport = permissions?.includes("Edit Report");
-  const isQaUser = data?.user?.profile?.roleType?.includes("qa-user");
+  const isQaUser = user?.profile?.roleType?.includes("qa-user");
   const isSuperAndDeputyAdmin =
     user?.profile?.roleType?.includes("super-admin") ||
     user?.profile?.roleType?.includes("deputy-admin");

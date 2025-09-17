@@ -374,22 +374,8 @@ const ReportEditor = (props) => {
 
   const isFullEditor = window.location.pathname.includes("/report-editor/");
 
-  // const getToken = async () => {
-  //   try {
-  //     const data = {
-  //       token: user.access_token,
-  //     };
-  //     const response = await userToken(data, apiData);
-  //     setToken(response);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   useEffect(() => {
     if (!apiData) return; // <-- inside the useEffect now
-
-    // getToken();
 
     fetchDefaultReportTemplates(apiData)
       .then((data) => setAvailableReportTemplates(data))

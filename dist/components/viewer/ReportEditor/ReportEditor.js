@@ -322,23 +322,8 @@ const ReportEditor = props => {
     localStorage.setItem("test_transcript", finalTranscript);
   }
   const isFullEditor = window.location.pathname.includes("/report-editor/");
-
-  // const getToken = async () => {
-  //   try {
-  //     const data = {
-  //       token: user.access_token,
-  //     };
-  //     const response = await userToken(data, apiData);
-  //     setToken(response);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   (0, _react.useEffect)(() => {
     if (!apiData) return; // <-- inside the useEffect now
-
-    // getToken();
 
     (0, _RequestHandler.fetchDefaultReportTemplates)(apiData).then(data => setAvailableReportTemplates(data)).catch(error => console.error("Error fetching default templates:", error));
     (0, _RequestHandler.fetchDocumentUpload)(apiData).then(data => setDocumentUploadDetails(data)).catch(error => console.error("Error fetching document upload details:", error));

@@ -88,23 +88,6 @@ const AiReportEditor = _ref => {
   const [usersList, setUsersList] = (0, _react.useState)([]);
   const [availableReportTemplates, setAvailableReportTemplates] = (0, _react.useState)("");
   const [documentUploadDetails, setDocumentUploadDetails] = (0, _react.useState)("");
-
-  // const getToken = async () => {
-  //   try {
-  //     const data = {
-  //       token: user.access_token,
-  //     };
-  //     const response = await userToken(data, apiData);
-  //     setToken(response);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getToken();
-  // }, []);
-
   (0, _react.useEffect)(() => {
     setTimeout(() => {
       if (textareaRef.current) {
@@ -284,7 +267,6 @@ const AiReportEditor = _ref => {
   (0, _react.useEffect)(() => {
     if (!apiData) return; // <-- inside the useEffect now
 
-    getToken();
     (0, _RequestHandler.fetchDefaultReportTemplates)(apiData).then(data => setAvailableReportTemplates(data)).catch(error => console.error("Error fetching default templates:", error));
     (0, _RequestHandler.fetchDocumentUpload)(apiData).then(data => setDocumentUploadDetails(data)).catch(error => console.error("Error fetching document upload details:", error));
   }, [apiData]);
@@ -404,7 +386,7 @@ const AiReportEditor = _ref => {
   const permissions = user?.profile?.permission;
   const isPhysicianOrTechnologist = user?.profile?.roleType === "Physician" || user?.profile?.roleType === "Technologist";
   const canEditReport = permissions?.includes("Edit Report");
-  const isQaUser = data?.user?.profile?.roleType?.includes("qa-user");
+  const isQaUser = user?.profile?.roleType?.includes("qa-user");
   const isSuperAndDeputyAdmin = user?.profile?.roleType?.includes("super-admin") || user?.profile?.roleType?.includes("deputy-admin");
   const isApproved = patientReportDetail?.document_status === "Approved";
   const allTemaplateAccess = user?.profile?.roleType?.includes("super-admin") || user?.profile?.roleType?.includes("deputy-admin");

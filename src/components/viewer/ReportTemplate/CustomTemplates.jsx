@@ -8,7 +8,7 @@ const CustomTemplates = ({ templates, setEditorData, dataTemplate, editorData })
   useEffect( () => {
     const editorElement = document.querySelector('#editor1');
     if (!editorElement || !templates) return;
-    console.log(DecoupledEditor,'DecoupledEditor')
+    console.log(window.DecoupledEditor,'DecoupledEditor')
     window.DecoupledEditor.create(editorElement, {
       toolbar: {
         items: [
