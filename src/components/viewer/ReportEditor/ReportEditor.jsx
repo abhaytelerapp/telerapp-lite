@@ -374,22 +374,22 @@ const ReportEditor = (props) => {
 
   const isFullEditor = window.location.pathname.includes("/report-editor/");
 
-  const getToken = async () => {
-    try {
-      const data = {
-        token: user.access_token,
-      };
-      const response = await userToken(data, apiData);
-      setToken(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getToken = async () => {
+  //   try {
+  //     const data = {
+  //       token: user.access_token,
+  //     };
+  //     const response = await userToken(data, apiData);
+  //     setToken(response);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   useEffect(() => {
     if (!apiData) return; // <-- inside the useEffect now
 
-    getToken();
+    // getToken();
 
     fetchDefaultReportTemplates(apiData)
       .then((data) => setAvailableReportTemplates(data))
@@ -405,14 +405,14 @@ const ReportEditor = (props) => {
   }, [apiData]);
 
   useEffect(() => {
-    if (!apiData || !keycloak_url) return;
-    fetchUsers(user.access_token, keycloak_url)
+    if (!apiData) return;
+    fetchUsers( apiData)
       .then((data) => {
         setRadiologistUserList(data);
         setUsersList(data);
       })
       .catch((error) => console.error("Error fetching users:", error));
-  }, [user.access_token, apiData, keycloak_url]);
+  }, [apiData]);
 
   const studyInstanceUid = params.pathname.includes("report-editor")
     ? params.pathname?.split("report-editor/:")[1]
@@ -758,12 +758,12 @@ const ReportEditor = (props) => {
   const isAttachment =
     user?.profile?.roleType?.includes("Radiologist") ||
     user?.profile?.roleType?.includes("QaUsers") ||
-    token?.realm_access?.roles?.includes("super-admin") ||
-    token?.realm_access?.roles?.includes("deputy-admin");
+    user?.profile?.roleType?.includes("super-admin") ||
+    user?.profile?.roleType?.includes("deputy-admin");
 
   const allTemaplateAccess =
-    token?.realm_access?.roles?.includes("super-admin") ||
-    token?.realm_access?.roles?.includes("deputy-admin");
+    user?.profile?.roleType?.includes("super-admin") ||
+    user?.profile?.roleType?.includes("deputy-admin");
 
   // filterData = priorityStudiesFilter.length > 0 ? priorityStudiesFilter : filterStudies;
   const templateOptions =
@@ -1011,10 +1011,10 @@ const ReportEditor = (props) => {
     user?.profile?.roleType === "Physician" ||
     user?.profile?.roleType === "Technologist";
   const canEditReport = permissions?.includes("Edit Report");
-  const isQaUser = token?.realm_access?.roles.includes("qa-user");
+  const isQaUser = user?.profile?.roleType?.includes("qa-user");
   const isSuperAndDeputyAdmin =
-    token?.realm_access?.roles.includes("super-admin") ||
-    token?.realm_access?.roles.includes("deputy-admin");
+    user?.profile?.roleType?.includes("super-admin") ||
+    user?.profile?.roleType?.includes("deputy-admin");
   const isApproved = patientReportDetail?.document_status === "Approved";
 
   // attachment

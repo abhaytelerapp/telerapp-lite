@@ -16,11 +16,13 @@ const userToken = async (accessToken, apiData) => {
   return data;
 };
 exports.userToken = userToken;
-const fetchUsers = async (accessTokens, keycloak_url) => {
-  return await fetch(`${keycloak_url}/users?max=-1`, {
+const fetchUsers = async apiData => {
+  return await fetch(`${apiData}/all-user`, {
+    method: 'GET',
     headers: {
-      Authorization: `Bearer ${accessTokens}`
-    }
+      'Content-Type': 'application/json'
+    },
+    credentials: "include"
   }).then(response => response.json());
 };
 exports.fetchUsers = fetchUsers;
