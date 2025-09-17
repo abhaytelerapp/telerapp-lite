@@ -164,7 +164,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
     if (!apiData) return;
     fetchUsers(apiData)
       .then((data) => {
-        setRadiologistUserList(data);
+        setRadiologistUserList(data?.users);
       })
       .catch((error) => console.error("Error fetching users:", error));
   }, [user, apiData]);
@@ -419,8 +419,8 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
     if (!apiData) return;
     fetchUsers( apiData)
       .then((data) => {
-        setRadiologistUserList(data);
-        setUsersList(data);
+        setRadiologistUserList(data?.users);
+        setUsersList(data?.users);
       })
       .catch((error) => console.error("Error fetching users:", error));
   }, [user, apiData]);

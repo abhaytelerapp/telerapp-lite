@@ -134,7 +134,7 @@ const AiReportEditor = _ref => {
   (0, _react.useEffect)(() => {
     if (!apiData) return;
     (0, _RequestHandler.fetchUsers)(apiData).then(data => {
-      setRadiologistUserList(data);
+      setRadiologistUserList(data?.users);
     }).catch(error => console.error("Error fetching users:", error));
   }, [user, apiData]);
   const fetchViewerStudys2 = async () => {
@@ -276,8 +276,8 @@ const AiReportEditor = _ref => {
   (0, _react.useEffect)(() => {
     if (!apiData) return;
     (0, _RequestHandler.fetchUsers)(apiData).then(data => {
-      setRadiologistUserList(data);
-      setUsersList(data);
+      setRadiologistUserList(data?.users);
+      setUsersList(data?.users);
     }).catch(error => console.error("Error fetching users:", error));
   }, [user, apiData]);
   (0, _react.useEffect)(() => {

@@ -344,8 +344,8 @@ const ReportEditor = props => {
   (0, _react.useEffect)(() => {
     if (!apiData) return;
     (0, _RequestHandler.fetchUsers)(apiData).then(data => {
-      setRadiologistUserList(data);
-      setUsersList(data);
+      setRadiologistUserList(data?.users);
+      setUsersList(data?.users);
     }).catch(error => console.error("Error fetching users:", error));
   }, [apiData]);
   const studyInstanceUid = params.pathname.includes("report-editor") ? params.pathname?.split("report-editor/:")[1] : params?.search?.slice(params?.search?.indexOf("StudyInstanceUIDs=") + "StudyInstanceUIDs=".length)?.split("&")[0]?.split(",")[0]?.replace(/^=/, "");

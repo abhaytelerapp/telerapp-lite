@@ -406,8 +406,8 @@ const ReportEditor = (props) => {
     if (!apiData) return;
     fetchUsers(apiData)
       .then((data) => {
-        setRadiologistUserList(data);
-        setUsersList(data);
+        setRadiologistUserList(data?.users);
+        setUsersList(data?.users);
       })
       .catch((error) => console.error("Error fetching users:", error));
   }, [apiData]);
