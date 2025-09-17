@@ -534,6 +534,7 @@ const ReportEditor = (props) => {
     return response;
   };
 
+  console.log(studyInstanceUid,'studyInstanceUid01')
   useEffect(() => {
     if (studyInstanceUid) {
       console.log(studyInstanceUid,'studyInstanceUid')

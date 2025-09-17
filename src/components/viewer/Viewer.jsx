@@ -58,7 +58,6 @@ const Viewer = (props) => {
 
   useEffect(() => {
     if (props) {
-      console.log(props,'propsviewer')
       setData(props?.props);
     }
   }, [props]);
@@ -131,10 +130,10 @@ const Viewer = (props) => {
 
     getToken();
   }, [data?.data]);
-console.log(data,'dataedge')
+  
   const hasAIEditorPermission =
     data?.user?.profile?.permission?.includes("AI Editor") ||
-    data?.user?.profile?.permission?.includes("super-admin");
+    data?.user?.profile?.roleType?.includes("super-admin");
 
   return (
     <div style={{ backgroundColor: "#000000" }} onWheel={() => {}}>
