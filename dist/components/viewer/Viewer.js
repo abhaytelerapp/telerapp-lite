@@ -127,7 +127,7 @@ const Viewer = props => {
 
     getToken();
   }, [data?.data]);
-  const hasAIEditorPermission = data?.user?.profile?.permission?.includes("AI Editor") || token?.realm_access?.roles?.includes("super-admin");
+  const hasAIEditorPermission = data?.user?.profile?.permission?.includes("AI Editor") || data?.user?.profile?.permission?.includes("super-admin");
   return /*#__PURE__*/_react.default.createElement("div", {
     style: {
       backgroundColor: "#000000"

@@ -99,9 +99,11 @@ const AiReportEditor = _ref => {
       console.log(error);
     }
   };
-  (0, _react.useEffect)(() => {
-    getToken();
-  }, []);
+
+  // useEffect(() => {
+  //   getToken();
+  // }, []);
+
   (0, _react.useEffect)(() => {
     setTimeout(() => {
       if (textareaRef.current) {
@@ -130,11 +132,11 @@ const AiReportEditor = _ref => {
     getReportDetails();
   }, [studyInstanceUid, patientCritical]);
   (0, _react.useEffect)(() => {
-    if (!apiData || !keycloak_url) return;
-    (0, _RequestHandler.fetchUsers)(user?.access_token, keycloak_url).then(data => {
+    if (!apiData) return;
+    (0, _RequestHandler.fetchUsers)(apiData).then(data => {
       setRadiologistUserList(data);
     }).catch(error => console.error("Error fetching users:", error));
-  }, [user?.access_token, apiData, keycloak_url]);
+  }, [user, apiData]);
   const fetchViewerStudys2 = async () => {
     const response = await (0, _RequestHandler.fetchViewerStudy)(studyInstanceUid, apiData);
     setViewerStudy(response);
@@ -272,16 +274,17 @@ const AiReportEditor = _ref => {
     fetchPatientData();
   }, [viewerStudy, apiData]);
   (0, _react.useEffect)(() => {
-    if (!apiData || !keycloak_url) return;
-    (0, _RequestHandler.fetchUsers)(user.access_token, keycloak_url).then(data => {
+    if (!apiData) return;
+    (0, _RequestHandler.fetchUsers)(apiData).then(data => {
       setRadiologistUserList(data);
       setUsersList(data);
     }).catch(error => console.error("Error fetching users:", error));
-  }, [user.access_token, apiData, keycloak_url]);
+  }, [user, apiData]);
   (0, _react.useEffect)(() => {
     if (!apiData) return; // <-- inside the useEffect now
 
-    getToken();
+    // getToken();
+
     (0, _RequestHandler.fetchDefaultReportTemplates)(apiData).then(data => setAvailableReportTemplates(data)).catch(error => console.error("Error fetching default templates:", error));
     (0, _RequestHandler.fetchDocumentUpload)(apiData).then(data => setDocumentUploadDetails(data)).catch(error => console.error("Error fetching document upload details:", error));
   }, [apiData]);

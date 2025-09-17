@@ -389,7 +389,7 @@ const ReportEditor = (props) => {
   useEffect(() => {
     if (!apiData) return; // <-- inside the useEffect now
 
-    getToken();
+    // getToken();
 
     fetchDefaultReportTemplates(apiData)
       .then((data) => setAvailableReportTemplates(data))
@@ -405,14 +405,14 @@ const ReportEditor = (props) => {
   }, [apiData]);
 
   useEffect(() => {
-    if (!apiData || !keycloak_url) return;
-    fetchUsers(user.access_token, keycloak_url)
+    if (!apiData) return;
+    fetchUsers(apiData)
       .then((data) => {
         setRadiologistUserList(data);
         setUsersList(data);
       })
       .catch((error) => console.error("Error fetching users:", error));
-  }, [user.access_token, apiData, keycloak_url]);
+  }, [apiData]);
 
   const studyInstanceUid = params.pathname.includes("report-editor")
     ? params.pathname?.split("report-editor/:")[1]
@@ -558,7 +558,9 @@ const ReportEditor = (props) => {
     radiologistUserList,
     apiData,
   ]);
-
+console.log(viewerStudy,'viewerStudy')
+console.log(reportSetting,'reportSetting')
+console.log(apiData,'apiData')
   const fetchViewerStudys2 = async () => {
     if (!apiData) return;
     const response = await fetchViewerStudy(studyInstanceUid, apiData);

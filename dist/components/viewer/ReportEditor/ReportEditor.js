@@ -336,17 +336,18 @@ const ReportEditor = props => {
   (0, _react.useEffect)(() => {
     if (!apiData) return; // <-- inside the useEffect now
 
-    getToken();
+    // getToken();
+
     (0, _RequestHandler.fetchDefaultReportTemplates)(apiData).then(data => setAvailableReportTemplates(data)).catch(error => console.error("Error fetching default templates:", error));
     (0, _RequestHandler.fetchDocumentUpload)(apiData).then(data => setDocumentUploadDetails(data)).catch(error => console.error("Error fetching document upload details:", error));
   }, [apiData]);
   (0, _react.useEffect)(() => {
-    if (!apiData || !keycloak_url) return;
-    (0, _RequestHandler.fetchUsers)(user.access_token, keycloak_url).then(data => {
+    if (!apiData) return;
+    (0, _RequestHandler.fetchUsers)(apiData).then(data => {
       setRadiologistUserList(data);
       setUsersList(data);
     }).catch(error => console.error("Error fetching users:", error));
-  }, [user.access_token, apiData, keycloak_url]);
+  }, [apiData]);
   const studyInstanceUid = params.pathname.includes("report-editor") ? params.pathname?.split("report-editor/:")[1] : params?.search?.slice(params?.search?.indexOf("StudyInstanceUIDs=") + "StudyInstanceUIDs=".length)?.split("&")[0]?.split(",")[0]?.replace(/^=/, "");
   (0, _react.useEffect)(() => {
     const query = params?.search;
@@ -416,6 +417,9 @@ const ReportEditor = props => {
     };
     fetchReportSettings();
   }, [_RequestHandler.fetchReportSetting, viewerStudy, patientFind, radiologistUserList, apiData]);
+  console.log(viewerStudy, 'viewerStudy');
+  console.log(reportSetting, 'reportSetting');
+  console.log(apiData, 'apiData');
   const fetchViewerStudys2 = async () => {
     if (!apiData) return;
     const response = await (0, _RequestHandler.fetchViewerStudy)(studyInstanceUid, apiData);

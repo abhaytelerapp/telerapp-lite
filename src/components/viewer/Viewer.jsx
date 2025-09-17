@@ -133,7 +133,7 @@ const Viewer = (props) => {
 
   const hasAIEditorPermission =
     data?.user?.profile?.permission?.includes("AI Editor") ||
-    token?.realm_access?.roles?.includes("super-admin");
+    data?.user?.profile?.permission?.includes("super-admin");
 
   return (
     <div style={{ backgroundColor: "#000000" }} onWheel={() => {}}>
