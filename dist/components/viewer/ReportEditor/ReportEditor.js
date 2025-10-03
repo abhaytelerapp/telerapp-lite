@@ -734,8 +734,8 @@ const ReportEditor = props => {
   const permissions = user?.profile?.permission;
   const isPhysicianOrTechnologist = user?.profile?.roleType === "Physician" || user?.profile?.roleType === "Technologist";
   const canEditReport = permissions?.includes("Edit Report");
-  const isQaUser = user?.profile?.roleType.includes("qa-user");
-  const isSuperAndDeputyAdmin = user?.profile?.roleType.includes("super-admin") || user?.profile?.roleType.includes("deputy-admin");
+  const isQaUser = user?.profile?.roleType?.includes("qa-user");
+  const isSuperAndDeputyAdmin = user?.profile?.roleType?.includes("super-admin") || user?.profile?.roleType?.includes("deputy-admin");
   const isApproved = patientReportDetail?.document_status === "Approved";
 
   // attachment

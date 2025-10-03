@@ -67,8 +67,8 @@ export const fetchReportSetting = (apiData, groupName) => {
   ).then((response) => response.json());
 };
 
-export const fetchDocumentUpload = (apiData) => {
-  return fetch(`${apiData}/document-upload`).then((response) =>
+export const fetchDocumentUpload = (apiData, studyInstanceUid) => {
+  return fetch(`${apiData}/document-upload-by-study?studyInstanceUid=${studyInstanceUid}`).then((response) =>
     response.json()
   );
 };

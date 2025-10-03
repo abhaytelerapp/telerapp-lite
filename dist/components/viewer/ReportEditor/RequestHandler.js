@@ -61,8 +61,8 @@ const fetchReportSetting = (apiData, groupName) => {
   return fetch(`${apiData}/reports-setting-by-study?groupName=${groupName}`).then(response => response.json());
 };
 exports.fetchReportSetting = fetchReportSetting;
-const fetchDocumentUpload = apiData => {
-  return fetch(`${apiData}/document-upload`).then(response => response.json());
+const fetchDocumentUpload = (apiData, studyInstanceUid) => {
+  return fetch(`${apiData}/document-upload-by-study?studyInstanceUid=${studyInstanceUid}`).then(response => response.json());
 };
 exports.fetchDocumentUpload = fetchDocumentUpload;
 const createDefaultTemplates = async (templatesDetail, apiData) => {
