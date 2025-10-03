@@ -408,14 +408,11 @@ const ReportEditor = props => {
   const fetchViewerStudys2 = async () => {
     if (!apiData) return;
     const response = await (0, _RequestHandler.fetchViewerStudy)(studyInstanceUid, apiData);
-    console.log(response, 'response');
     setViewerStudy(response);
     return response;
   };
-  console.log(studyInstanceUid, 'studyInstanceUid01');
   (0, _react.useEffect)(() => {
     if (studyInstanceUid) {
-      console.log(studyInstanceUid, 'studyInstanceUid');
       fetchViewerStudys2();
     }
   }, [studyInstanceUid]);
@@ -423,7 +420,6 @@ const ReportEditor = props => {
     const fetchReportSettings = async () => {
       if (_RequestHandler.fetchReportSetting && viewerStudy?.length > 0 && viewerStudy[0]?.MainDicomTags?.InstitutionName && patientFind) {
         const fetchUserInformation = await (0, _getUserInformation.getUserInformation)(_RequestHandler.fetchReportSetting, viewerStudy[0].MainDicomTags.InstitutionName, patientFind, radiologistUserList, apiData);
-        console.log(fetchUserInformation, "fetchUserInformation");
         setReportSetting(fetchUserInformation?.reportSetting);
         setAssignUserDataFind(fetchUserInformation?.assignUserDataFind);
         setDoctorInformation(fetchUserInformation?.doctorInformation);
@@ -431,9 +427,6 @@ const ReportEditor = props => {
     };
     fetchReportSettings();
   }, [_RequestHandler.fetchReportSetting, viewerStudy, patientFind, radiologistUserList, apiData]);
-  console.log(viewerStudy, 'viewerStudy');
-  console.log(reportSetting, 'reportSetting');
-  console.log(apiData, 'apiData');
   const isNewTab = params.pathname.includes("report-editor");
   const fetchPatientData = async () => {
     if (!apiData) return;
@@ -518,7 +511,14 @@ const ReportEditor = props => {
   // );
   // console.log(availableReportTemplates)
 
-  const templategroupFiltered = Array.isArray(availableReportTemplates) && Array.isArray(loginUseremplateName) ? availableReportTemplates.filter(data => loginUseremplateName.some(dat => dat === data.templategroup)) : [];
+  const templategroupFiltered = Array.isArray(availableReportTemplates) && Array.isArray(loginUseremplateName) ? availableReportTemplates.filter(data => {
+    // Normal filter check
+    const inUserTemplates = loginUseremplateName.some(dat => dat === data.templategroup);
+
+    // Special case: if "IND 1" not in loginUseremplateName, include "Default Template"
+    const allowDefaultTemplate = !loginUseremplateName.includes("IND 1") && data.name === "Default Template";
+    return inUserTemplates || allowDefaultTemplate;
+  }) : [];
 
   // Then, add additional matches for 'name' if they aren't already included
   const loginUserTemplateOption = [...(templategroupFiltered?.length > 0 ? templategroupFiltered : []), ...(availableReportTemplates?.length > 0 ? availableReportTemplates?.filter(data => !templategroupFiltered?.includes(data) && loginUseremplateName.some(dat => dat === data.name)) : [])];

@@ -526,15 +526,12 @@ const ReportEditor = (props) => {
   const fetchViewerStudys2 = async () => {
     if (!apiData) return;
     const response = await fetchViewerStudy(studyInstanceUid, apiData);
-    console.log(response,'response')
     setViewerStudy(response);
     return response;
   };
 
-  console.log(studyInstanceUid,'studyInstanceUid01')
   useEffect(() => {
     if (studyInstanceUid) {
-      console.log(studyInstanceUid,'studyInstanceUid')
       fetchViewerStudys2();
     }
   }, [studyInstanceUid]);
@@ -555,7 +552,6 @@ const ReportEditor = (props) => {
           apiData
         );
 
-        console.log(fetchUserInformation, "fetchUserInformation");
         setReportSetting(fetchUserInformation?.reportSetting);
         setAssignUserDataFind(fetchUserInformation?.assignUserDataFind);
         setDoctorInformation(fetchUserInformation?.doctorInformation);
@@ -570,9 +566,6 @@ const ReportEditor = (props) => {
     radiologistUserList,
     apiData,
   ]);
-console.log(viewerStudy,'viewerStudy')
-console.log(reportSetting,'reportSetting')
-console.log(apiData,'apiData')
 
   const isNewTab = params.pathname.includes("report-editor");
 
@@ -739,9 +732,19 @@ console.log(apiData,'apiData')
   const templategroupFiltered =
     Array.isArray(availableReportTemplates) &&
     Array.isArray(loginUseremplateName)
-      ? availableReportTemplates.filter((data) =>
-          loginUseremplateName.some((dat) => dat === data.templategroup)
-        )
+      ? availableReportTemplates.filter((data) => {
+          // Normal filter check
+          const inUserTemplates = loginUseremplateName.some(
+            (dat) => dat === data.templategroup
+          );
+
+          // Special case: if "IND 1" not in loginUseremplateName, include "Default Template"
+          const allowDefaultTemplate =
+            !loginUseremplateName.includes("IND 1") &&
+            data.name === "Default Template";
+
+          return inUserTemplates || allowDefaultTemplate;
+        })
       : [];
 
   // Then, add additional matches for 'name' if they aren't already included
