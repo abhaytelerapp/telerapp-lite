@@ -524,7 +524,7 @@ const ReportEditor = props => {
   const loginUserTemplateOption = [...(templategroupFiltered?.length > 0 ? templategroupFiltered : []), ...(availableReportTemplates?.length > 0 ? availableReportTemplates?.filter(data => !templategroupFiltered?.includes(data) && loginUseremplateName.some(dat => dat === data.name)) : [])];
 
   //permission
-  const isAttachment = user?.profile?.roleType?.includes("Radiologist") || user?.profile?.roleType?.includes("QaUsers") || user?.profile?.roleType?.includes("super-admin") || user?.profile?.roleType?.includes("deputy-admin");
+  const isAttachment = user?.profile?.roleType?.includes("Radiologist") || user?.profile?.roleType?.includes("QaUsers") || user?.profile?.roleType?.includes("super-admin") || user?.profile?.roleType?.includes("TelerappManager") || user?.profile?.roleType?.includes("DeputyAdmin") || user?.profile?.roleType?.includes("deputy-admin");
   const allTemaplateAccess = user?.profile?.roleType?.includes("super-admin") || user?.profile?.roleType?.includes("deputy-admin");
 
   // filterData = priorityStudiesFilter.length > 0 ? priorityStudiesFilter : filterStudies;

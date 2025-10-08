@@ -764,6 +764,8 @@ const ReportEditor = (props) => {
     user?.profile?.roleType?.includes("Radiologist") ||
     user?.profile?.roleType?.includes("QaUsers") ||
     user?.profile?.roleType?.includes("super-admin") ||
+    user?.profile?.roleType?.includes("TelerappManager") ||
+    user?.profile?.roleType?.includes("DeputyAdmin") ||
     user?.profile?.roleType?.includes("deputy-admin");
 
   const allTemaplateAccess =
