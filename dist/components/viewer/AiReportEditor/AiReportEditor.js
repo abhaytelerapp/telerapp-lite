@@ -411,7 +411,15 @@ const AiReportEditor = _ref => {
 
   // filterData = priorityStudiesFilter.length > 0 ? priorityStudiesFilter : filterStudies;
   const templateOptions = loginUseremplateName.includes("Select All") || allTemaplateAccess ? availableReportTemplates : loginUserTemplateOption;
-  const isAttachment = user?.profile?.roleType?.includes("Radiologist") || user?.profile?.roleType?.includes("QaUsers") || user?.profile?.roleType?.includes("super-admin") || user?.profile?.roleType?.includes("TelerappManager") || user?.profile?.roleType?.includes("DeputyAdmin") || user?.profile?.roleType?.includes("deputy-admin");
+
+  // const isAttachment =
+  //   user?.profile?.roleType?.includes("Radiologist") ||
+  //   user?.profile?.roleType?.includes("QaUsers") ||
+  //   user?.profile?.roleType?.includes("super-admin") ||
+  //   user?.profile?.roleType?.includes("TelerappManager") ||
+  //   user?.profile?.roleType?.includes("DeputyAdmin") ||
+  //   user?.profile?.roleType?.includes("deputy-admin");
+
   const handleMessageType = e => {
     const value = e.target.value;
     setInputValue(value);
@@ -1448,7 +1456,7 @@ const AiReportEditor = _ref => {
   }, /*#__PURE__*/_react.default.createElement(_hi.HiClipboardDocumentCheck, {
     className: `text-2xl`
   }))), /*#__PURE__*/_react.default.createElement("div", {
-    onClick: isAttachment ? () => handleAttachment(studyInstanceUid, patientData?.patient_name) : undefined,
+    onClick: () => handleAttachment(studyInstanceUid, patientData?.patient_name),
     className: " flex items-center text-primary-main p-[6px] hover:bg-[#dedede] rounded"
   }, /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
     text: "See Attachments",

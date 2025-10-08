@@ -760,13 +760,13 @@ const ReportEditor = (props) => {
   ];
 
   //permission
-  const isAttachment =
-    user?.profile?.roleType?.includes("Radiologist") ||
-    user?.profile?.roleType?.includes("QaUsers") ||
-    user?.profile?.roleType?.includes("super-admin") ||
-    user?.profile?.roleType?.includes("TelerappManager") ||
-    user?.profile?.roleType?.includes("DeputyAdmin") ||
-    user?.profile?.roleType?.includes("deputy-admin");
+  // const isAttachment =
+  //   user?.profile?.roleType?.includes("Radiologist") ||
+  //   user?.profile?.roleType?.includes("QaUsers") ||
+  //   user?.profile?.roleType?.includes("super-admin") ||
+  //   user?.profile?.roleType?.includes("TelerappManager") ||
+  //   user?.profile?.roleType?.includes("DeputyAdmin") ||
+  //   user?.profile?.roleType?.includes("deputy-admin");
 
   const allTemaplateAccess =
     user?.profile?.roleType?.includes("super-admin") ||
@@ -2849,14 +2849,8 @@ const ReportEditor = (props) => {
             </Tooltip>
           </div>
           <div
-            onClick={
-              isAttachment
-                ? () =>
-                    handleAttachment(
-                      studyInstanceUid,
-                      patientData?.patient_name
-                    )
-                : undefined
+            onClick={() =>
+              handleAttachment(studyInstanceUid, patientData?.patient_name)
             }
             className=" flex items-center text-primary-main p-[6px] hover:bg-[#dedede] rounded inline-flex"
           >
