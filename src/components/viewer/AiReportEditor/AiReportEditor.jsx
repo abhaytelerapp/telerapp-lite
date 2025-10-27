@@ -265,24 +265,63 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
       ?.map((prompt) => ({
         label: prompt,
         value: prompt,
-      })),
+      })) || [],
   ];
+
+  // useEffect(() => {
+  //   const fetchInstitutionAIPrompt = async () => {
+  //     await fetchInstitutionPromptAccess(user?.profile?.radiologyGroup, apiData)
+  //       .then((result) => {
+  //         if (result) {
+  //           setDisplayPromptStyleOptions(result?.promptaccess);
+  //         }
+  //         setSelectedPrompt({
+  //           label: "Default",
+  //           value: "Default",
+  //         });
+  //       })
+  //       .catch((err) => {
+  //         console.error("Error fetching institution AIPrompt style:", err);
+  //       });
+  //   };
+
+  //   fetchInstitutionAIPrompt();
+  // }, [user, apiData]);
 
   useEffect(() => {
     const fetchInstitutionAIPrompt = async () => {
-      await fetchInstitutionPromptAccess(user?.profile?.radiologyGroup, apiData)
-        .then((result) => {
-          if (result) {
-            setDisplayPromptStyleOptions(result?.promptaccess);
+      try {
+        const radiologyGroups =
+          Array.isArray(user?.profile?.radiologyGroup) &&
+          user?.profile?.radiologyGroup.length > 0
+            ? user.profile.radiologyGroup
+            : ["Default"];
+
+        const allResults = [];
+        for (const institution of radiologyGroups) {
+          try {
+            const result = await fetchInstitutionPromptAccess(institution, apiData);
+
+            if (result && result.promptaccess) {
+              allResults.push(result.promptaccess);
+            }
+          } catch (err) {
+            console.error(`Error fetching AI Prompt for institution "${institution}":`, err);
           }
-          setSelectedPrompt({
-            label: "Default",
-            value: "Default",
-          });
-        })
-        .catch((err) => {
-          console.error("Error fetching institution AIPrompt style:", err);
+        }
+            
+        // ✅ Remove duplicate prompt names
+        const mergedPromptAccess = [...new Set(allResults.flat())];
+
+        setDisplayPromptStyleOptions(mergedPromptAccess);
+
+        setSelectedPrompt({
+          label: 'Default',
+          value: 'Default',
         });
+      } catch (err) {
+        console.error('Error fetching institution AI prompts:', err);
+      } 
     };
 
     fetchInstitutionAIPrompt();
