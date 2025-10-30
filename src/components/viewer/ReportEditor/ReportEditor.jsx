@@ -2607,6 +2607,7 @@ const ReportEditor = (props) => {
             );
           }
           const imageUrl = imageUrl0; // Replace with your actual image URL
+          console.log(imageUrl,'imageUrl')
           // console.log(imageUrl)
           //const imageUrl = assignUserDataFind?.attributes?.uploadSignature[0]; // Replace with your actual image URL
           instance.model.change((writer) => {

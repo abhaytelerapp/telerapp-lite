@@ -1,6 +1,6 @@
 {
   "name": "@abhaytelerapp/telerapp-lite",
-  "version": "0.15.32",
+  "version": "0.15.33",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "files": [

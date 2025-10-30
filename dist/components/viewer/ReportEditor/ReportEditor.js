@@ -1777,6 +1777,7 @@ const ReportEditor = props => {
             imageUrl0 = imageUrl0.replace("https://prod-telerapp-attachments.s3.us-east-2.amazonaws.com/uploads/", "https://d256o3ycvhwumu.cloudfront.net/uploads/");
           }
           const imageUrl = imageUrl0; // Replace with your actual image URL
+          console.log(imageUrl, 'imageUrl');
           // console.log(imageUrl)
           //const imageUrl = assignUserDataFind?.attributes?.uploadSignature[0]; // Replace with your actual image URL
           instance.model.change(writer => {
