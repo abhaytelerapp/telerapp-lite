@@ -1255,7 +1255,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
                             assignUserDataFind?.attributes
                               ?.uploadSignature[0] &&
                             assignUserDataFind
-                              ? `<img src="${assignUserDataFind?.attributes?.uploadSignature[0]}" alt="signature" style="${signatureStyle}" />`
+                              ? `<img src="${assignUserDataFind?.attributes?.uploadSignature}" alt="signature" style="${signatureStyle}" />`
                               : ""
                           }<br/>
                           ${output}
@@ -1701,7 +1701,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
         // Handle image + doctor info if Approved
         if (patientReportDetail?.document_status === "Approved") {
           let imageUrl0 =
-            assignUserDataFind?.attributes?.uploadSignature?.[0] || "";
+            assignUserDataFind?.attributes?.uploadSignature || "";
           if (
             imageUrl0.includes(
               "telerappdevattachments.s3.ap-south-1.amazonaws.com"

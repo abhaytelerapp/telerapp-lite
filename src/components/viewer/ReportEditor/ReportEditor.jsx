@@ -1885,9 +1885,9 @@ const ReportEditor = (props) => {
                 <div style="margin-top: 10px; line-height:1 !important;">
                   ${
                     reportSetting?.signature &&
-                    assignUserDataFind?.attributes?.uploadSignature[0] &&
+                    assignUserDataFind?.attributes?.uploadSignature &&
                     assignUserDataFind
-                      ? `<img src="${assignUserDataFind?.attributes?.uploadSignature[0]}" alt="signature" style="${signatureStyle}" />`
+                      ? `<img src="${assignUserDataFind?.attributes?.uploadSignature}" alt="signature" style="${signatureStyle}" />`
                       : ""
                   }<br/>
                   ${output}
@@ -2585,7 +2585,7 @@ const ReportEditor = (props) => {
 
         if (patientReportDetail?.document_status === "Approved") {
           let imageUrl0 =
-            assignUserDataFind?.attributes?.uploadSignature?.[0] || "";
+            assignUserDataFind?.attributes?.uploadSignature || "";
 
           if (
             imageUrl0.includes(
@@ -2607,7 +2607,6 @@ const ReportEditor = (props) => {
             );
           }
           const imageUrl = imageUrl0; // Replace with your actual image URL
-          console.log(imageUrl,'imageUrl')
           // console.log(imageUrl)
           //const imageUrl = assignUserDataFind?.attributes?.uploadSignature[0]; // Replace with your actual image URL
           instance.model.change((writer) => {
