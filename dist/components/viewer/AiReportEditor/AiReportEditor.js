@@ -860,7 +860,7 @@ const AiReportEditor = _ref => {
                       <div style="${reportDataStyle}">
                         ${updateModifiedEditorData}
                         <div style="margin-top: 10px; line-height:1 !important;">
-                          ${reportSetting?.signature && assignUserDataFind?.attributes?.uploadSignature[0] && assignUserDataFind ? `<img src="${assignUserDataFind?.attributes?.uploadSignature[0]}" alt="signature" style="${signatureStyle}" />` : ""}<br/>
+                          ${reportSetting?.signature && assignUserDataFind?.attributes?.uploadSignature[0] && assignUserDataFind ? `<img src="${assignUserDataFind?.attributes?.uploadSignature}" alt="signature" style="${signatureStyle}" />` : ""}<br/>
                           ${output}
                         </div>
                       </div>
@@ -1146,7 +1146,7 @@ const AiReportEditor = _ref => {
 
         // Handle image + doctor info if Approved
         if (patientReportDetail?.document_status === "Approved") {
-          let imageUrl0 = assignUserDataFind?.attributes?.uploadSignature?.[0] || "";
+          let imageUrl0 = assignUserDataFind?.attributes?.uploadSignature || "";
           if (imageUrl0.includes("telerappdevattachments.s3.ap-south-1.amazonaws.com")) {
             imageUrl0 = imageUrl0.replace("https://telerappdevattachments.s3.ap-south-1.amazonaws.com/uploads/", "https://d3tx83aj1g4m0j.cloudfront.net/uploads/");
           } else if (imageUrl0.includes("prod-telerapp-attachments.s3.us-east-2.amazonaws.com")) {
