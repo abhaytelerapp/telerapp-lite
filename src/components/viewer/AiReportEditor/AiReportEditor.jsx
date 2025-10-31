@@ -426,7 +426,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
           accession_number:
             studyList?.MainDicomTags.AccessionNumber ||
             patientReportData.accessionnumber || 'Undefined',
-          uid: patientReportData?.studyInstanceUid,
+          uid: patientReportData?.studyinstanceuid || patientReportData?.studyInstanceUid,
           studyID: patientReportData?.studyid,
           institution_name:
             studyList?.MainDicomTags.InstitutionName ||

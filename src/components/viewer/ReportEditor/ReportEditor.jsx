@@ -667,7 +667,7 @@ const ReportEditor = (props) => {
           accession_number:
             studyList?.MainDicomTags.AccessionNumber ||
             patientReportData.accessionnumber || 'Undefined',
-          uid: patientReportData.studyInstanceUid,
+          uid: patientReportData.studyinstanceuid || patientReportData?.studyInstanceUid,
           studyID: patientReportData?.studyid,
           document_status: patient?.document_status,
           priority: patient?.study_priority || "Routine",

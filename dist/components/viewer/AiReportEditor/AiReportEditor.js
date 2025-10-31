@@ -292,7 +292,7 @@ const AiReportEditor = _ref => {
           ref_physician: patientReportData.referringphysicianname,
           ref_doctor: patientReportData.referringphysicianname,
           accession_number: studyList?.MainDicomTags.AccessionNumber || patientReportData.accessionnumber || 'Undefined',
-          uid: patientReportData?.studyInstanceUid,
+          uid: patientReportData?.studyinstanceuid || patientReportData?.studyInstanceUid,
           studyID: patientReportData?.studyid,
           institution_name: studyList?.MainDicomTags.InstitutionName || patientReportData.institutionname,
           study_description: studyList?.MainDicomTags.StudyDescription || patientReportData.studydescription,
