@@ -2778,7 +2778,7 @@ const ReportEditor = (props) => {
 
   return (
     <div
-      className={` report_ckeditor z-10 h-full overflow-y-auto md:h-[96%] h-[83%]`}
+      className={` z-10 flex h-full w-full flex-col justify-between`}
       // style={{ height: isNewTab ? '95vh' : '100%' }}
     >
       {!browserSupportsSpeechRecognition && (
@@ -2818,14 +2818,14 @@ const ReportEditor = (props) => {
           />
         </div>
 
-        <div className=" flex justify-between items-center">
+        <div className=" flex justify-between items-center pr-2">
           {previouPatientReports?.length > 0 &&
             previouPatientReports?.some(
               (report) => report?.document_status === "Approved"
             ) && (
               <div
                 onClick={handleSeePreviousReport}
-                className="text-primary-main rounded p-[6px] hover:bg-[#dedede] flex"
+                className="text-primary-main dark:text-[#d6d6d6] dark:hover:text-[#333] rounded p-[6px] hover:bg-[#dedede] flex"
               >
                 <Tooltip
                   text={"See Previous Reports"}
@@ -2838,7 +2838,7 @@ const ReportEditor = (props) => {
             )}
           <div
             onClick={handleSaveReportTemaplate}
-            className="text-primary-main p-[6px] hover:bg-[#dedede] rounded inline-flex"
+            className="text-primary-main dark:text-[#d6d6d6] dark:hover:text-[#333] p-[6px] hover:bg-[#dedede] rounded inline-flex"
           >
             <Tooltip
               text="Save Template"
@@ -2852,7 +2852,7 @@ const ReportEditor = (props) => {
             onClick={() =>
               handleAttachment(studyInstanceUid, patientData?.patient_name)
             }
-            className=" flex items-center text-primary-main p-[6px] hover:bg-[#dedede] rounded inline-flex"
+            className=" text-primary-main dark:text-[#d6d6d6] dark:hover:text-[#333] flex items-center p-[6px] hover:bg-[#dedede] rounded inline-flex"
           >
             <Tooltip
               text="See Attachments"
@@ -2873,7 +2873,7 @@ const ReportEditor = (props) => {
                 patientData?.institution_name
               )
             }
-            className="text-primary-main p-[6px] hover:bg-[#dedede] rounded inline-flex"
+            className="text-primary-main dark:text-[#d6d6d6] dark:hover:text-[#333] p-[6px] hover:bg-[#dedede] rounded inline-flex"
           >
             {patientFind?.clinical_history ? (
               // <BsFileMedicalFill
@@ -2913,23 +2913,25 @@ const ReportEditor = (props) => {
       {/* {console.log(editorData, "editorData")} */}
 
       {editorData ? (
-        <div
-          className={`editor_table ${
-            patientData?.document_status === "Approved"
-              ? " pointer-events-none"
-              : " pointer-events-auto"
-          }`}
-        >
-          <div id="toolbar-container"></div>
+        <div className="h-full overflow-y-auto overflow-hidden ">
           <div
-            id="editor"
-            className={`${
-              isModelOpen
-                ? "h-[40vh] overflow-y-auto"
-                : `${!toggleDisplayReportEditor ? "h-[100vh]" : "h-full"}`
+            className={` ${
+              patientData?.document_status === "Approved"
+                ? " pointer-events-none"
+                : " pointer-events-auto"
             }`}
-            // style={{height:'40vh',overflowY: 'auto'}}
-          ></div>
+          >
+            <div id="toolbar-container" className=' px-2'></div>
+            <div
+              id="editor"
+              className={`${
+                isModelOpen
+                  ? "h-[40vh] overflow-y-auto"
+                  : `${!toggleDisplayReportEditor ? "h-[100vh]" : "h-full"}`
+              }`}
+              // style={{height:'40vh',overflowY: 'auto'}}
+            ></div>
+          </div>
         </div>
       ) : (
         <div className="flex h-[615px] !w-full grow flex-col items-center justify-center">
@@ -2937,7 +2939,7 @@ const ReportEditor = (props) => {
         </div>
       )}
 
-      <div className="fixed bottom-[-5px] z-10 mt-2.5 flex max-[340px]:w-[350px] items-center p-1 max-sm:overflow-x-auto">
+      <div className={`flex flex-shrink-0 items-center overflow-x-auto px-2 mb-2 items-center`}>
         <button
           id="mic-container"
           className="mic-container ml-1 cursor-pointer min-[425px]:ml-2"

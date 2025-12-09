@@ -1904,7 +1904,7 @@ const ReportEditor = props => {
     });
   };
   return /*#__PURE__*/_react.default.createElement("div", {
-    className: ` report_ckeditor z-10 h-full overflow-y-auto md:h-[96%] h-[83%]`
+    className: ` z-10 flex h-full w-full flex-col justify-between`
     // style={{ height: isNewTab ? '95vh' : '100%' }}
   }, !browserSupportsSpeechRecognition && /*#__PURE__*/_react.default.createElement("div", {
     className: "p-2 text-red-600"
@@ -1944,10 +1944,10 @@ const ReportEditor = props => {
       MultiValueContainer
     }
   })), /*#__PURE__*/_react.default.createElement("div", {
-    className: " flex justify-between items-center"
+    className: " flex justify-between items-center pr-2"
   }, previouPatientReports?.length > 0 && previouPatientReports?.some(report => report?.document_status === "Approved") && /*#__PURE__*/_react.default.createElement("div", {
     onClick: handleSeePreviousReport,
-    className: "text-primary-main rounded p-[6px] hover:bg-[#dedede] flex"
+    className: "text-primary-main dark:text-[#d6d6d6] dark:hover:text-[#333] rounded p-[6px] hover:bg-[#dedede] flex"
   }, /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
     text: "See Previous Reports",
     position: "bottom",
@@ -1959,7 +1959,7 @@ const ReportEditor = props => {
     className: `text-2xl`
   }))), /*#__PURE__*/_react.default.createElement("div", {
     onClick: handleSaveReportTemaplate,
-    className: "text-primary-main p-[6px] hover:bg-[#dedede] rounded inline-flex"
+    className: "text-primary-main dark:text-[#d6d6d6] dark:hover:text-[#333] p-[6px] hover:bg-[#dedede] rounded inline-flex"
   }, /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
     text: "Save Template",
     position: "left",
@@ -1971,7 +1971,7 @@ const ReportEditor = props => {
     className: ` text-2xl `
   }))), /*#__PURE__*/_react.default.createElement("div", {
     onClick: () => handleAttachment(studyInstanceUid, patientData?.patient_name),
-    className: " flex items-center text-primary-main p-[6px] hover:bg-[#dedede] rounded inline-flex"
+    className: " text-primary-main dark:text-[#d6d6d6] dark:hover:text-[#333] flex items-center p-[6px] hover:bg-[#dedede] rounded inline-flex"
   }, /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
     text: "See Attachments",
     position: "left",
@@ -1983,7 +1983,7 @@ const ReportEditor = props => {
     className: `text-2xl`
   }))), /*#__PURE__*/_react.default.createElement("div", {
     onClick: () => handleClinicalHistory(studyInstanceUid, patientData?.patientId, patientData?.accession, patientData?.patientName, patientData?.institution_name),
-    className: "text-primary-main p-[6px] hover:bg-[#dedede] rounded inline-flex"
+    className: "text-primary-main dark:text-[#d6d6d6] dark:hover:text-[#333] p-[6px] hover:bg-[#dedede] rounded inline-flex"
   }, patientFind?.clinical_history ?
   /*#__PURE__*/
   // <BsFileMedicalFill
@@ -2011,19 +2011,22 @@ const ReportEditor = props => {
   }))
   // <FaNotesMedical className=" text-2xl transition-all hover:opacity-70" title="Add Clinical History" />
   ))), editorData ? /*#__PURE__*/_react.default.createElement("div", {
-    className: `editor_table ${patientData?.document_status === "Approved" ? " pointer-events-none" : " pointer-events-auto"}`
+    className: "h-full overflow-y-auto overflow-hidden "
   }, /*#__PURE__*/_react.default.createElement("div", {
-    id: "toolbar-container"
+    className: ` ${patientData?.document_status === "Approved" ? " pointer-events-none" : " pointer-events-auto"}`
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    id: "toolbar-container",
+    className: " px-2"
   }), /*#__PURE__*/_react.default.createElement("div", {
     id: "editor",
     className: `${isModelOpen ? "h-[40vh] overflow-y-auto" : `${!toggleDisplayReportEditor ? "h-[100vh]" : "h-full"}`}`
     // style={{height:'40vh',overflowY: 'auto'}}
-  })) : /*#__PURE__*/_react.default.createElement("div", {
+  }))) : /*#__PURE__*/_react.default.createElement("div", {
     className: "flex h-[615px] !w-full grow flex-col items-center justify-center"
   }, /*#__PURE__*/_react.default.createElement("span", {
     className: "loader01"
   })), /*#__PURE__*/_react.default.createElement("div", {
-    className: "fixed bottom-[-5px] z-10 mt-2.5 flex max-[340px]:w-[350px] items-center p-1 max-sm:overflow-x-auto"
+    className: `flex flex-shrink-0 items-center overflow-x-auto px-2 mb-2 items-center`
   }, /*#__PURE__*/_react.default.createElement("button", {
     id: "mic-container",
     className: "mic-container ml-1 cursor-pointer min-[425px]:ml-2",

@@ -1448,7 +1448,7 @@ const AiReportEditor = _ref => {
     });
   };
   return /*#__PURE__*/_react.default.createElement("div", {
-    className: "h-full w-full bg-[#fff] flex flex-col justify-between"
+    className: "h-full w-full bg-[#fff] dark:bg-[#333] dark:text-[#d6d6d6] text-black flex flex-col justify-between"
   }, /*#__PURE__*/_react.default.createElement(_reactToastify.ToastContainer, {
     position: "top-right",
     autoClose: 5000,
@@ -1503,7 +1503,7 @@ const AiReportEditor = _ref => {
     className: `text-2xl`
   }))), /*#__PURE__*/_react.default.createElement("div", {
     onClick: () => handleClinicalHistory(studyInstanceUid, patientData?.patientId, patientData?.accession, patientData?.patientName, patientData?.institution_name),
-    className: "text-primary-main p-[6px] pt-[12px] hover:bg-[#dedede] rounded"
+    className: "text-primary-main p-[6px] pt-[12px] hover:bg-[#dedede] rounded flex items-center pr-2"
   }, patientFind?.clinical_history ?
   /*#__PURE__*/
   // <BsFileMedicalFill
@@ -1533,9 +1533,10 @@ const AiReportEditor = _ref => {
   ))), patientData?.patient_name ? /*#__PURE__*/_react.default.createElement("div", {
     className: "h-full overflow-y-auto"
   }, /*#__PURE__*/_react.default.createElement("div", {
-    className: `ai_editor_table ${patientData?.document_status === "Approved" ? "pointer-events-none" : "pointer-events-auto"}`
+    className: `ai_editor_table !h-[93%] ${patientData?.document_status === "Approved" ? "pointer-events-none" : "pointer-events-auto"}`
   }, /*#__PURE__*/_react.default.createElement("div", {
-    id: "ai-toolbar-container"
+    id: "ai-toolbar-container",
+    className: "px-2"
   }), /*#__PURE__*/_react.default.createElement("div", {
     id: "ai-editor",
     className: "h-full",
@@ -1557,7 +1558,7 @@ const AiReportEditor = _ref => {
     className: "flex items-center mb-2",
     onSubmit: sendClinicalIndication
   }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "dark:bg-[#333333] bg-[#d4d4d4] relative w-full rounded-lg py-3 px-2"
+    className: "dark:bg-[#282828] bg-[#d4d4d4] relative w-full rounded-lg py-3 px-2"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "border-[#282828] dark:border-[#6d6d6d] dark:focus:border-[#ffffff] focus:border-[#a7adba] relative w-full rounded-lg border py-2 px-2 shadow",
     style: {
@@ -1566,7 +1567,7 @@ const AiReportEditor = _ref => {
   }, /*#__PURE__*/_react.default.createElement("textarea", {
     ref: textareaRef,
     id: "ai-textarea",
-    className: `memberScroll dark:bg-primary-dark bg-primary-light placeholder-inputfield-placeholder mb-5 w-full appearance-none rounded-lg text-[16px] leading-tight text-black transition duration-300 placeholder:text-black placeholder:text-opacity-50 focus:outline-none outline-none dark:text-white dark:placeholder:text-white ${patientData?.document_status === "Approved" ? "pointer-events-none" : "pointer-events-auto"}`,
+    className: `memberScroll dark:bg-[#282828] bg-primary-light placeholder-inputfield-placeholder mb-5 w-full appearance-none rounded-lg text-[16px] leading-tight text-black transition duration-300 placeholder:text-black placeholder:text-opacity-50 focus:outline-none outline-none dark:text-white dark:placeholder:text-white ${patientData?.document_status === "Approved" ? "pointer-events-none" : "pointer-events-auto"}`,
     style: {
       minHeight: "63px",
       maxHeight: "216px",

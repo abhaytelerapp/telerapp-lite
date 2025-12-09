@@ -2201,7 +2201,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
   };
 
   return (
-    <div className="h-full w-full bg-[#fff] flex flex-col justify-between">
+    <div className="h-full w-full bg-[#fff] dark:bg-[#333] dark:text-[#d6d6d6] text-black flex flex-col justify-between">
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -2257,7 +2257,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
             </Tooltip>
           </div>
 
-          <div onClick={() => handleClinicalHistory(studyInstanceUid, patientData?.patientId, patientData?.accession, patientData?.patientName, patientData?.institution_name)} className='text-primary-main p-[6px] pt-[12px] hover:bg-[#dedede] rounded'>
+          <div onClick={() => handleClinicalHistory(studyInstanceUid, patientData?.patientId, patientData?.accession, patientData?.patientName, patientData?.institution_name)} className='text-primary-main p-[6px] pt-[12px] hover:bg-[#dedede] rounded flex items-center pr-2'>
 
             {patientFind?.clinical_history ? (
               // <BsFileMedicalFill
@@ -2297,13 +2297,13 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
       {patientData?.patient_name ? (
         <div className="h-full overflow-y-auto">
           <div
-            className={`ai_editor_table ${
+            className={`ai_editor_table !h-[93%] ${
               patientData?.document_status === "Approved"
                 ? "pointer-events-none"
                 : "pointer-events-auto"
             }`}
           >
-            <div id="ai-toolbar-container"></div>
+            <div id="ai-toolbar-container" className='px-2'></div>
             <div
               id="ai-editor"
               className="h-full"
@@ -2331,7 +2331,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
             className="flex items-center mb-2"
             onSubmit={sendClinicalIndication}
           >
-            <div className="dark:bg-[#333333] bg-[#d4d4d4] relative w-full rounded-lg py-3 px-2">
+            <div className="dark:bg-[#282828] bg-[#d4d4d4] relative w-full rounded-lg py-3 px-2">
               <div
                 className="border-[#282828] dark:border-[#6d6d6d] dark:focus:border-[#ffffff] focus:border-[#a7adba] relative w-full rounded-lg border py-2 px-2 shadow"
                 style={{ boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)" }}
@@ -2339,7 +2339,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
                 <textarea
                   ref={textareaRef}
                   id="ai-textarea"
-                  className={`memberScroll dark:bg-primary-dark bg-primary-light placeholder-inputfield-placeholder mb-5 w-full appearance-none rounded-lg text-[16px] leading-tight text-black transition duration-300 placeholder:text-black placeholder:text-opacity-50 focus:outline-none outline-none dark:text-white dark:placeholder:text-white ${
+                  className={`memberScroll dark:bg-[#282828] bg-primary-light placeholder-inputfield-placeholder mb-5 w-full appearance-none rounded-lg text-[16px] leading-tight text-black transition duration-300 placeholder:text-black placeholder:text-opacity-50 focus:outline-none outline-none dark:text-white dark:placeholder:text-white ${
                     patientData?.document_status === "Approved"
                       ? "pointer-events-none"
                       : "pointer-events-auto"
