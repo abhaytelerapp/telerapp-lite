@@ -2920,6 +2920,7 @@ const ReportEditor = (props) => {
                 ? " pointer-events-none"
                 : " pointer-events-auto"
             }`}
+            style={{ height: '90%' }}
           >
             <div id="toolbar-container" className=' px-2'></div>
             <div
