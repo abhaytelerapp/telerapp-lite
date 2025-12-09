@@ -1479,7 +1479,7 @@ const AiReportEditor = _ref => {
     className: "flex items-center"
   }, previouPatientReports?.length > 0 && previouPatientReports?.some(report => report?.document_status === 'Approved') && /*#__PURE__*/_react.default.createElement("div", {
     onClick: handleSeePreviousReport,
-    className: "text-primary-main rounded p-[6px] hover:bg-[#dedede]"
+    className: "text-primary-main dark:text-[#d6d6d6] dark:hover:text-[#333] rounded p-[6px] hover:bg-[#dedede]"
   }, /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
     text: "See Previous Reports",
     position: "bottom",
@@ -1491,7 +1491,7 @@ const AiReportEditor = _ref => {
     className: `text-2xl`
   }))), /*#__PURE__*/_react.default.createElement("div", {
     onClick: () => handleAttachment(studyInstanceUid, patientData?.patient_name),
-    className: " flex items-center text-primary-main p-[6px] hover:bg-[#dedede] rounded"
+    className: " flex items-center dark:text-[#d6d6d6] dark:hover:text-[#333] text-primary-main p-[6px] hover:bg-[#dedede] rounded"
   }, /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
     text: "See Attachments",
     position: "left",
@@ -1503,7 +1503,7 @@ const AiReportEditor = _ref => {
     className: `text-2xl`
   }))), /*#__PURE__*/_react.default.createElement("div", {
     onClick: () => handleClinicalHistory(studyInstanceUid, patientData?.patientId, patientData?.accession, patientData?.patientName, patientData?.institution_name),
-    className: "text-primary-main p-[6px] pt-[12px] hover:bg-[#dedede] rounded flex items-center pr-2"
+    className: "text-primary-main dark:text-[#d6d6d6] dark:hover:text-[#333] p-[6px] pt-[12px] hover:bg-[#dedede] rounded flex items-center pr-2"
   }, patientFind?.clinical_history ?
   /*#__PURE__*/
   // <BsFileMedicalFill
