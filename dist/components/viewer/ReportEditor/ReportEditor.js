@@ -1904,7 +1904,7 @@ const ReportEditor = props => {
     });
   };
   return /*#__PURE__*/_react.default.createElement("div", {
-    className: ` z-10 flex h-full w-full flex-col justify-between`
+    className: ` z-10 flex h-full w-full flex-col justify-between bg-[#fff] dark:bg-[#333] dark:text-[#d6d6d6] text-black`
     // style={{ height: isNewTab ? '95vh' : '100%' }}
   }, !browserSupportsSpeechRecognition && /*#__PURE__*/_react.default.createElement("div", {
     className: "p-2 text-red-600"
@@ -2092,9 +2092,9 @@ const ReportEditor = props => {
     id: "captureImage"
     // className="ml-3 px-[5px] text-sm max-[1440px]:ml-2 min-[425px]:px-[10px] min-[425px]:text-[14px]"
     ,
-    className: "box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] ml-3 px-[5px] sm:text-sm max-[1440px]:ml-2 sm:px-[10px] text-[10px]"
+    className: "box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] ml-3 sm:text-sm max-[1440px]:ml-2 text-[10px]"
   }, /*#__PURE__*/_react.default.createElement(_bs.BsCameraFill, {
-    className: "20px"
+    className: "text-20px"
   }))), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
     text: "Download PDF",
     position: "top",
@@ -2106,14 +2106,14 @@ const ReportEditor = props => {
     id: "fileDownload"
     // className="downloadbutton mx-3 max-[320px]:mr-4 px-[5px] text-sm max-[1440px]:mx-2 min-[425px]:px-[10px] min-[425px]:text-[14px]"
     ,
-    className: "downloadbutton mx-3 box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] ml-3 px-[5px] sm:text-sm max-[1440px]:ml-2 sm:px-[10px] text-[10px]",
+    className: "downloadbutton mx-3 box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] ml-3 sm:text-sm max-[1440px]:ml-2 text-[10px]",
     onClick: handleDownloadPdf
   }, isLoading ? /*#__PURE__*/_react.default.createElement("span", {
     className: "buttonloader"
   }) : /*#__PURE__*/_react.default.createElement("span", {
     className: "flex"
   }, /*#__PURE__*/_react.default.createElement(_fa.FaFileDownload, {
-    className: "20px"
+    className: "text-20px"
   }))))));
 };
 var _default = exports.default = ReportEditor;
