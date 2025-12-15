@@ -1533,7 +1533,7 @@ const AiReportEditor = _ref => {
   ))), patientData?.patient_name ? /*#__PURE__*/_react.default.createElement("div", {
     className: "h-full overflow-y-auto"
   }, /*#__PURE__*/_react.default.createElement("div", {
-    className: `ai_editor_table !h-[93%] ${patientData?.document_status === "Approved" ? "pointer-events-none" : "pointer-events-auto"}`
+    className: `ai_editor_table !h-[93%] ${patientData?.document_status === "Approved" ? "pointer-events-auto" : "pointer-events-auto"}`
   }, /*#__PURE__*/_react.default.createElement("div", {
     id: "ai-toolbar-container",
     className: "px-2"

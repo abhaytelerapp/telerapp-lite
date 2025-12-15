@@ -2013,7 +2013,7 @@ const ReportEditor = props => {
   ))), editorData ? /*#__PURE__*/_react.default.createElement("div", {
     className: "h-full overflow-y-auto overflow-hidden "
   }, /*#__PURE__*/_react.default.createElement("div", {
-    className: ` ${patientData?.document_status === "Approved" ? " pointer-events-none" : " pointer-events-auto"}`,
+    className: ` ${patientData?.document_status === "Approved" ? " pointer-events-auto" : " pointer-events-auto"}`,
     style: {
       height: '90%'
     }

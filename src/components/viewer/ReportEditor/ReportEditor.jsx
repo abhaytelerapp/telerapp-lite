@@ -2917,7 +2917,7 @@ const ReportEditor = (props) => {
           <div
             className={` ${
               patientData?.document_status === "Approved"
-                ? " pointer-events-none"
+                ? " pointer-events-auto"
                 : " pointer-events-auto"
             }`}
             style={{ height: '90%' }}

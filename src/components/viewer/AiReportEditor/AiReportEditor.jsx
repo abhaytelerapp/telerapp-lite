@@ -2299,7 +2299,7 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
           <div
             className={`ai_editor_table !h-[93%] ${
               patientData?.document_status === "Approved"
-                ? "pointer-events-none"
+                ? "pointer-events-auto"
                 : "pointer-events-auto"
             }`}
           >
