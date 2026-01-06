@@ -445,6 +445,8 @@ const AiReportEditor = _ref => {
 
   // filterData = priorityStudiesFilter.length > 0 ? priorityStudiesFilter : filterStudies;
   const templateOptions = loginUseremplateName.includes("Select All") || allTemaplateAccess ? availableReportTemplates : loginUserTemplateOption;
+  const isRadiologist = user?.profile?.roleType?.includes('Radiologist');
+  const shouldHideSubmitButton = window.location.href.includes('quantum-os.telerapp.com') && isRadiologist && !canEditReport;
 
   // const isAttachment =
   //   user?.profile?.roleType?.includes("Radiologist") ||
@@ -1615,7 +1617,7 @@ const AiReportEditor = _ref => {
     className: "flex justify-between"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "flex justify-between gap-2"
-  }, /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
+  }, !shouldHideSubmitButton && /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
     text: "Submit Report",
     position: "top",
     style: {

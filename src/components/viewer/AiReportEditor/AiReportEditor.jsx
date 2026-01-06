@@ -653,6 +653,9 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
       ? availableReportTemplates
       : loginUserTemplateOption;
 
+  const isRadiologist = user?.profile?.roleType?.includes('Radiologist');
+  const shouldHideSubmitButton = window.location.href.includes('quantum-os.telerapp.com') && isRadiologist && !canEditReport;
+
   // const isAttachment =
   //   user?.profile?.roleType?.includes("Radiologist") ||
   //   user?.profile?.roleType?.includes("QaUsers") ||
@@ -2410,31 +2413,33 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
         ) : null}
         <div className="flex justify-between">
           <div className="flex justify-between gap-2">
-            <Tooltip
-              text="Submit Report"
-              position="top"
-              style={{ padding: "8px", fontWeight: "normal" }}
-            >
-              <button
-                id="submit-button"
-                onClick={handleSubmit}
-                className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
-                disabled={
-                  (assignUserDetail && isPhysicianOrTechnologist) ||
-                  !aiEditorData ||
-                  isApproved
-                    ? true
-                    : (!assignUserDetail &&
-                        (canEditReport || isQaUser || isSuperAndDeputyAdmin)) ||
-                      assignUserDetail ||
-                      isSuperAndDeputyAdmin
-                    ? false
-                    : true
-                }
+            {!shouldHideSubmitButton && (
+              <Tooltip
+                text="Submit Report"
+                position="top"
+                style={{ padding: "8px", fontWeight: "normal" }}
               >
-                Submit
-              </button>
-            </Tooltip>
+                <button
+                  id="submit-button"
+                  onClick={handleSubmit}
+                  className="box-content inline-flex flex-row items-center justify-center gap-[5px] justify center outline-none rounded leading-[1.2] font-sans text-center whitespace-nowrap font-semibold bg-primary-main text-white transition duration-300 ease-in-out focus:outline-none hover:opacity-80 active:bg-opacity-50 h-[32px] min-w-[32px] px-[5px] sm:text-sm sm:px-[10px] text-[10px] cursor-pointer"
+                  disabled={
+                    (assignUserDetail && isPhysicianOrTechnologist) ||
+                    !aiEditorData ||
+                    isApproved
+                      ? true
+                      : (!assignUserDetail &&
+                          (canEditReport || isQaUser || isSuperAndDeputyAdmin)) ||
+                        assignUserDetail ||
+                        isSuperAndDeputyAdmin
+                      ? false
+                      : true
+                  }
+                >
+                  Submit
+                </button>
+              </Tooltip>
+            )}
             <Tooltip
               text="Save as Draft"
               position="top"

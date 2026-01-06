@@ -533,6 +533,8 @@ const ReportEditor = props => {
   //   user?.profile?.roleType?.includes("deputy-admin");
 
   const allTemaplateAccess = user?.profile?.roleType?.includes("super-admin") || user?.profile?.roleType?.includes("deputy-admin");
+  const isRadiologist = user?.profile?.roleType?.includes('Radiologist');
+  const shouldHideSubmitButton = window.location.href.includes('quantum-os.telerapp.com') && isRadiologist && !canEditReport;
 
   // filterData = priorityStudiesFilter.length > 0 ? priorityStudiesFilter : filterStudies;
   const templateOptions = loginUseremplateName.includes("Select All") || allTemaplateAccess ? availableReportTemplates || [] : loginUserTemplateOption;
@@ -2042,7 +2044,7 @@ const ReportEditor = props => {
     className: " text-xl text-white "
   }) : /*#__PURE__*/_react.default.createElement(_fa.FaMicrophoneSlash, {
     className: " text-xl text-white"
-  }))), /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
+  }))), !shouldHideSubmitButton && /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
     text: "Submit Report",
     position: "top",
     style: {
