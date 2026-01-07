@@ -1224,6 +1224,12 @@ const Viewer = props => {
     style: {
       display: "none"
     }
+  }), /*#__PURE__*/_react.default.createElement("div", {
+    className: "page",
+    id: "SrPage",
+    style: {
+      display: "none"
+    }
   })), toggleDisplayReportEditor && /*#__PURE__*/_react.default.createElement(_reactResizable.Resizable, {
     width: editorWidth,
     height: 0,

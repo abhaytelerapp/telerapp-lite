@@ -350,6 +350,7 @@ class BlueLightViewPort {
                 DcmLoader(Sop.Image, this);
             }
             else if (Sop.type == 'pdf') PdfLoader(Sop.pdf, Sop);
+            else if (Sop.type == 'sr') SRLoader(Sop.Image.srData, Sop);
             else if (Sop.type == 'ecg' && openECG) EcgLoader(Sop);
             else if (Sop.type == 'img') DcmLoader(Sop.Image, this);
         });

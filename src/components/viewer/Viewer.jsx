@@ -1228,6 +1228,11 @@ const Viewer = (props) => {
               id="EcgPage"
               style={{ display: "none" }}
             ></div>
+            <div
+              className="page"
+              id="SrPage"
+              style={{ display: "none" }}
+            ></div>
           </div>
           {toggleDisplayReportEditor && (
             <Resizable

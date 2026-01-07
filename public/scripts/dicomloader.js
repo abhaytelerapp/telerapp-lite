@@ -2,6 +2,7 @@
 function loadImageFromDataSet(dataSet, type, loadimage = true, url, fromLocal = false, seriesInstanceNumber) {
     var imageObj = getDefaultImageObj(dataSet, type, url, loadimage, seriesInstanceNumber);
     if (type == 'pdf') setPDF(imageObj);
+    if (type == 'sr') setSR(imageObj);
     if (type == 'ecg' && openECG) setECG(imageObj);
     var Sop = ImageManager.pushStudy(imageObj); //註冊此Image至Viewer
     if (!Sop) return; //發生重覆，等情況
@@ -36,6 +37,21 @@ function setPDF(imageObj) {
     var pdfObj = new Blob([pdfByteArray], { type: 'application/pdf' });
     var pdf = URL.createObjectURL(pdfObj);
     imageObj.pdf = pdf;
+}
+
+function setSR(imageObj) {
+    // Store the SR dataSet for later processing
+    // SR files are structured reports that can be parsed and displayed as text/XML
+    imageObj.srData = imageObj.data;
+    // Extract basic SR information if available
+    try {
+        if (imageObj.data.elements.x0040a043) {
+            // ConceptNameCodeSequence - can contain report type
+            imageObj.srType = "Structured Report";
+        }
+    } catch (ex) {
+        console.log("Error parsing SR data:", ex);
+    }
 }
 
 // function getDefaultImageObj(dataSet, type, url, imageDataLoaded, seriesInstanceNumber) {

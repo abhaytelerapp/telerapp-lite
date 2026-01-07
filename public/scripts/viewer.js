@@ -202,6 +202,284 @@ function PdfLoader(pdf, Sop) {
     }
 }
 
+function SRLoader(srData, Sop) {
+    Pages.displayPage("SrPage");
+    img2darkByClass("sr", false);
+    leftLayout.setAccent(Sop.parent.SeriesInstanceUID);
+
+    var srPage = getByid("SrPage");
+    if (!srPage) return;
+
+    srPage.innerHTML = "";
+
+    if (!getByid("SRView")) {
+        var srContainer = document.createElement("div");
+        srContainer.id = "SRView";
+        srContainer.className = "SelectedViewport";
+        srContainer.style.width = "100%";
+        srContainer.style.height = "100%";
+        srContainer.style.left = "0px";
+        srContainer.style.position = "absolute";
+        srContainer.style.backgroundColor = "#000";
+        srContainer.style.color = "white";
+        srContainer.style.overflow = "auto";
+        srContainer.style.padding = "20px";
+        srContainer.style.boxSizing = "border-box";
+        srContainer.style.maxWidth = "100%";
+        srContainer.style.wordWrap = "break-word";
+        srContainer.style.wordBreak = "break-all";
+        srPage.appendChild(srContainer);
+    }
+
+    var srContainer = getByid("SRView");
+    if (!srContainer.classList.contains("SelectedViewport")) {
+        srContainer.classList.add("SelectedViewport");
+    }
+    srContainer.innerHTML = "";
+
+    var contentDiv = document.createElement("div");
+    contentDiv.style.whiteSpace = "pre";
+    contentDiv.style.fontFamily = "monospace";
+    contentDiv.style.lineHeight = "1.6";
+    contentDiv.style.color = "white";
+    contentDiv.style.maxWidth = "100%";
+    contentDiv.style.overflowWrap = "anywhere";
+    contentDiv.style.display = "block";
+    contentDiv.style.fontWeight = "normal";
+
+    var outputText = "";
+
+    try {
+        var dataSet = null;
+        if (Sop && Sop.Image && Sop.Image.srData) {
+            dataSet = Sop.Image.srData;
+        } else if (srData) {
+            dataSet = srData;
+        } else if (Sop && Sop.Image && Sop.Image.data) {
+            dataSet = Sop.Image.data;
+        }
+
+        if (!dataSet) {
+            outputText = "Error: SR data not available.";
+        } else {
+
+            // Device Observer UID once at top
+            var deviceUIDElement = dataSet.elements["x00181002"];
+            if (deviceUIDElement) {
+                var deviceUID = dataSet.string("x00181002") || "";
+                if (deviceUID) {
+                    outputText += "Device Observer UID: " + deviceUID + "\n\n";
+                }
+            }
+
+            var ContentSequenceTag = "x0040a730";
+            var contentSequence = dataSet.elements[ContentSequenceTag];
+
+            if (contentSequence && contentSequence.items && contentSequence.items.length > 0) {
+
+                function getContentValue(itemDataSet) {
+                    var valueType = itemDataSet.string("x0040a040") || "";
+
+                    // TEXT
+                    if (valueType === "TEXT") {
+                        return itemDataSet.string("x0040a160") || "";
+                    }
+
+                    // CODE
+                    if (valueType === "CODE") {
+                        var codeSeq = itemDataSet.elements["x0040a168"];
+                        if (codeSeq && codeSeq.items && codeSeq.items.length > 0) {
+                            var codeItem = codeSeq.items[0].dataSet;
+                            return codeItem.string("x00080104") ||  // Code Meaning
+                                   codeItem.string("x00080108") ||  // Alt Code Meaning
+                                   "";
+                        }
+                        return itemDataSet.string("x0040a160") || "";
+                    }
+
+                    // NUM
+                    if (valueType === "NUM") {
+                        return getNumericValue(itemDataSet);
+                    }
+
+                    // DATE / TIME / DATETIME
+                    if (valueType === "DATE") {
+                        // (0040,A121) Date
+                        var raw = itemDataSet.string("x0040a121") || "";
+                        return raw ? formatDicomDateTime(raw) : "";
+                    }
+                    if (valueType === "TIME") {
+                        // (0040,A122) Time
+                         var raw = itemDataSet.string("x0040a122") || "";
+                        return raw ? formatDicomDateTime(raw) : "";
+                    }
+                    if (valueType === "DATETIME") {
+                        // (0040,A120) DateTime
+                         var raw = itemDataSet.string("x0040a120") || "";
+                        return raw ? formatDicomDateTime(raw) : "";
+                    }
+
+                    // PERSON NAME
+                    if (valueType === "PNAME") {
+                        // (0040,A123) Person Name
+                        return itemDataSet.string("x0040a123") || "";
+                    }
+
+                    // UID reference
+                    if (valueType === "UIDREF") {
+                        // (0040,A124) UID
+                        return itemDataSet.string("x0040a124") || "";
+                    }
+
+                    // Fallback: generic text / common identifiers
+                    return itemDataSet.string("x0040a160") ||   // Text Value
+                           itemDataSet.string("x00080018") ||   // SOP Instance UID
+                           itemDataSet.string("x00080090") ||   // Referring Physician Name
+                           "";
+                }
+
+                function getNumericValue(dataSet) {
+                    var numericSeq = dataSet.elements["x0040a300"];
+                    if (numericSeq && numericSeq.items && numericSeq.items.length > 0) {
+                        var numItem = numericSeq.items[0].dataSet;
+                        var floatVal = numItem.string("x0040a30a");
+                        if (floatVal) return floatVal;
+
+                        var num = numItem.string("x0040a304");
+                        var den = numItem.string("x0040a306");
+                        if (num && den) return num + "/" + den;
+
+                        var intVal = numItem.string("x0040a30b");
+                        if (intVal) return intVal;
+                    }
+                    return "";
+                }
+
+                // hierarchical numbering with shared counters
+                function parseContentItem(item, indent, numbers) {
+                    var levelNumbers = numbers || [];
+
+                    // ensure slot for this depth
+                    if (levelNumbers.length <= indent) {
+                        levelNumbers[indent] = 0;
+                    }
+
+                    // increment this depth
+                    levelNumbers[indent]++;
+
+                    // drop deeper levels so sequence is correct
+                    levelNumbers.length = indent + 1;
+
+                    // "1 ", "1.2 ", "1.2.1 "
+                    var numberStr = levelNumbers
+                        .slice(0, indent + 1)
+                        .map(function (n) { return n.toString(); })
+                        .join(".") + " ";
+
+                    var indentStr = "  ".repeat(indent); // 2 spaces per level
+
+                    var valueType = item.dataSet.string("x0040a040") || "";
+                    var conceptNameSeq = item.dataSet.elements["x0040a043"];
+                    var conceptName = "";
+                    if (conceptNameSeq && conceptNameSeq.items && conceptNameSeq.items.length > 0) {
+                        conceptName = conceptNameSeq.items[0].dataSet.string("x00080104") || "";
+                    }
+                    var contentValue = getContentValue(item.dataSet);
+
+                    var measurementUnits = "";
+                    if (valueType === "NUM") {
+                        var unitsSeq = item.dataSet.elements["x0040a301"];
+                        if (unitsSeq && unitsSeq.items && unitsSeq.items.length > 0) {
+                            measurementUnits = unitsSeq.items[0].dataSet.string("x00080104") || "";
+                        }
+                    }
+
+                    var lineText = indentStr + numberStr;
+                    var hasContent = false;
+
+                    if (conceptName && conceptName.trim()) {
+                        lineText += '<span style="font-size: 1.1em; font-weight: bold;">' + conceptName.trim() + "</span>";
+                        hasContent = true;
+                        if (contentValue && contentValue.trim()) {
+                            lineText += ": " + contentValue.trim();
+                            if (measurementUnits) {
+                                lineText += " " + measurementUnits.trim();
+                            }
+                        }
+                    } else if (contentValue && contentValue.trim()) {
+                        lineText += contentValue.trim();
+                        hasContent = true;
+                    }
+
+                    var itemText = "";
+                    if (hasContent) {
+                        itemText += lineText + "\n";
+                    }
+
+                    var nestedContentSeq = item.dataSet.elements[ContentSequenceTag];
+                    if (nestedContentSeq && nestedContentSeq.items && nestedContentSeq.items.length > 0) {
+                        for (var i = 0; i < nestedContentSeq.items.length; i++) {
+                            itemText += parseContentItem(
+                                nestedContentSeq.items[i],
+                                indent + 1,
+                                levelNumbers
+                            );
+                        }
+                    }
+
+                    return itemText;
+                }
+
+                // shared numbering array for whole document
+                var rootNumbers = [];
+                for (var i = 0; i < contentSequence.items.length; i++) {
+                    outputText += parseContentItem(contentSequence.items[i], 0, rootNumbers);
+                }
+
+                if (!outputText.trim()) {
+                    outputText = "SR Document loaded but no readable content found.";
+                }
+            } else {
+                outputText = "SR Document loaded.\nNo ContentSequence found.";
+            }
+        }
+    } catch (ex) {
+        outputText = "Error: " + ex.toString();
+        console.error("SR parsing error:", ex);
+    }
+
+    contentDiv.innerHTML = outputText || "SR Document loaded.";
+    srContainer.appendChild(contentDiv);
+}
+
+function formatDicomDateTime(dt) {
+    // Handles values like "20260101214026.659000"
+    if (!dt || dt.length < 14) return dt;
+
+    var year   = dt.slice(0, 4);
+    var month  = dt.slice(4, 6);
+    var day    = dt.slice(6, 8);
+    var hour   = dt.slice(8, 10);
+    var minute = dt.slice(10, 12);
+    var second = dt.slice(12, 14);
+    var ms     = "";
+
+    // optional fractional seconds start with '.'
+    var dotIndex = dt.indexOf(".");
+    if (dotIndex !== -1) {
+        ms = dt.slice(dotIndex + 1).replace(/0+$/, ""); // trim trailing zeros
+        if (ms) {
+            ms = "." + ms;
+        }
+    }
+
+    // result like "2026-01-01 21:40:26.659"
+    return year + "-" + month + "-" + day + " " +
+           hour + ":" + minute + ":" + second + ms;
+}
+
+
+
 function DcmLoader(image, viewport) {
     if (Pages.type != "DicomPage") {
         Pages.displayPage("DicomPage");
@@ -319,6 +597,18 @@ function loadDicomDataSet(fileData, loadimage = true, url, fromLocal = false, se
     //PDF
     if (dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.EncapsulatedPDFStorage)
         loadImageFromDataSet(dataSet, 'pdf', loadimage, url, fromLocal, seriesInstanceNumber);
+
+    //SR (Structured Report)
+    else if (dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.BasicTextSR ||
+             dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.EnhancedSR ||
+             dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.ComprehensiveSR ||
+             dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.Comprehensive3DSR ||
+             dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.MammographyCADSR ||
+             dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.ChestCADSR ||
+             dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.X_RayRadiationDoseSR ||
+             dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.ColonCADSR ||
+             dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.ImplantationPlanSRDocumentStorage)
+        loadImageFromDataSet(dataSet, 'sr', loadimage, url, fromLocal, seriesInstanceNumber);
 
     //Mark
     else if (dataSet.string(Tag.MediaStorageSOPClassUID) == SOPClassUID.RTStructureSetStorage)//RTSS
