@@ -534,7 +534,8 @@ const ReportEditor = props => {
 
   const allTemaplateAccess = user?.profile?.roleType?.includes("super-admin") || user?.profile?.roleType?.includes("deputy-admin");
   const isRadiologist = user?.profile?.roleType?.includes('Radiologist');
-  const shouldHideSubmitButton = window.location.href.includes('quantum-os.telerapp.com') && isRadiologist && !canEditReport;
+  const canSubmitReport = permissions?.includes('Submit Report');
+  const shouldHideSubmitButton = window.location.href.includes('quantum-os.telerapp.com') && isRadiologist && !canSubmitReport;
 
   // filterData = priorityStudiesFilter.length > 0 ? priorityStudiesFilter : filterStudies;
   const templateOptions = loginUseremplateName.includes("Select All") || allTemaplateAccess ? availableReportTemplates || [] : loginUserTemplateOption;

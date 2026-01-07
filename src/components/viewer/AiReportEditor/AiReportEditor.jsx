@@ -654,7 +654,8 @@ const AiReportEditor = ({ apiData, user, keycloak_url, toggleDisplayReportEditor
       : loginUserTemplateOption;
 
   const isRadiologist = user?.profile?.roleType?.includes('Radiologist');
-  const shouldHideSubmitButton = window.location.href.includes('quantum-os.telerapp.com') && isRadiologist && !canEditReport;
+  const canSubmitReport = permissions?.includes('Submit Report');
+  const shouldHideSubmitButton = window.location.href.includes('quantum-os.telerapp.com') && isRadiologist && !canSubmitReport;
 
   // const isAttachment =
   //   user?.profile?.roleType?.includes("Radiologist") ||
