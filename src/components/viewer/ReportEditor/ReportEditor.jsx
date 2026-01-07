@@ -773,6 +773,7 @@ const ReportEditor = (props) => {
     user?.profile?.roleType?.includes("deputy-admin");
 
   const isRadiologist = user?.profile?.roleType?.includes('Radiologist');
+  const permissions = user?.profile?.permission;
   const canSubmitReport = permissions?.includes('Submit Report');
   const shouldHideSubmitButton = window.location.href.includes('quantum-os.telerapp.com') && isRadiologist && !canSubmitReport;
 
@@ -1015,8 +1016,6 @@ const ReportEditor = (props) => {
     assignUserFind?.find(
       (item) => item.assign_name === user?.profile?.preferred_username
     );
-
-  const permissions = user?.profile?.permission;
 
   const isPhysicianOrTechnologist =
     user?.profile?.roleType === "Physician" ||
