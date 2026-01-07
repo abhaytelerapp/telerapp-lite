@@ -1070,9 +1070,18 @@ function drawBorder(element) {
 }
 
 function img2darkByClass(classname, dark) {
+  const excludedClasses = ["pdf", "ecg"];
+
   for (var className of ["img", "cropimg"]) {
     let icon = getClass(className);
     for (let i = 0; i < icon.length; i++) {
+      // Skip if element has any excluded class
+      if (excludedClasses.some(excluded => icon[i].classList.contains(excluded))) {
+        icon[i].style.opacity = 1;
+        icon[i].enable = true;
+        continue;
+      }
+
       if (!icon[i].classList.contains(classname)) {
         if (dark) {
           icon[i].style.opacity = 1;
